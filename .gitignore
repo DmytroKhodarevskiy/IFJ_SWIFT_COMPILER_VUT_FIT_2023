@@ -1,0 +1,55 @@
+# Compiled Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.a
+
+# Executables
+*.exe
+*.out
+*.app
+
+# CMake build directory
+cmake-build-*/
+
+# Visual Studio Code settings
+.vscode/
+
+# CLion settings
+.idea/
+
+# Sublime Text settings
+*.sublime-workspace
+
+# Eclipse settings
+.settings/
+.project
+.cproject
+
+# Code::Blocks settings
+*.depend
+
+# Xcode settings
+*.xcodeproj/
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/
+
+# Autotools generated files
+autom4te.cache/
+compile
+config.log
+config.status
+configure
+
+# Dependency files
+Makefile.in
+
+# Generated files
+*.gch

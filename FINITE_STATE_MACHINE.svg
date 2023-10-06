@@ -1,0 +1,554 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1088pt" height="1621pt" viewBox="0.00 0.00 1088.26 1621.45">
+<g id="graph0" class="graph" transform="translate(-457.11958317420647,1476.8336387385416) scale(1.8129450348696723)" data-name="LexicalAnalyzer">
+
+<polygon fill="white" stroke="none" points="-4,4 -4,-1617.45 1084.26,-1617.45 1084.26,4 -4,4"/>
+<!-- S0 -->
+<g id="node1" class="node" pointer-events="visible" data-name="START" data-comment="S0">
+
+<ellipse fill="yellowgreen" stroke="black" stroke-width="2" cx="28.67" cy="-887.45" rx="28.83" ry="28.83"/>
+<text text-anchor="middle" x="28.67" y="-884.45" font-family="Comic Sans MS" font-size="10.00">START</text>
+</g>
+<!-- LPAR -->
+<g id="node2" class="node" pointer-events="visible" data-name="LPAR">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-1584.45" rx="24.99" ry="24.99"/>
+<text text-anchor="middle" x="198.5" y="-1581.45" font-family="Comic Sans MS" font-size="10.00">LPAR</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-1584.45" rx="28.99" ry="28.99"/>
+
+</g>
+<!-- S0&#45;&gt;LPAR -->
+<g id="edge1" class="edge" data-name="START-&gt;LPAR" data-comment="S0-&gt;LPAR">
+
+<path fill="none" stroke="black" d="M29.18,-917.04C27.89,-1022.28 27.26,-1377.53 75.33,-1478.45 93.59,-1516.78 132.88,-1546.8 162.01,-1564.97"/>
+<polygon fill="black" stroke="black" points="160.16,-1567.94 170.53,-1570.11 163.78,-1561.95 160.16,-1567.94"/>
+<text text-anchor="middle" x="102.19" y="-1544.65" font-family="mono" font-size="14.00"> (</text>
+</g>
+<!-- RPAR -->
+<g id="node3" class="node" pointer-events="visible" data-name="RPAR">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-1508.45" rx="25.18" ry="25.18"/>
+<text text-anchor="middle" x="198.5" y="-1505.45" font-family="Comic Sans MS" font-size="10.00">RPAR</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-1508.45" rx="29.16" ry="29.16"/>
+
+</g>
+<!-- S0&#45;&gt;RPAR -->
+<g id="edge2" class="edge" data-name="START-&gt;RPAR" data-comment="S0-&gt;RPAR">
+
+<path fill="none" stroke="black" d="M29.97,-917.22C31.29,-1011.57 38.36,-1302.86 75.33,-1388.45 93.52,-1430.56 134.17,-1465.51 163.59,-1486.62"/>
+<polygon fill="black" stroke="black" points="161.26,-1489.27 171.46,-1492.12 165.27,-1483.53 161.26,-1489.27"/>
+<text text-anchor="middle" x="102.19" y="-1461.65" font-family="mono" font-size="14.00">  )</text>
+</g>
+<!-- LBRACE -->
+<g id="node4" class="node" pointer-events="visible" data-name="LBRACE">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-1423.45" rx="33.2" ry="33.2"/>
+<text text-anchor="middle" x="198.5" y="-1420.45" font-family="Comic Sans MS" font-size="10.00">LBRACE</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-1423.45" rx="37.19" ry="37.19"/>
+
+</g>
+<!-- S0&#45;&gt;LBRACE -->
+<g id="edge3" class="edge" data-name="START-&gt;LBRACE" data-comment="S0-&gt;LBRACE">
+
+<path fill="none" stroke="black" d="M30.69,-917.06C33.89,-999.03 45.33,-1227.37 75.33,-1295.45 93.21,-1336.04 129.78,-1371.56 158.27,-1394.82"/>
+<polygon fill="black" stroke="black" points="156.02,-1397.49 166.02,-1400.99 160.38,-1392.02 156.02,-1397.49"/>
+<text text-anchor="middle" x="102.19" y="-1371.65" font-family="mono" font-size="14.00"> {</text>
+</g>
+<!-- RBRACE -->
+<g id="node5" class="node" pointer-events="visible" data-name="RBRACE">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-1330.45" rx="33.84" ry="33.84"/>
+<text text-anchor="middle" x="198.5" y="-1327.45" font-family="Comic Sans MS" font-size="10.00">RBRACE</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-1330.45" rx="37.86" ry="37.86"/>
+
+</g>
+<!-- S0&#45;&gt;RBRACE -->
+<g id="edge4" class="edge" data-name="START-&gt;RBRACE" data-comment="S0-&gt;RBRACE">
+
+<path fill="none" stroke="black" d="M31.55,-916.93C36.35,-986.17 50.43,-1157.19 75.33,-1208.45 93.94,-1246.77 129.54,-1280.14 157.53,-1302.25"/>
+<polygon fill="black" stroke="black" points="155.06,-1304.77 165.12,-1308.1 159.34,-1299.23 155.06,-1304.77"/>
+<text text-anchor="middle" x="102.19" y="-1278.65" font-family="mono" font-size="14.00">  }</text>
+</g>
+<!-- ASSIGN -->
+<g id="node6" class="node" pointer-events="visible" data-name="ASSIGN">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-1239.45" rx="31.2" ry="31.2"/>
+<text text-anchor="middle" x="198.5" y="-1236.45" font-family="Comic Sans MS" font-size="10.00">ASSIGN</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-1239.45" rx="35.18" ry="35.18"/>
+
+</g>
+<!-- S0&#45;&gt;ASSIGN -->
+<g id="edge5" class="edge" data-name="START-&gt;ASSIGN" data-comment="S0-&gt;ASSIGN">
+
+<path fill="none" stroke="black" d="M29.8,-917.04C31.18,-963.83 38.78,-1056.57 75.33,-1124.45 95.12,-1161.2 131.03,-1192.85 158.82,-1213.58"/>
+<polygon fill="black" stroke="black" points="156.53,-1216.24 166.67,-1219.3 160.65,-1210.58 156.53,-1216.24"/>
+<text text-anchor="middle" x="102.19" y="-1191.65" font-family="mono" font-size="14.00">=</text>
+</g>
+<!-- PLUS -->
+<g id="node8" class="node" pointer-events="visible" data-name="PLUS">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-1157.45" rx="24.18" ry="24.18"/>
+<text text-anchor="middle" x="198.5" y="-1154.45" font-family="Comic Sans MS" font-size="10.00">PLUS</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-1157.45" rx="28.15" ry="28.15"/>
+
+</g>
+<!-- S0&#45;&gt;PLUS -->
+<g id="edge7" class="edge" data-name="START-&gt;PLUS" data-comment="S0-&gt;PLUS">
+
+<path fill="none" stroke="black" d="M34.54,-916.65C40.71,-948.39 53.27,-999.86 75.33,-1039.45 97.38,-1079.03 136.96,-1113.6 165.09,-1134.92"/>
+<polygon fill="black" stroke="black" points="162.82,-1137.59 172.94,-1140.73 166.98,-1131.97 162.82,-1137.59"/>
+<text text-anchor="middle" x="102.19" y="-1107.65" font-family="mono" font-size="14.00">+</text>
+</g>
+<!-- MINUS -->
+<g id="node9" class="node" pointer-events="visible" data-name="MINUS">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-1078.45" rx="29" ry="29"/>
+<text text-anchor="middle" x="198.5" y="-1075.45" font-family="Comic Sans MS" font-size="10.00">MINUS</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-1078.45" rx="33" ry="33"/>
+
+</g>
+<!-- S0&#45;&gt;MINUS -->
+<g id="edge8" class="edge" data-name="START-&gt;MINUS" data-comment="S0-&gt;MINUS">
+
+<path fill="none" stroke="black" d="M42.97,-913.44C51.37,-928.88 62.95,-948.48 75.33,-964.45 103,-1000.15 113.72,-1005.97 147.05,-1036.45 152.18,-1041.15 157.73,-1045.99 163.21,-1050.64"/>
+<polygon fill="black" stroke="black" points="160.62,-1053.04 170.54,-1056.78 165.12,-1047.68 160.62,-1053.04"/>
+<text text-anchor="middle" x="102.19" y="-1022.65" font-family="mono" font-size="14.00">-</text>
+</g>
+<!-- MULTIPLY -->
+<g id="node10" class="node" pointer-events="visible" data-name="MULTIPLY">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-983.45" rx="40.04" ry="40.04"/>
+<text text-anchor="middle" x="198.5" y="-980.45" font-family="Comic Sans MS" font-size="10.00">MULTIPLY</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-983.45" rx="44.04" ry="44.04"/>
+
+</g>
+<!-- S0&#45;&gt;MULTIPLY -->
+<g id="edge9" class="edge" data-name="START-&gt;MULTIPLY" data-comment="S0-&gt;MULTIPLY">
+
+<path fill="none" stroke="black" d="M54.79,-901.82C79.79,-916.13 118.79,-938.43 149.7,-956.11"/>
+<polygon fill="black" stroke="black" points="147.69,-959 158.11,-960.92 151.17,-952.92 147.69,-959"/>
+<text text-anchor="middle" x="102.19" y="-947.65" font-family="mono" font-size="14.00">*</text>
+</g>
+<!-- DIVIDE -->
+<g id="node11" class="node" pointer-events="visible" data-name="DIVIDE">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-887.45" rx="30.18" ry="30.18"/>
+<text text-anchor="middle" x="198.5" y="-884.45" font-family="Comic Sans MS" font-size="10.00">DIVIDE</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-887.45" rx="34.16" ry="34.16"/>
+
+</g>
+<!-- S0&#45;&gt;DIVIDE -->
+<g id="edge10" class="edge" data-name="START-&gt;DIVIDE" data-comment="S0-&gt;DIVIDE">
+
+<path fill="none" stroke="black" d="M58.14,-887.45C83.81,-887.45 122.03,-887.45 151.95,-887.45"/>
+<polygon fill="black" stroke="black" points="151.86,-890.95 161.86,-887.45 151.86,-883.95 151.86,-890.95"/>
+<text text-anchor="middle" x="102.19" y="-891.65" font-family="mono" font-size="14.00">/</text>
+</g>
+<!-- EQUAL -->
+<!-- START&#45;&gt;COLON -->
+<g id="edge37" class="edge" data-name="START-&gt;COLON">
+
+<path fill="none" stroke="black" d="M30.14,-857.94C32,-762.22 40.55,-461.46 75.33,-371.65 92.71,-326.78 132.05,-287.14 161.42,-262.15"/>
+<polygon fill="black" stroke="black" points="163.55,-264.93 169.01,-255.85 159.08,-259.54 163.55,-264.93"/>
+<text text-anchor="middle" x="102.19" y="-375.65" font-family="mono" font-size="14.00">:</text>
+</g>
+<!-- EQUAL -->
+<g id="node7" class="node" pointer-events="visible" data-name="EQUAL">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="432.89" cy="-1239.45" rx="29.99" ry="29.99"/>
+<text text-anchor="middle" x="432.89" y="-1236.45" font-family="Comic Sans MS" font-size="10.00">EQUAL</text><ellipse fill="none" stroke="black" stroke-width="2" cx="432.89" cy="-1239.45" rx="33.99" ry="33.99"/>
+
+</g>
+<!-- L_MUL_COMMENT&#45;&gt;R_MUL_COMMENT -->
+<g id="edge12" class="edge" data-name="L_MUL_COMMENT-&gt;R_MUL_COMMENT">
+
+<path fill="none" stroke="black" d="M480.29,-1017.85C487.53,-1015.29 495.04,-1013.08 502.34,-1011.65 514.98,-1009.18 528.68,-1009.16 541.66,-1010.34"/>
+<polygon fill="black" stroke="black" points="541,-1013.78 551.34,-1011.47 541.82,-1006.83 541,-1013.78"/>
+<text text-anchor="middle" x="515.27" y="-1015.65" font-family="mono" font-size="14.00">  *</text>
+</g>
+<!-- SING_COMMENT&#45;&gt;END_SING_COMMENT -->
+<g id="edge17" class="edge" data-name="SING_COMMENT-&gt;END_SING_COMMENT">
+
+<path fill="none" stroke="black" d="M481.09,-887.45C497.55,-887.45 516.31,-887.45 533.94,-887.45"/>
+<polygon fill="black" stroke="black" points="533.81,-890.95 543.81,-887.45 533.81,-883.95 533.81,-890.95"/>
+<text text-anchor="middle" x="515.27" y="-891.65" font-family="mono" font-size="14.00">\n</text>
+</g>
+<!-- SING_COMMENT&#45;&gt;SING_COMMENT -->
+<g id="edge16" class="edge" data-name="SING_COMMENT-&gt;SING_COMMENT">
+
+<path fill="none" stroke="black" d="M417.68,-933.33C418.81,-944.56 423.88,-952.91 432.89,-952.91 438.52,-952.91 442.61,-949.65 445.16,-944.46"/>
+<polygon fill="black" stroke="black" points="448.55,-945.36 447.71,-934.8 441.78,-943.58 448.55,-945.36"/>
+<text text-anchor="middle" x="432.89" y="-957.11" font-family="mono" font-size="14.00">else</text>
+</g>
+<!-- TYPE_ID -->
+<g id="node18" class="node" pointer-events="visible" data-name="TYPE_ID">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="432.89" cy="-675.45" rx="32.55" ry="32.55"/>
+<text text-anchor="middle" x="432.89" y="-678.45" font-family="Comic Sans MS" font-size="10.00">TYPE_</text><ellipse fill="none" stroke="black" stroke-width="2" cx="432.89" cy="-675.45" rx="36.55" ry="36.55"/>
+
+<text text-anchor="middle" x="432.89" y="-666.45" font-family="Comic Sans MS" font-size="10.00">ID</text>
+</g>
+<!-- ASSIGN&#45;&gt;EQUAL -->
+<g id="edge19" class="edge" data-name="START-&gt;UNDERSCORE" data-comment="ASSIGN-&gt;EQUAL">
+
+<path fill="none" stroke="black" d="M55.16,-874.09C81.88,-860.07 124.31,-837.83 155.9,-821.27"/>
+<polygon fill="black" stroke="black" points="157.17,-824.55 164.4,-816.81 153.91,-818.35 157.17,-824.55"/>
+<text text-anchor="middle" x="102.19" y="-864.65" font-family="mono" font-size="14.00">_       </text>
+</g>
+<!-- MUL_COMMENT -->
+<g id="node17" class="node" pointer-events="visible" data-name="UNDERSCORE" data-comment="MUL_COMMENT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-799.45" rx="35.84" ry="35.84"/>
+<text text-anchor="middle" x="198.5" y="-802.45" font-family="Comic Sans MS" font-size="10.00">UNDER</text>
+<text text-anchor="middle" x="198.5" y="-790.45" font-family="Comic Sans MS" font-size="10.00">SCORE</text>
+</g><g id="node19" class="node" pointer-events="visible" data-name="TYPE_ID_KEYWORD" data-comment="MUL_COMMENT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-659.45" rx="47.4" ry="47.4"/>
+<text text-anchor="middle" x="198.5" y="-668.45" font-family="Comic Sans MS" font-size="10.00">TYPE_</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-659.45" rx="51.4" ry="51.4"/>
+
+<text text-anchor="middle" x="198.5" y="-656.45" font-family="Comic Sans MS" font-size="10.00">ID_</text>
+<text text-anchor="middle" x="198.5" y="-644.45" font-family="Comic Sans MS" font-size="10.00">KEYWORD</text>
+</g>
+<!-- DIVIDE&#45;&gt;MUL_COMMENT -->
+<g id="edge18" class="edge" data-name="START-&gt;TYPE_ID_KEYWORD" data-comment="DIVIDE-&gt;MUL_COMMENT">
+
+<path fill="none" stroke="black" d="M44.46,-862.43C53.1,-848.18 64.42,-830.14 75.33,-814.65 101.3,-777.78 132.83,-737.83 157.35,-707.7"/>
+<polygon fill="black" stroke="black" points="159.82,-710.21 163.44,-700.25 154.4,-705.78 159.82,-710.21"/>
+<text text-anchor="middle" x="102.19" y="-818.65" font-family="mono" font-size="14.00">a-z | A-Z </text>
+</g>
+<!-- SING_COMMENT -->
+<!-- SING_COMMENT -->
+
+<!-- DIVIDE&#45;&gt;L_MUL_COMMENT -->
+<g id="edge11" class="edge" data-name="DIVIDE-&gt;L_MUL_COMMENT">
+
+<path fill="none" stroke="black" d="M227.99,-906.09C265.64,-930.71 332.65,-974.54 379.54,-1005.21"/>
+<polygon fill="black" stroke="black" points="377.37,-1007.98 387.66,-1010.52 381.21,-1002.12 377.37,-1007.98"/>
+<text text-anchor="middle" x="315.69" y="-998.65" font-family="mono" font-size="14.00">  *</text>
+</g><g id="edge42" class="edge" data-name="START-&gt;GREATER" data-comment="DIVIDE-&gt;L_MUL_COMMENT">
+
+<path fill="none" stroke="black" d="M30.34,-858.01C33.38,-732.39 46.92,-244.74 75.33,-182.65 92.35,-145.46 126.31,-113.55 154.12,-91.98"/>
+<polygon fill="black" stroke="black" points="156.2,-94.79 162.07,-85.98 151.98,-89.21 156.2,-94.79"/>
+<text text-anchor="middle" x="102.19" y="-186.65" font-family="mono" font-size="14.00">&gt;</text>
+</g>
+<!-- SING_COMMENT -->
+<g id="node16" class="node" pointer-events="visible" data-name="SING_COMMENT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="432.89" cy="-887.45" rx="47.41" ry="47.41"/>
+<text text-anchor="middle" x="432.89" y="-890.45" font-family="Comic Sans MS" font-size="10.00">SING_</text>
+
+<text text-anchor="middle" x="432.89" y="-878.45" font-family="Comic Sans MS" font-size="10.00">COMMENT</text></g>
+<!-- ASSIGN&#45;&gt;EQUAL -->
+<g id="edge6" class="edge" data-name="ASSIGN-&gt;EQUAL">
+
+<path fill="none" stroke="black" d="M234.54,-1239.45C275.16,-1239.45 342.22,-1239.45 386.72,-1239.45"/>
+<polygon fill="black" stroke="black" points="386.56,-1242.95 396.56,-1239.45 386.56,-1235.95 386.56,-1242.95"/>
+<text text-anchor="middle" x="315.69" y="-1243.65" font-family="mono" font-size="14.00">  =</text>
+</g><g id="edge40" class="edge" data-name="START-&gt;LESS" data-comment="ASSIGN-&gt;EQUAL">
+
+<path fill="none" stroke="black" d="M29.39,-857.94C28.77,-750.4 30.03,-380.16 75.33,-272.65 93.22,-230.2 134.72,-195.57 164.38,-175.01"/>
+<polygon fill="black" stroke="black" points="165.96,-178.17 172.3,-169.68 162.05,-172.36 165.96,-178.17"/>
+<text text-anchor="middle" x="102.19" y="-276.65" font-family="mono" font-size="14.00">&lt;</text>
+</g>
+<!-- L_MUL_COMMENT -->
+<g id="node15" class="node" pointer-events="visible" data-name="L_MUL_COMMENT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="432.89" cy="-1039.45" rx="47.42" ry="47.42"/>
+<text text-anchor="middle" x="432.89" y="-1042.45" font-family="Comic Sans MS" font-size="10.00">L_MUL_</text><ellipse fill="none" stroke="black" stroke-width="2" cx="432.89" cy="-1039.45" rx="51.41" ry="51.41"/>
+
+<text text-anchor="middle" x="432.89" y="-1030.45" font-family="Comic Sans MS" font-size="10.00">COMMENT</text>
+</g><g id="node22" class="node" pointer-events="visible" data-name="T_INT" data-comment="L_MUL_COMMENT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-524.45" rx="26.16" ry="26.16"/>
+<text text-anchor="middle" x="198.5" y="-521.45" font-family="Comic Sans MS" font-size="10.00">T_INT</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-524.45" rx="30.14" ry="30.14"/>
+
+</g>
+<!-- DIVIDE&#45;&gt;SING_COMMENT -->
+
+<!-- DIVIDE&#45;&gt;SING_COMMENT -->
+<g id="edge25" class="edge" data-name="START-&gt;T_INT" data-comment="DIVIDE-&gt;SING_COMMENT">
+
+<path fill="none" stroke="black" d="M35.4,-858.61C42.54,-825.3 56.18,-769.24 75.33,-723.65 100.02,-664.89 113.3,-653.53 147.05,-599.45 155.52,-585.87 165.25,-571.21 173.89,-558.48"/>
+<polygon fill="black" stroke="black" points="176.65,-560.65 179.39,-550.42 170.86,-556.71 176.65,-560.65"/>
+<text text-anchor="middle" x="102.19" y="-727.65" font-family="mono" font-size="14.00">0-9</text>
+</g>
+<g id="edge38" class="edge" data-name="START-&gt;SEMICOLON" data-comment="DIVIDE-&gt;SING_COMMENT">
+
+<path fill="none" stroke="black" d="M30.88,-857.85C33.79,-805.64 43.52,-694.41 75.33,-606.65 93.53,-556.45 129.06,-506.87 157.13,-472.63"/>
+<polygon fill="black" stroke="black" points="159.78,-474.92 163.49,-465 154.4,-470.44 159.78,-474.92"/>
+<text text-anchor="middle" x="102.19" y="-610.65" font-family="mono" font-size="14.00">;</text>
+</g>
+<!-- TYPE_ID&#45;&gt;TYPE_ID -->
+<!-- TYPE_ID&#45;&gt;TYPE_ID -->
+<!-- TYPE_ID&#45;&gt;TYPE_ID -->
+
+<!-- DIVIDE&#45;&gt;SING_COMMENT -->
+<g id="edge15" class="edge" data-name="DIVIDE-&gt;SING_COMMENT">
+
+<path fill="none" stroke="black" d="M233.29,-887.45C269.92,-887.45 329.07,-887.45 373.3,-887.45"/>
+<polygon fill="black" stroke="black" points="373.26,-890.95 383.26,-887.45 373.26,-883.95 373.26,-890.95"/>
+<text text-anchor="middle" x="315.69" y="-891.65" font-family="mono" font-size="14.00">/</text>
+</g>
+<!-- R_MUL_COMMENT -->
+<g id="node12" class="node" pointer-events="visible" data-name="R_MUL_COMMENT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="599.62" cy="-1022.45" rx="47.41" ry="47.41"/>
+<text text-anchor="middle" x="599.62" y="-1025.45" font-family="Comic Sans MS" font-size="10.00">R_MUL_</text>
+<text text-anchor="middle" x="599.62" y="-1013.45" font-family="Comic Sans MS" font-size="10.00">COMMENT</text>
+</g>
+<g id="edge39" class="edge" data-name="START-&gt;COMMA" data-comment="R_MUL_COMMENT">
+
+<path fill="none" stroke="black" d="M29.01,-857.84C28.4,-790.91 31.77,-623.59 75.33,-492.65 95.33,-432.54 107.24,-418.74 147.05,-369.45 151.15,-364.37 155.82,-359.35 160.63,-354.59"/>
+<polygon fill="black" stroke="black" points="162.83,-357.34 167.68,-347.92 158.01,-352.25 162.83,-357.34"/>
+<text text-anchor="middle" x="102.19" y="-496.65" font-family="mono" font-size="14.00">,</text>
+</g>
+
+
+<!-- END_MUL_COMMENT -->
+<g id="node13" class="node" pointer-events="visible" data-name="END_MUL_COMMENT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="763.87" cy="-1022.45" rx="48.75" ry="48.75"/>
+<text text-anchor="middle" x="763.87" y="-1025.45" font-family="Comic Sans MS" font-size="10.00">END_MUL_</text><ellipse fill="none" stroke="black" stroke-width="2" cx="763.87" cy="-1022.45" rx="52.76" ry="52.76"/>
+
+<text text-anchor="middle" x="763.87" y="-1013.45" font-family="Comic Sans MS" font-size="10.00">COMMENT</text>
+</g>
+<!-- R_MUL_COMMENT&#45;&gt;END_MUL_COMMENT -->
+<g id="edge14" class="edge" data-name="R_MUL_COMMENT-&gt;END_MUL_COMMENT">
+
+<path fill="none" stroke="black" d="M647.99,-1022.45C664.02,-1022.45 682.2,-1022.45 699.29,-1022.45"/>
+<polygon fill="black" stroke="black" points="698.81,-1025.95 708.81,-1022.45 698.81,-1018.95 698.81,-1025.95"/>
+<text text-anchor="middle" x="680.37" y="-1026.65" font-family="mono" font-size="14.00">  /</text>
+</g>
+<!-- R_MUL_COMMENT&#45;&gt;L_MUL_COMMENT -->
+<g id="edge13" class="edge" data-name="R_MUL_COMMENT-&gt;L_MUL_COMMENT">
+
+<path fill="none" stroke="black" d="M551.67,-1027.3C534.33,-1029.09 514.4,-1031.14 495.93,-1033.05"/>
+<polygon fill="black" stroke="black" points="495.75,-1029.55 486.16,-1034.06 496.47,-1036.51 495.75,-1029.55"/>
+<text text-anchor="middle" x="515.27" y="-1035.65" font-family="mono" font-size="14.00">else</text>
+</g>
+<!-- END_SING_COMMENT -->
+<g id="node14" class="node" pointer-events="visible" data-name="END_SING_COMMENT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="599.62" cy="-887.45" rx="49.34" ry="49.34"/>
+<text text-anchor="middle" x="599.62" y="-890.45" font-family="Comic Sans MS" font-size="10.00">END_SING_</text><ellipse fill="none" stroke="black" stroke-width="2" cx="599.62" cy="-887.45" rx="53.33" ry="53.33"/>
+
+<text text-anchor="middle" x="599.62" y="-878.45" font-family="Comic Sans MS" font-size="10.00">COMMENT</text>
+</g>
+<!-- UNDERSCORE&#45;&gt;TYPE_ID -->
+<g id="edge20" class="edge" data-name="UNDERSCORE-&gt;TYPE_ID">
+
+<path fill="none" stroke="black" d="M230.84,-782.73C271.84,-760.85 343.85,-722.43 389.64,-698"/>
+<polygon fill="black" stroke="black" points="391.04,-701.21 398.22,-693.42 387.75,-695.04 391.04,-701.21"/>
+<text text-anchor="middle" x="315.69" y="-766.65" font-family="mono" font-size="14.00">a-z | A-Z | _ | 0-9</text>
+</g>
+<!-- ERR1 -->
+<g id="node20" class="node" pointer-events="visible" data-name="ERR1">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="432.89" cy="-796.45" rx="21.16" ry="21.16"/>
+<ellipse fill="none" stroke="black" stroke-width="2" cx="432.89" cy="-796.45" rx="25.13" ry="25.13"/>
+<text text-anchor="middle" x="432.89" y="-793.45" font-family="Comic Sans MS" font-size="10.00">ERR</text>
+</g>
+<!-- T_INT&#45;&gt;T_INT -->
+<g id="edge26" class="edge" data-name="T_INT-&gt;T_INT">
+
+<path fill="none" stroke="black" d="M180.88,-549.81C178.71,-562.01 184.58,-572.77 198.5,-572.77 207.85,-572.77 213.57,-567.91 215.66,-561.02"/>
+<polygon fill="black" stroke="black" points="219.14,-561.46 216.05,-551.32 212.15,-561.17 219.14,-561.46"/>
+<text text-anchor="middle" x="198.5" y="-576.97" font-family="mono" font-size="14.00">0-9</text>
+</g>
+<!-- T_FLOAT -->
+<g id="node23" class="node" pointer-events="visible" data-name="T_FLOAT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="432.89" cy="-570.45" rx="35.84" ry="35.84"/>
+<text text-anchor="middle" x="432.89" y="-567.45" font-family="Comic Sans MS" font-size="10.00">T_FLOAT</text><ellipse fill="none" stroke="black" stroke-width="2" cx="432.89" cy="-570.45" rx="39.86" ry="39.86"/>
+
+</g>
+<!-- UNDERSCORE&#45;&gt;ERR1 -->
+<g id="edge21" class="edge" data-name="UNDERSCORE-&gt;ERR1">
+
+<path fill="none" stroke="black" d="M235.3,-798.99C278.8,-798.43 351.79,-797.49 395.54,-796.92"/>
+<polygon fill="black" stroke="black" points="395.32,-800.43 405.27,-796.8 395.23,-793.43 395.32,-800.43"/>
+<text text-anchor="middle" x="315.69" y="-802.65" font-family="mono" font-size="14.00">else</text>
+</g>
+<!-- TYPE_ID&#45;&gt;TYPE_ID -->
+<g id="edge24" class="edge" data-name="TYPE_ID-&gt;TYPE_ID">
+
+<path fill="none" stroke="black" d="M417.44,-709.53C417.44,-720.89 422.59,-729.98 432.89,-729.98 439.48,-729.98 443.97,-726.25 446.34,-720.58"/>
+<polygon fill="black" stroke="black" points="449.73,-721.48 448.07,-711.02 442.85,-720.24 449.73,-721.48"/>
+<text text-anchor="middle" x="432.89" y="-734.18" font-family="mono" font-size="14.00">a-z | A-Z | _ | 0-9</text>
+</g>
+<!-- TYPE_ID_KEYWORD&#45;&gt;TYPE_ID -->
+<g id="edge23" class="edge" data-name="TYPE_ID_KEYWORD-&gt;TYPE_ID">
+
+<path fill="none" stroke="black" d="M250.5,-662.96C290.3,-665.7 345.19,-669.48 384.14,-672.17"/>
+<polygon fill="black" stroke="black" points="383.7,-675.64 393.91,-672.84 384.18,-668.66 383.7,-675.64"/>
+<text text-anchor="middle" x="315.69" y="-674.65" font-family="mono" font-size="14.00"> _ | 0-9</text>
+</g>
+<!-- TYPE_ID_KEYWORD&#45;&gt;TYPE_ID_KEYWORD -->
+<g id="edge22" class="edge" data-name="TYPE_ID_KEYWORD-&gt;TYPE_ID_KEYWORD">
+
+<path fill="none" stroke="black" d="M180.8,-708.77C182.25,-720.35 188.15,-728.9 198.5,-728.9 205.29,-728.9 210.16,-725.22 213.12,-719.41"/>
+<polygon fill="black" stroke="black" points="216.37,-720.8 215.78,-710.22 209.64,-718.86 216.37,-720.8"/>
+<text text-anchor="middle" x="198.5" y="-733.1" font-family="mono" font-size="14.00">a-z | A-Z</text>
+</g>
+<!-- ERR2 -->
+<g id="node21" class="node" pointer-events="visible" data-name="ERR2">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="1054.95" cy="-479.45" rx="21.16" ry="21.16"/>
+<ellipse fill="none" stroke="black" stroke-width="2" cx="1054.95" cy="-479.45" rx="25.13" ry="25.13"/>
+<text text-anchor="middle" x="1054.95" y="-476.45" font-family="Comic Sans MS" font-size="10.00">ERR</text>
+</g>
+<!-- T_INT&#45;&gt;T_FLOAT -->
+<g id="edge27" class="edge" data-name="T_INT-&gt;T_FLOAT">
+
+<path fill="none" stroke="black" d="M228.93,-530.28C267.41,-537.89 335.37,-551.35 381.97,-560.57"/>
+<polygon fill="black" stroke="black" points="381.06,-563.96 391.54,-562.47 382.41,-557.09 381.06,-563.96"/>
+<text text-anchor="middle" x="315.69" y="-560.65" font-family="mono" font-size="14.00">.</text>
+</g>
+<!-- EXPONENT -->
+<g id="node24" class="node" pointer-events="visible" data-name="EXPONENT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="432.89" cy="-471.45" rx="41.21" ry="41.21"/>
+<text text-anchor="middle" x="432.89" y="-468.45" font-family="Comic Sans MS" font-size="10.00">EXPONENT</text>
+</g>
+<!-- T_INT&#45;&gt;EXPONENT -->
+<g id="edge28" class="edge" data-name="T_INT-&gt;EXPONENT">
+
+<path fill="none" stroke="black" d="M228.46,-517.85C266.57,-509.16 334.17,-493.74 380.92,-483.08"/>
+<polygon fill="black" stroke="black" points="381.59,-486.51 390.56,-480.88 380.03,-479.69 381.59,-486.51"/>
+<text text-anchor="middle" x="315.69" y="-512.65" font-family="mono" font-size="14.00">e | E</text>
+</g>
+<!-- EXPONENT_SIGN -->
+<g id="node25" class="node" pointer-events="visible" data-name="EXPONENT_SIGN">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="599.62" cy="-413.45" rx="52.33" ry="52.33"/>
+<text text-anchor="middle" x="599.62" y="-416.45" font-family="Comic Sans MS" font-size="10.00">EXPONENT_</text>
+<text text-anchor="middle" x="599.62" y="-404.45" font-family="Comic Sans MS" font-size="10.00">SIGN</text>
+</g>
+<!-- EXPONENT&#45;&gt;EXPONENT_SIGN -->
+<g id="edge29" class="edge" data-name="EXPONENT-&gt;EXPONENT_SIGN">
+
+<path fill="none" stroke="black" d="M472.51,-457.85C492.21,-450.92 516.6,-442.33 538.67,-434.56"/>
+<polygon fill="black" stroke="black" points="539.6,-437.95 547.87,-431.32 537.27,-431.34 539.6,-437.95"/>
+<text text-anchor="middle" x="515.27" y="-449.65" font-family="mono" font-size="14.00"> + | -</text>
+</g>
+<!-- EXPONENT_NUM -->
+<g id="node26" class="node" pointer-events="visible" data-name="EXPONENT_NUM">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="763.87" cy="-479.45" rx="52.32" ry="52.32"/>
+<text text-anchor="middle" x="763.87" y="-482.45" font-family="Comic Sans MS" font-size="10.00">EXPONENT_</text><ellipse fill="none" stroke="black" stroke-width="2" cx="763.87" cy="-479.45" rx="56.33" ry="56.33"/>
+
+<text text-anchor="middle" x="763.87" y="-470.45" font-family="Comic Sans MS" font-size="10.00">NUM</text>
+</g>
+<!-- EXPONENT&#45;&gt;EXPONENT_NUM -->
+<g id="edge30" class="edge" data-name="EXPONENT-&gt;EXPONENT_NUM">
+
+<path fill="none" stroke="black" d="M474.96,-472.59C496.23,-473.16 522.61,-473.87 546.2,-474.45 596.16,-475.7 652.6,-477 695.35,-477.96"/>
+<polygon fill="black" stroke="black" points="695.16,-481.45 705.24,-478.18 695.32,-474.46 695.16,-481.45"/>
+<text text-anchor="middle" x="599.62" y="-480.65" font-family="mono" font-size="14.00">0-9</text>
+</g>
+<!-- EXPONENT_SIGN&#45;&gt;EXPONENT_NUM -->
+<g id="edge31" class="edge" data-name="EXPONENT_SIGN-&gt;EXPONENT_NUM">
+
+<path fill="none" stroke="black" d="M648.86,-433.08C665.03,-439.65 683.29,-447.08 700.39,-454.04"/>
+<polygon fill="black" stroke="black" points="698.87,-457.2 709.45,-457.72 701.51,-450.71 698.87,-457.2"/>
+<text text-anchor="middle" x="680.37" y="-451.65" font-family="mono" font-size="14.00">0-9</text>
+</g>
+<!-- EXPONENT_NUM&#45;&gt;ERR2 -->
+<g id="edge36" class="edge" data-name="EXPONENT_NUM-&gt;ERR2">
+
+<path fill="none" stroke="black" d="M815.97,-502.75C829.82,-507.99 845.01,-512.78 859.53,-515.45 908.64,-524.47 923,-525.7 971.86,-515.45 989.14,-511.83 1007.23,-504.35 1022.01,-497.14"/>
+<polygon fill="black" stroke="black" points="1023.46,-500.33 1030.79,-492.68 1020.29,-494.09 1023.46,-500.33"/>
+<text text-anchor="middle" x="915.7" y="-526.65" font-family="mono" font-size="14.00">else</text>
+</g>
+<!-- EXPONENT_NUM&#45;&gt;EXPONENT_NUM -->
+<g id="edge32" class="edge" data-name="EXPONENT_NUM-&gt;EXPONENT_NUM">
+
+<path fill="none" stroke="black" d="M750.27,-535.08C751.85,-545.92 756.38,-553.62 763.87,-553.62 768.43,-553.62 771.9,-550.76 774.26,-546.08"/>
+<polygon fill="black" stroke="black" points="777.61,-547.12 777.04,-536.54 770.89,-545.16 777.61,-547.12"/>
+<text text-anchor="middle" x="763.87" y="-557.82" font-family="mono" font-size="14.00">0-9</text>
+</g>
+<!-- EXPONENT_FLOAT -->
+<g id="node27" class="node" pointer-events="visible" data-name="EXPONENT_FLOAT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="915.7" cy="-415.45" rx="52.32" ry="52.32"/>
+<text text-anchor="middle" x="915.7" y="-418.45" font-family="Comic Sans MS" font-size="10.00">EXPONENT_</text><ellipse fill="none" stroke="black" stroke-width="2" cx="915.7" cy="-415.45" rx="56.33" ry="56.33"/>
+
+<text text-anchor="middle" x="915.7" y="-406.45" font-family="Comic Sans MS" font-size="10.00">FLOAT</text>
+</g><g id="node28" class="node" pointer-events="visible" data-name="SEMICOLON" data-comment="EXPONENT_FLOAT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-427.45" rx="44.89" ry="44.89"/>
+<ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-427.45" rx="48.9" ry="48.9"/>
+<text text-anchor="middle" x="198.5" y="-424.45" font-family="Comic Sans MS" font-size="10.00">SEMICOLON</text>
+</g><g id="node29" class="node" pointer-events="visible" data-name="COMMA" data-comment="EXPONENT_FLOAT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-323.45" rx="33.02" ry="33.02"/>
+<text text-anchor="middle" x="198.5" y="-320.45" font-family="Comic Sans MS" font-size="10.00">COMMA</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-323.45" rx="37.02" ry="37.02"/>
+
+</g><g id="node30" class="node" pointer-events="visible" data-name="COLON" data-comment="EXPONENT_FLOAT">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-234.45" rx="30.19" ry="30.19"/>
+<text text-anchor="middle" x="198.5" y="-231.45" font-family="Comic Sans MS" font-size="10.00">COLON</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-234.45" rx="34.17" ry="34.17"/>
+
+</g>
+<!-- EXPONENT_NUM&#45;&gt;EXPONENT_FLOAT -->
+<g id="edge33" class="edge" data-name="EXPONENT_NUM-&gt;EXPONENT_FLOAT">
+
+<path fill="none" stroke="black" d="M816.43,-457.43C828.08,-452.45 840.58,-447.11 852.61,-441.97"/>
+<polygon fill="black" stroke="black" points="853.83,-445.26 861.65,-438.11 851.08,-438.82 853.83,-445.26"/>
+<text text-anchor="middle" x="839.78" y="-451.65" font-family="mono" font-size="14.00">.</text>
+</g>
+<!-- EXPONENT_FLOAT&#45;&gt;ERR2 -->
+<g id="edge35" class="edge" data-name="EXPONENT_FLOAT-&gt;ERR2">
+
+<path fill="none" stroke="black" d="M967.8,-439.28C985.51,-447.54 1004.89,-456.58 1020.78,-463.99"/>
+<polygon fill="black" stroke="black" points="1019.24,-467.13 1029.78,-468.18 1022.2,-460.79 1019.24,-467.13"/>
+<text text-anchor="middle" x="1000.75" y="-462.65" font-family="mono" font-size="14.00">else</text>
+</g>
+<!-- EXPONENT_FLOAT&#45;&gt;EXPONENT_FLOAT -->
+<!-- EXPONENT_FLOAT&#45;&gt;EXPONENT_FLOAT -->
+<g id="edge34" class="edge" data-name="EXPONENT_FLOAT-&gt;EXPONENT_FLOAT">
+
+<path fill="none" stroke="black" d="M902.1,-471.08C903.68,-481.92 908.21,-489.62 915.7,-489.62 920.26,-489.62 923.73,-486.76 926.1,-482.08"/>
+<polygon fill="black" stroke="black" points="929.44,-483.12 928.88,-472.54 922.72,-481.16 929.44,-483.12"/>
+<text text-anchor="middle" x="915.7" y="-493.82" font-family="mono" font-size="14.00">0-9</text>
+</g>
+<!-- LES -->
+<g id="node31" class="node" pointer-events="visible" data-name="LESS" data-comment="LES">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-154.45" rx="23.79" ry="23.79"/>
+<text text-anchor="middle" x="198.5" y="-151.45" font-family="Comic Sans MS" font-size="10.00">LESS</text><ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-154.45" rx="27.81" ry="27.81"/>
+
+</g>
+<!-- GREATER -->
+<!-- GREATER -->
+<g id="node32" class="node" pointer-events="visible" data-name="GREATER">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="198.5" cy="-62.45" rx="37.21" ry="37.21"/>
+<ellipse fill="none" stroke="black" stroke-width="2" cx="198.5" cy="-62.45" rx="41.2" ry="41.2"/>
+<text text-anchor="middle" x="198.5" y="-59.45" font-family="Comic Sans MS" font-size="10.00">GREATER</text>
+</g>
+
+
+<!-- LESS_EQUAL -->
+<g id="node33" class="node" pointer-events="visible" data-name="LESS_EQUAL">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="432.89" cy="-160.45" rx="35.07" ry="35.07"/>
+<ellipse fill="none" stroke="black" stroke-width="2" cx="432.89" cy="-160.45" rx="39.04" ry="39.04"/>
+<text text-anchor="middle" x="432.89" y="-163.45" font-family="Comic Sans MS" font-size="10.00">LESS_</text>
+<text text-anchor="middle" x="432.89" y="-151.45" font-family="Comic Sans MS" font-size="10.00">EQUAL</text>
+</g>
+<!-- GREATER_EQUAL -->
+<!-- GREATER_EQUAL -->
+<g id="node34" class="node" pointer-events="visible" data-name="GREATER_EQUAL">
+
+<ellipse fill="white" stroke="black" stroke-width="2" cx="432.89" cy="-51.45" rx="47.41" ry="47.41"/>
+<ellipse fill="none" stroke="black" stroke-width="2" cx="432.89" cy="-51.45" rx="51.41" ry="51.41"/>
+<text text-anchor="middle" x="432.89" y="-54.45" font-family="Comic Sans MS" font-size="10.00">GREATER_</text>
+<text text-anchor="middle" x="432.89" y="-42.45" font-family="Comic Sans MS" font-size="10.00">EQUAL</text>
+</g><g id="edge41" class="edge" data-name="LESS-&gt;LESS_EQUAL" data-comment="GREATER_EQUAL">
+
+<path fill="none" stroke="black" d="M227.07,-155.16C265.17,-156.15 334.56,-157.94 381.92,-159.16"/>
+<polygon fill="black" stroke="black" points="381.55,-162.65 391.64,-159.41 381.73,-155.66 381.55,-162.65"/>
+<text text-anchor="middle" x="315.69" y="-162.65" font-family="mono" font-size="14.00">=</text>
+</g>
+
+<!-- GREATER&#45;&gt;GREATER_EQUAL -->
+<g id="edge43" class="edge" data-name="GREATER-&gt;GREATER_EQUAL">
+
+<path fill="none" stroke="black" d="M240.51,-60.51C276.16,-58.82 328.37,-56.35 369.25,-54.42"/>
+<polygon fill="black" stroke="black" points="369.4,-57.91 379.22,-53.95 369.07,-50.92 369.4,-57.91"/>
+<text text-anchor="middle" x="315.69" y="-63.65" font-family="mono" font-size="14.00">=</text>
+</g>
+</g>
+</svg>

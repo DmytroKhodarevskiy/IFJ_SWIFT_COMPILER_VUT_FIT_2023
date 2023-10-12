@@ -20,7 +20,11 @@ int main(int argc, char* argv){
   FILE* file = read_file("test.txt");
   // int *position = 0;
 
-  while (file != EOF){
+  while (true){
+    if (feof(file)){
+      break;
+    }
+    
     // Token token = get_token(file, &position);
     Token token = get_token(file);
     printf("Token: %s\n", token.string_value);

@@ -16,13 +16,13 @@ char* createDynamicString() {
     return dynamicString;
 }
 
-void appendToDynamicString(char** dynamicString, const char* content) {
+void appendToDynamicString(char** dynamicString, char content) {
     int currentLength = strlen(*dynamicString);
 
     // Check if more memory is needed
-    if (currentLength + strlen(content) >= strlen(*dynamicString)) {
+    if (currentLength + 1 >= strlen(*dynamicString)) {
         // If more memory is needed, reallocate
-        *dynamicString = (char*)realloc(*dynamicString, (strlen(*dynamicString) + strlen(content) + 1) * sizeof(char));
+        *dynamicString = (char*)realloc(*dynamicString, (strlen(*dynamicString) + 1 + 1) * sizeof(char));
 
         if (*dynamicString == NULL) {
             printf("Memory reallocation failed.\n");
@@ -30,19 +30,27 @@ void appendToDynamicString(char** dynamicString, const char* content) {
         }
     }
 
-    strcat(*dynamicString, content);
+    // strcat(*dynamicString, content);
+    (*dynamicString)[currentLength] = content;
+    
+    (*dynamicString)[currentLength + 1] = '\0';
+
 }
 
-int main() {
-    char* myString = createDynamicString("Hello ");
-
-    if (myString != NULL) {
-        appendToDynamicString(&myString, "World!");
-        printf("%s\n", myString);
-
-        // Don't forget to free the memory when you're done
-        free(myString);
-    }
-
-    return 0;
+void dynamic_string_free(char *s) {
+  free(s);
 }
+
+// int main() {
+//     // char* myString = createDynamicString("Hello ");
+
+//     // if (myString != NULL) {
+//     //     appendToDynamicString(&myString, "World!");
+//     //     printf("%s\n", myString);
+
+//     //     // Don't forget to free the memory when you're done
+//     //     free(myString);
+//     // }
+
+//     return 0;
+// }

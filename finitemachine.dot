@@ -1,0 +1,213 @@
+digraph LexicalAnalyzer {
+  node [shape=circle, fontsize=2, fontname="Comic Sans MS", style=filled, fillcolor="white", color="black", penwidth=2, fontcolor="black"];
+  rankdir=LR;
+
+  edge [fontname = mono]
+  
+  START [label="START", fillcolor = yellowgreen]
+  LPAR [shape=doublecircle, label="LPAR" fillcolor = lightblue]
+  RPAR [shape=doublecircle, label="RPAR" fillcolor = lightblue]
+  LBRACE [shape=doublecircle, label="LBRACE" fillcolor = lightblue]
+  RBRACE [shape=doublecircle, label="RBRACE" fillcolor = lightblue]
+  ASSIGN [shape=doublecircle, label="ASSIGN" fillcolor = lightblue]
+  EQUAL [shape=doublecircle, label="EQUAL" fillcolor = lightblue]
+  PLUS [shape=doublecircle, label="PLUS" fillcolor = lightblue]
+  MINUS [shape=doublecircle, label="MINUS" fillcolor = lightblue]
+  MULTIPLY [shape=doublecircle, label="MULTIPLY" fillcolor = lightblue]
+  DIVIDE [shape=doublecircle, label="DIVIDE" fillcolor = lightblue]
+  R_MUL_COMMENT [label="R_MUL_\nCOMMENT" fillcolor = lightyellow]
+  END_MUL_COMMENT [shape=doublecircle, label="END_MUL_\nCOMMENT" fillcolor = lightblue]
+  END_SING_COMMENT [shape=doublecircle, label="END_SING_\nCOMMENT" fillcolor = lightblue]
+  L_MUL_COMMENT [shape=doublecircle, label="L_MUL_\nCOMMENT" fillcolor = lightblue]
+  SING_COMMENT [ label="SING_\nCOMMENT"fillcolor = lightyellow ]
+  UNDERSCORE [label="UNDER\nSCORE"fillcolor = lightyellow ]
+  TYPE_ID [shape=doublecircle, label="TYPE_\nID" fillcolor = lightblue]
+  ERR1 [shape=doublecircle, label="ERR" fillcolor = red]
+  ERR2 [shape=doublecircle, label="ERR"fillcolor = red]
+  T_INT [shape=doublecircle, label="T_INT" fillcolor = lightblue]
+  T_FLOAT [shape=doublecircle, label="T_FLOAT" fillcolor = lightblue]
+  EXPONENT [label="EXPONENT" fillcolor = lightyellow]
+  EXPONENT_SIGN [label="EXPONENT_\nSIGN" fillcolor = lightyellow]
+  EXPONENT_NUM [shape=doublecircle, label="EXPONENT_\nNUM" fillcolor = lightblue]
+  EXPONENT_FLOAT [shape=doublecircle, label="EXPONENT_\nFLOAT" fillcolor = lightblue]
+  SEMICOLON [shape=doublecircle, label="SEMICOLON" fillcolor = lightblue]
+  COMMA [shape=doublecircle, label="COMMA" fillcolor = lightblue]
+  COLON [shape=doublecircle, label="COLON" fillcolor = lightblue]
+  LESS [shape=doublecircle, label="LESS" fillcolor = lightblue]
+  GREATER [shape=doublecircle, label="GREATER" fillcolor = lightblue]
+  LESS_EQUAL [shape=doublecircle, label="LESS_\nEQUAL" fillcolor = lightblue]
+  GREATER_EQUAL [shape=doublecircle, label="GREATER_\nEQUAL" fillcolor = lightblue]
+  NOT_EQUAL [shape=doublecircle, label="NOT_\nEQUAL" fillcolor = lightblue]
+  NOT_NIL [shape=doublecircle, label="NOT_\nNIL" fillcolor = lightblue]
+  if [shape=doublecircle, label="if" fillcolor = lightblue]
+  else [shape=doublecircle, label="else" fillcolor = lightblue]
+  func [shape=doublecircle, label="func" fillcolor = lightblue]
+  return [shape=doublecircle, label="return" fillcolor = lightblue]
+  var [shape=doublecircle, label="var" fillcolor = lightblue]
+  let [shape=doublecircle, label ="let" fillcolor = lightblue]
+  nil [shape=doublecircle, label="nil" fillcolor = lightblue]
+  while [shape=doublecircle, label="while" fillcolor = lightblue]
+  Double [shape=doublecircle, label="Double" fillcolor = lightblue]
+  DoubleWithQ [shape=doublecircle, label="DoubleWithQ" fillcolor = lightblue]
+  String [shape=doublecircle, label="String" fillcolor = lightblue]
+  StringWithQ [shape=doublecircle, label="StringWithQ" fillcolor = lightblue]
+  Int [shape=doublecircle, label="Int" fillcolor = lightblue]
+  IntWithQ [shape=doublecircle, label="IntWithQ" fillcolor = lightblue]
+  BINARY_OPERATOR[shape=doublecircle, label="BINARY_\nOPERATOR" fillcolor = lightblue]
+
+
+
+
+  //Keywords
+  START -> if [label="if"]
+  START -> else [label="else"]
+  START -> func [label="func"]
+  START -> return [label="return"]
+  START -> var [label="var"]
+  START -> let [label="let"]
+  START -> nil [label="nil"]
+  START -> while [label="while"]
+
+  //Keywords but , datatypes
+  START -> Double [label="Double"]
+  Double -> DoubleWithQ [label="?"]
+  START -> String [label="String"]
+  String -> StringWithQ [label="?"]
+  START -> Int [label="Int"]
+  Int -> IntWithQ [label="?"]
+
+
+
+
+
+
+  // Simple Brackets
+  START -> LPAR [label=" ("]
+  START -> RPAR [label="  )"]
+
+
+  // Figured brackets  
+  START -> LBRACE [label=" {"]
+  START -> RBRACE [label="  }"]
+
+  // Assignment
+  START -> ASSIGN [label="="]
+  // Equality
+  ASSIGN -> EQUAL [label="  ="]
+  
+  // Arithmetic
+  START -> PLUS [label="+"]
+  START -> MINUS [label="-"]
+  START -> MULTIPLY [label="*"]
+  START -> DIVIDE [label="/"]
+
+
+  // Comments
+  DIVIDE -> L_MUL_COMMENT [label="  *"]
+  L_MUL_COMMENT -> R_MUL_COMMENT [label="  *"]
+  R_MUL_COMMENT -> L_MUL_COMMENT [label="else"]
+  R_MUL_COMMENT -> END_MUL_COMMENT [label="  /"]
+  DIVIDE -> SING_COMMENT [label="/"]
+  SING_COMMENT -> SING_COMMENT [label="else"]
+  SING_COMMENT -> END_SING_COMMENT [label="\\n"]
+
+  // Indentifier
+  START -> TYPE_ID [label="a-z | A-Z "]
+  START -> UNDERSCORE [label="_       "]
+  UNDERSCORE -> TYPE_ID [label="a-z | A-Z | _ | 0-9"]
+  UNDERSCORE -> ERR1 [label="else"]
+  TYPE_ID -> TYPE_ID [label="a-z | A-Z | _ | 0-9"]
+
+
+  // Numbers
+  START -> T_INT [label="0-9"]
+  T_INT -> T_INT [label="0-9"]
+  T_INT -> T_FLOAT [label="."]
+
+
+  //Exponent
+  T_INT -> EXPONENT [label="e | E"]
+  EXPONENT -> EXPONENT_SIGN [label=" + | -"]
+  EXPONENT -> EXPONENT_NUM [label="0-9"]
+  EXPONENT_SIGN -> EXPONENT_NUM [label="0-9"]
+  EXPONENT_NUM -> EXPONENT_NUM [label="0-9"]
+  EXPONENT_NUM -> EXPONENT_FLOAT [label="."]
+  EXPONENT_FLOAT -> EXPONENT_FLOAT [label="0-9"]
+  EXPONENT_FLOAT -> ERR2 [label="else"]
+  EXPONENT_NUM -> ERR2 [label="else"]
+
+  // Different spells
+  START -> COLON [label=":"]
+  START -> SEMICOLON [label=";"]
+  START -> COMMA [label=","]
+  
+  // Comparison
+  QUESTION_MARK [label="QUESTION_MARK" fillcolor = lightyellow]
+  START -> QUESTION_MARK [label="?"]
+  QUESTION_MARK -> ERROR6  [label = "else"]
+  QUESTION_MARK -> BINARY_OPERATOR [label="?"]
+  START -> LESS [label="<"]
+  LESS -> LESS_EQUAL [label="="]
+  START -> GREATER [label=">"]
+  GREATER -> GREATER_EQUAL [label="="]
+  START -> NOT_NIL [label="!"]
+  NOT_NIL-> NOT_EQUAL [label="="]
+
+
+  // String
+  STRING_START [label="STRING_START" fillcolor = lightyellow]
+  SINGLE_STRING_END [label="SINGLE_STRING_END" fillcolor = lightyellow]
+  ESCAPE_SEQUENCE [label="ESCAPE_SEQUENCE" fillcolor = lightyellow]
+  ESCAPE_SEQUENCE_CONTENT [label="ESCAPE_SEQUENCE_CONTENT" fillcolor = lightyellow]
+  SINGLE_STRING_CONTENT [label="SINGLE_STRING_CONTENT " fillcolor = lightyellow]
+  MULTI_LINE_STRING_CHECK [label="MULTI_LINE_STRING_CHECK" fillcolor = lightyellow]
+  MULTI_LINE_STRING_CONTENT [label="MULTI_LINE_STRING_CONTENT" fillcolor = lightyellow]
+  MULTI_LINE_STRING_END [label="MULTI_LINE_STRING_END" fillcolor = lightyellow]
+  SINGLE_STRING_END[shape=doublecircle, label="SINGLE_STRING_END" fillcolor = lightblue]
+  MULTI_LINE_STRING_START[label="MULTI_LINE_STRING_START" fillcolor = lightyellow]
+  ESCAPE_SEQUENCE_FOR_MULTIPLY_STRING[label="ESCAPE_SEQUENCE_FOR_MULTIPLY_STRING" fillcolor = lightyellow]
+  ESCAPE_SEQUENCE_CONTENT_ML[label="ESCAPE_SEQUENCE_CONTENT_ML" fillcolor = lightyellow]
+  MULTI_LINE_CONTENT_1[label="MULTI_LINE_CONTENT_1" fillcolor = lightyellow]
+  MULTI_LINE_CONTENT_2[label="MULTI_LINE_CONTENT_2" fillcolor = lightyellow]
+  MULTI_LINE_STRING_END[label="MULTI_LINE_STRING_END" fillcolor = lightyellow]
+  MULTI_LINE_STRING_END[shape=doublecircle, label="SINGLE_STRING_END" fillcolor = lightblue]
+  ERROR3 [label="ERROR3" fillcolor = red]
+  ERROR4 [label="ERROR4"fillcolor = red]
+  ERROR5 [label="ERROR5"fillcolor = red]
+  ERROR6 [label="ERROR6"fillcolor = red]
+
+
+  //Single String
+  START -> STRING_START [label="\""]
+  STRING_START -> SINGLE_STRING_CONTENT [label="Any characters"]
+  STRING_START -> ESCAPE_SEQUENCE [label="\\"]
+  ESCAPE_SEQUENCE -> ESCAPE_SEQUENCE_CONTENT [label="Escape characters | \\ | \""]
+  ESCAPE_SEQUENCE -> ERROR3 [label="else"]
+  ESCAPE_SEQUENCE_CONTENT -> SINGLE_STRING_CONTENT [label="Any character"]
+  SINGLE_STRING_CONTENT -> SINGLE_STRING_END [label="\""]
+  SINGLE_STRING_CONTENT -> SINGLE_STRING_CONTENT [label="Any character"]
+
+  // Multi line string
+  STRING_START -> MULTI_LINE_STRING_CHECK [label="\""]
+  MULTI_LINE_STRING_CHECK -> MULTI_LINE_STRING_START [label="\""]
+  MULTI_LINE_STRING_START -> MULTI_LINE_STRING_CONTENT [label="else"]
+  MULTI_LINE_STRING_START -> ESCAPE_SEQUENCE_FOR_MULTIPLY_STRING [label="\\"]
+  ESCAPE_SEQUENCE_FOR_MULTIPLY_STRING -> ESCAPE_SEQUENCE_CONTENT_ML [label="Escape characters | \\ | \""]
+  ESCAPE_SEQUENCE_FOR_MULTIPLY_STRING -> ERROR5 [label="else"]
+  MULTI_LINE_STRING_CHECK -> ERROR4 [label="Any Character"]
+  ESCAPE_SEQUENCE_CONTENT_ML-> MULTI_LINE_STRING_CONTENT [label="Any character"]
+  MULTI_LINE_STRING_CONTENT -> MULTI_LINE_CONTENT_1 [label="\""]
+  MULTI_LINE_CONTENT_1 -> MULTI_LINE_CONTENT_2 [label="\""]
+  MULTI_LINE_CONTENT_2 -> MULTI_LINE_STRING_END [label="\""]
+  MULTI_LINE_STRING_CONTENT -> ESCAPE_SEQUENCE_FOR_MULTIPLY_STRING[label="\\"]
+  MULTI_LINE_STRING_CONTENT -> MULTI_LINE_STRING_CONTENT [label="else"]
+  MULTI_LINE_CONTENT_1 -> MULTI_LINE_STRING_CONTENT[label="else"]
+  MULTI_LINE_CONTENT_1 -> ESCAPE_SEQUENCE_FOR_MULTIPLY_STRING[label="\\"]
+  MULTI_LINE_CONTENT_2 -> MULTI_LINE_STRING_CONTENT[label="else"]
+  MULTI_LINE_CONTENT_2 -> ESCAPE_SEQUENCE_FOR_MULTIPLY_STRING[label="\\"]
+
+
+
+
+
+}

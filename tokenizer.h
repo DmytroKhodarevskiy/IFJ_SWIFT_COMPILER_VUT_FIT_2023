@@ -72,6 +72,8 @@ typedef enum{
 
   T_KEYWORD, // KEYWORD
 
+  T_EMPTY, // EMPTY
+
 } token_type;
 
 typedef struct {
@@ -121,6 +123,7 @@ const char *tokenTypeNames[] = {
     "End of File",              // T_EOF
     "End of Line",              // T_EOL
     "Keyword"                   // T_KEYWORD
+    "Empty"                     // T_EMPTY
 };
 
 

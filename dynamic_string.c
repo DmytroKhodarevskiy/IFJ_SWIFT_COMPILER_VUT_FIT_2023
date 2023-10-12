@@ -41,32 +41,8 @@ void dynamic_string_free(char *s) {
   free(s);
 }
 
-void convert_from_dynamic_string(char *s, char *string) {
-
-  //printf("%s\n", s);
-
-  //printf("%d\n", len);
-
-  strcpy(string, s);
-
-//   for (int i = 0; i < len; i++) {
-//     string[i] = s[i];
-//   }
-
-    printf("%s ya loh\n", string);
-
-//   dynamic_string_free(s);
+char* convert_from_dynamic_string(char* dynamic_string) {
+  char* string;
+  strcpy(string, dynamic_string);
+  return string;
 }
-// int main() {
-//     // char* myString = createDynamicString("Hello ");
-
-//     // if (myString != NULL) {
-//     //     appendToDynamicString(&myString, "World!");
-//     //     printf("%s\n", myString);
-
-//     //     // Don't forget to free the memory when you're done
-//     //     free(myString);
-//     // }
-
-//     return 0;
-// }

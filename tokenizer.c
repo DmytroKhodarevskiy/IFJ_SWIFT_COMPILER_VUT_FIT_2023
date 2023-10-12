@@ -13,39 +13,55 @@ Token get_token(FILE *file){
   // char* token = malloc(sizeof(char) * 100);
   char *token_string = createDynamicString();
 
+  if (token_string == NULL) {
+    printf("Memory allocation failed.\n");
+    exit(1);
+  }
+
   while (true){
 
     char symbol = fgetc(file); //get next character
 
+    appendToDynamicString(&token_string, symbol);
+    
     if (symbol == EOF){
       Token token;
-      token.token_type = T_EOF;
-      if (token_string != NULL) {
-        token.string_value = strdup(token_string);
-        dynamic_string_free(token_string);
+
+      printf("%s\n", token_string);
+
+      if (token_string[0] == '\0') {
+        token.token_type = T_EOF;
+      } else {
+        token.token_type = T_ERR;
       }
-      break;
+
+      return token;
+
     }
     
-
-    if (token_string != NULL) {
-      appendToDynamicString(&token_string, symbol);
-    }
-
-    // position++; //increment position
-
     // compare_token(token_string); //returns token_type
-    // if (token_string == "a = 5")
     if (strcmp (token_string, "a = 5") == 0)
     {
       Token token;
+
       token.token_type = T_ASSIGN;
-      token.string_value = strdup(token_string);
-      dynamic_string_free(token_string);
+      token.string_value = "";
+      token.int_value = 0;
+
+      token.token_type = T_ASSIGN;
+
+      char* string;
+      convert_from_dynamic_string(token_string, &string);
+      token.string_value = string;
+
+      // printf("%s\n", string);
+      printf("YA PIDORAS\n");
+      printf("%s\n", token.string_value);
+      printf("MNE PIZDEC\n");
+
       return token;
     }
 
-    // position = //position after reading token
     //if token is ready, return it
   }
 }

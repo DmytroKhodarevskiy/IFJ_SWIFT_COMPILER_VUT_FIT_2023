@@ -17,7 +17,7 @@ char* createDynamicString() {
 }
 
 void appendToDynamicString(char** dynamicString, char content) {
-    int currentLength = strlen(*dynamicString);
+    unsigned int currentLength = strlen(*dynamicString);
 
     // Check if more memory is needed
     if (currentLength + 1 >= strlen(*dynamicString)) {
@@ -40,6 +40,7 @@ void appendToDynamicString(char** dynamicString, char content) {
 void dynamic_string_free(char *s) {
   free(s);
 }
+
 
 // int main() {
 //     // char* myString = createDynamicString("Hello ");

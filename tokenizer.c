@@ -20,8 +20,11 @@ Token get_token(FILE *file){
     if (symbol == EOF){
       Token token;
       token.token_type = T_EOF;
-      token.string_value = token_string;
-      return token;
+      if (token_string != NULL) {
+        token.string_value = strdup(token_string);
+        dynamic_string_free(token_string);
+      }
+      break;
     }
     
 
@@ -32,11 +35,13 @@ Token get_token(FILE *file){
     // position++; //increment position
 
     // compare_token(token_string); //returns token_type
-    if (token_string == "a = 5")
+    // if (token_string == "a = 5")
+    if (strcmp (token_string, "a = 5") == 0)
     {
       Token token;
       token.token_type = T_ASSIGN;
-      token.string_value = token_string;
+      token.string_value = strdup(token_string);
+      dynamic_string_free(token_string);
       return token;
     }
 

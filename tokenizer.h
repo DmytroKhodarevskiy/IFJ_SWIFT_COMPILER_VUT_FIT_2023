@@ -85,6 +85,43 @@ typedef struct {
 
 } Token;
 
+const char *tokenTypeNames[] = {
+    "Left Parenthesis",         // T_LPAR
+    "Right Parenthesis",        // T_RPAR
+    "Left Brace",               // T_LBRACE
+    "Right Brace",              // T_RBRACE
+    "Plus",                     // T_PLUS
+    "Minus",                    // T_MINUS
+    "Multiply",                 // T_MULTIPLY
+    "Divide",                   // T_DIVIDE
+    "Multi-line Comment",       // T_MUL_COMMENT
+    "Single-line Comment",      // T_SING_COMMENT
+    "Multi-line String",        // T_MUL_STRING
+    "Single-line String",       // T_SING_STRING
+    "Identifier",               // T_TYPE_ID
+    "Error",                    // T_ERR
+    "Integer",                  // T_INT
+    "Double",                   // T_DOUBLE
+    "Float",                    // T_FLOAT
+    "String",                   // T_STRING
+    "Exponent Integer",         // T_EXPONENT_INT
+    "Exponent Float",           // T_EXPONENT_FLOAT
+    "Semicolon",                // T_SEMICOLON
+    "Comma",                    // T_COMMA
+    "Colon",                    // T_COLON
+    "Less Than",                // T_LESS
+    "Greater Than",             // T_GREATER
+    "Less Than or Equal",       // T_LESS_EQUAL
+    "Greater Than or Equal",    // T_GREATER_EQUAL
+    "Not Equal",                // T_NOT_EQUAL
+    "Assignment",               // T_ASSIGN
+    "Equal",                    // T_EQUAL
+    "Not Nil",                  // T_NOTNIL
+    "Nullish Coalescing",       // T_BINARY_OP
+    "End of File",              // T_EOF
+    "End of Line",              // T_EOL
+    "Keyword"                   // T_KEYWORD
+};
 
 
 

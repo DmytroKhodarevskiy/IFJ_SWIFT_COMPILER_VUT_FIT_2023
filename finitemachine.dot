@@ -1,5 +1,5 @@
 digraph LexicalAnalyzer {
-  node [shape=circle, fontsize=2, fontname="Comic Sans MS", style=filled, fillcolor="white", color="black", penwidth=2, fontcolor="black"];
+  node [shape=circle, fontsize=6, fontname="Comic Sans MS", style=filled, fillcolor="white", color="black", penwidth=2, fontcolor="black"];
   rankdir=LR;
 
   edge [fontname = mono]
@@ -160,7 +160,7 @@ digraph LexicalAnalyzer {
   ESCAPE_SEQUENCE [label="ESCAPE_SEQUENCE" fillcolor = lightyellow]
   ESCAPE_SEQUENCE_CONTENT [label="ESCAPE_SEQUENCE_CONTENT" fillcolor = lightyellow]
   SINGLE_STRING_CONTENT [label="SINGLE_STRING_CONTENT " fillcolor = lightyellow]
-  MULTI_LINE_STRING_CHECK [label="MULTI_LINE_STRING_CHECK" fillcolor = lightyellow]
+  MULTI_LINE_STRING_CHECK [shape=doublecircle label="MULTI_LINE_STRING_CHECK" fillcolor = lightyellow]
   MULTI_LINE_STRING_CONTENT [label="MULTI_LINE_STRING_CONTENT" fillcolor = lightyellow]
   MULTI_LINE_STRING_END [label="MULTI_LINE_STRING_END" fillcolor = lightyellow]
   SINGLE_STRING_END[shape=doublecircle, label="SINGLE_STRING_END" fillcolor = lightblue]

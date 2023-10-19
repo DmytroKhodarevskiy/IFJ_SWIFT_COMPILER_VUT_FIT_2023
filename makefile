@@ -8,10 +8,10 @@ PROG = compiler.c
 # Output binary
 OUTPUT = compiler
 
-# Default target (build and run)
+.PHONY: all clean
+
+# Default target (build)
 all: $(OUTPUT)
-	$(CC) $(CFLAGS) -o $(OUTPUT) $(PROG)
-	./$(OUTPUT)
 
 # Compile the program
 $(OUTPUT): $(PROG)
@@ -21,4 +21,6 @@ $(OUTPUT): $(PROG)
 clean:
 	rm -f $(OUTPUT)
 
-.PHONY: all clean
+# Run the program with an output file
+run: $(OUTPUT)
+	./$(OUTPUT) output.txt

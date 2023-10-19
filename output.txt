@@ -1,16 +1,5 @@
-StackToken 0 type: Greater Than or Equal, Token value: >=
-StackToken 1 type: Greater Than, Token value: >
-StackToken 2 type: Plus, Token value: +
-StackToken 3 type: Minus, Token value: -
-StackToken 4 type: Less Than, Token value: <
-StackToken 5 type: Minus, Token value: -
-StackToken 6 type: Less Than or Equal, Token value: <=
-StackToken 7 type: Less Than, Token value: <
-StackToken 8 type: Less Than, Token value: <
-StackToken 9 type: Left Parenthesis, Token value: (
-StackToken 10 type: Plus, Token value: +
-StackToken 11 type: Minus, Token value: -
-StackToken 12 type: Right Brace, Token value: }
-StackToken 13 type: Left Parenthesis, Token value: (
-StackToken 14 type: Right Parenthesis, Token value: )
-StackToken 15 type: End of File, Token value: 
+StackToken 0 type: Keyword, Token value: while
+StackToken 1 type: Identifier, Token value: z
+StackToken 2 type: Less Than or Equal, Token value: <=
+StackToken 3 type: Keyword, Token value: if
+StackToken 4 type: Exponent Integer, Token value: 2e311231+3132313

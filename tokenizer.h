@@ -134,7 +134,7 @@ const char *tokenTypeNames[] = {
     "Nullish Coalescing",       // T_BINARY_OP
     "End of File",              // T_EOF
     "End of Line",              // T_EOL
-    "Keyword"                   // T_KEYWORD
+    "Keyword" ,                 // T_KEYWORD
     "Empty"                     // T_EMPTY
 };
 

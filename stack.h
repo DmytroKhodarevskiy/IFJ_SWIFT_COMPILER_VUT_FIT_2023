@@ -1,8 +1,10 @@
 #ifndef STACK_H
 #define STACK_H
 
-#define INITIAL_STACK_SIZE 10
-#define STACK_GROWTH_FACTOR 2
+//#define INITIAL_STACK_SIZE 10
+//#define STACK_GROWTH_FACTOR 2
+
+#include "tokenizer.h"
 
 typedef struct {
   Token *items;

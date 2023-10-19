@@ -5,6 +5,7 @@
 #include <ctype.h>
 
 #include "tokenizer.c"
+#include "stack.c"
 
 FILE* read_file(char* filename) {
   FILE* file = fopen(filename, "r");

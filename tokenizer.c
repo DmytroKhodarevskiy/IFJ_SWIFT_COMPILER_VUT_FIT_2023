@@ -13,6 +13,7 @@
 #define Less_or_LessEqual_STATE 104
 #define Reading_Number_STATE 105
 #define Reading_Identifier_or_Keyword_STATE 106
+#define Reading_Exponencial_number_STATE 107
 
 
 int isKeyword(const char* word) {
@@ -20,6 +21,8 @@ int isKeyword(const char* word) {
     if (strcmp(word, "func") == 0) {
         return 1;
     } else if (strcmp(word, "var") == 0) {
+        return 1;
+    } else if (strcmp(word, "while") == 0) {
         return 1;
     } else if (strcmp(word, "return") == 0) {
         return 1;
@@ -205,6 +208,10 @@ Token get_token(FILE *file){
                 if (isdigit(symbol)) {
                     appendToDynamicString(token_string, symbol);
                     state = Reading_Number_STATE;
+                } else if (symbol == 'e' || symbol == 'E') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_Exponencial_number_STATE;
+                    break;
                 } else if (symbol == '.') {
                     appendToDynamicString(token_string, symbol);
                     state = Reading_Number_STATE;
@@ -223,6 +230,26 @@ Token get_token(FILE *file){
                     return token;
                     }
                 break;
+
+
+            case Reading_Exponencial_number_STATE:
+                if (isdigit(symbol)) {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_Exponencial_number_STATE;
+                } else if (symbol == '+' || symbol == '-') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_Exponencial_number_STATE;
+                } else {
+                    ungetc(symbol, file);
+                    token.token_type = T_EXPONENT_INT;
+                    token.double_value = atof(token_string->str);
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                }
+                break;
+
+
+
 
             case Less_or_LessEqual_STATE:
                 if (symbol == '=') {

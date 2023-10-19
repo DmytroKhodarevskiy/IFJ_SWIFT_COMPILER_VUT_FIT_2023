@@ -57,6 +57,20 @@ void appendToDynamicString(Dynamic_string* dynamicString, char content) {
 
 
 
+
+void deleteLastCharacter(Dynamic_string* dynamicString) {
+    if (dynamicString == NULL || dynamicString->length == 0) {
+        return;
+    }
+
+    dynamicString->str[dynamicString->length - 1] = '\0'; 
+    dynamicString->length--;
+}
+
+
+
+
+
 void dynamic_string_free(Dynamic_string* dynamicString) {
     if (dynamicString != NULL) {
         if (dynamicString->str != NULL) {

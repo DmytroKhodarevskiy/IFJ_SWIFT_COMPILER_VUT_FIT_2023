@@ -76,12 +76,24 @@ typedef enum{
 
 } token_type;
 
+
+
+
+typedef struct
+{
+	char *str; /// string ened by '\0' byte
+	unsigned int length; /// lenght of string
+  unsigned int allocSize; /// size of allocated memory  
+} Dynamic_string;
+
+
+
 typedef struct {
 
   token_type token_type;
   keyword keyword_type;
 
-  char *string_value;
+  Dynamic_string *string_value;
   int int_value;
   double double_value;
 

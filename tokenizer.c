@@ -189,7 +189,6 @@ Token get_token(FILE *file){
                 } else {
                     ungetc(symbol, file);
                     if (isKeyword(token_string->str)) {
-                        printf("ddasdasda");
                         token.token_type = T_KEYWORD;
                         copyString(token.string_value->str, token_string->str);
                         return token;
@@ -199,8 +198,7 @@ Token get_token(FILE *file){
                         return token;
                     }
                 }
-
-
+                break;
 
 
             case Reading_Number_STATE:

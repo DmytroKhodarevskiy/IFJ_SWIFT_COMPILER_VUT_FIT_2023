@@ -6,78 +6,73 @@
 #include "tokenizer.h"
 #include "dynamic_string.c"
 
-// Token get_token(FILE* file){
-// Token get_token(char *file, int* position){
+#define START 100
+#define EOF_STATE 101
+
+
+void copyString(char *destination, char *source) {
+  strcpy(destination, source);
+  free(source);
+}
+
+
+
 
 Token init_token(){
   Token token;
 
   token.token_type = T_EMPTY;
-  token.string_value = " ";
   token.int_value = 0;
   token.double_value = 0.0;
+  token.string_value = createDynamicString();
 
   return token;
 }
 
 Token get_token(FILE *file){
+  Dynamic_string *token_string = createDynamicString();
 
-  // char* token = malloc(sizeof(char) * 100);
-  char *token_string = createDynamicString();
+  int state = START;
+  Token token = init_token();
 
-  if (token_string == NULL) {
-    printf("Memory allocation failed.\n");
-    exit(1);
-  }
+  while (true) {
+    char symbol = (char)fgetc(file);
+    appendToDynamicString(token_string, symbol);
 
-  while (true){
-
-    // printf("ya gay\n");
-
-    char symbol = fgetc(file); //get next character
-
-    appendToDynamicString(&token_string, symbol);
-    printf("token_string: %s\n", token_string);
-    
-    if (symbol == EOF){
-      Token token = init_token();
-
-      printf("%s\n", token_string);
-
-      if (token_string[0] == '\0') {
-        token.token_type = T_EOF;
-      } else {
-        token.token_type = T_ERR;
+    switch (state) {
+    case START:
+      if (symbol == '\n' || symbol == EOF) {
+        state = EOF_STATE;
+      } else if (symbol == '+') {
+        token.token_type = T_PLUS;
+        //strcpy(token.string_value->str, token_string->str);
+        //dynamic_string_free(token_string);
+        copyString(token.string_value->str, token_string->str);
+        return token;
+      } else if (symbol == '-') {
+        token.token_type = T_MINUS;
+        copyString(token.string_value->str, token_string->str);
+        return token;
+      } else if (symbol == '*') {
+        token.token_type = T_MULTIPLY;
+        copyString(token.string_value->str, token_string->str);
+        return token;
       }
+      break;
 
-      // token.string_value = " ";
 
-      return token;
 
+
+    case EOF_STATE:
+      if (symbol == EOF) {
+        token.token_type = T_EOF;
+        return token;
+      } else {
+        ungetc(symbol, file);
+        token.token_type = T_ERR;
+        return token;
+      }
+      break;
     }
-    
-    // compare_token(token_string); //returns token_type
-    if (strcmp (token_string, "a = 5") == 0)
-    {
-      Token token = init_token();
-
-      token.token_type = T_ASSIGN;
-
-      //char* string;
-      // printf("%s\n", token_string);
-
-      char *string;
-      strcpy(string, token_string);
-      token.string_value = string;
-
-      // printf("YA PIDORAS\n");
-      // printf("MNE PIZDEC\n");
-
-      free(token_string);
-
-      return token;
-    }
-
-    //if token is ready, return it
   }
 }

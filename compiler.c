@@ -16,7 +16,7 @@ FILE* read_file(char* filename){
 }
 
 int main(int argc, char* argv[]){
-  
+
   FILE* file = read_file("test.txt");
   // int *position = 0;
 
@@ -27,11 +27,12 @@ int main(int argc, char* argv[]){
 
     // Token token = get_token(file, &position);
     Token token = get_token(file);
+
     // printf("Token: %s\n", token.string_value);
-    printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value);
+    printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
 
     // printf("%d", strlen(token.string_value));
   }
-  
+
   return 0;
 }

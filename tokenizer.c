@@ -11,9 +11,42 @@
 #define EQUAL_STATE_or_ASSIGN_STATE 102
 #define Greater_or_GreaterEqual_STATE 103
 #define Less_or_LessEqual_STATE 104
+#define Reading_Number_STATE 105
+#define Reading_Identifier_or_Keyword_STATE 106
 
 
-
+int isKeyword(const char* word) {
+    
+    if (strcmp(word, "func") == 0) {
+        return 1;
+    } else if (strcmp(word, "var") == 0) {
+        return 1;
+    } else if (strcmp(word, "return") == 0) {
+        return 1;
+    } else if (strcmp(word, "else") == 0) {
+        return 1;
+    } else if (strcmp(word, "if") == 0) {
+        return 1;
+    } else if (strcmp(word, "nil") == 0) {
+        return 1;
+    } else if (strcmp(word, "Int") == 0) {
+        return 1;
+    } else if (strcmp(word, "Double") == 0) {
+        return 1;
+    } else if (strcmp(word, "String") == 0) {
+        return 1;
+    } else if (strcmp(word, "String?") == 0) {
+        return 1;
+    } else if (strcmp(word, "Int?") == 0) {
+        return 1;
+    } else if (strcmp(word, "Double?") == 0) {
+        return 1;
+    }  else {
+        return 0;
+    }
+    
+    return 0; 
+}
 
 void copyString(char *destination, char *source) {
   strcpy(destination, source);
@@ -137,9 +170,61 @@ Token get_token(FILE *file){
                     token.token_type = T_COMMA;
                     copyString(token.string_value->str, token_string->str);
                     return token;
+                } else if (isdigit(symbol)) {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_Number_STATE;
+
+
+                } else if (isalpha(symbol)) {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_Identifier_or_Keyword_STATE;
                 }
+
                 break;
 
+                
+            case Reading_Identifier_or_Keyword_STATE:
+                if (isalnum(symbol)) {
+                    appendToDynamicString(token_string, symbol);
+                } else {
+                    ungetc(symbol, file);
+                    if (isKeyword(token_string->str)) {
+                        printf("ddasdasda");
+                        token.token_type = T_KEYWORD;
+                        copyString(token.string_value->str, token_string->str);
+                        return token;
+                    } else {
+                        token.token_type = T_TYPE_ID;
+                        copyString(token.string_value->str, token_string->str);
+                        return token;
+                    }
+                }
+
+
+
+
+            case Reading_Number_STATE:
+                if (isdigit(symbol)) {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_Number_STATE;
+                } else if (symbol == '.') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_Number_STATE;
+                } else {
+                    ungetc(symbol, file);
+                    if(strchr(token_string->str, '.') != NULL) {
+                        token.token_type = T_DOUBLE;
+                        token.double_value = atof(token_string->str);
+                    } else {
+                        token.token_type = T_INT;
+                        token.int_value = atoi(token_string->str);
+                    }
+
+                    token.int_value = atoi(token_string->str);
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                    }
+                break;
 
             case Less_or_LessEqual_STATE:
                 if (symbol == '=') {

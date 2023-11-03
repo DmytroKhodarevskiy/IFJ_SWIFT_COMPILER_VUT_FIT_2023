@@ -7,15 +7,43 @@
 #include "dynamic_string.c"
 
 #define START 100
+
 #define EOF_STATE 101
+
 #define EQUAL_STATE_or_ASSIGN_STATE 102
 #define Greater_or_GreaterEqual_STATE 103
 #define Less_or_LessEqual_STATE 104
+
 #define Reading_Number_STATE 105
-#define Reading_Identifier_or_Keyword_STATE 106
-#define Reading_Exponencial_number_STATE 107
 
+#define Reading_Identifier_or_Keyword_STATE 106 
 
+#define Checking_Exponential 107
+#define Reading_Expontential_number_with_sign_STATE 108
+#define Reading_Exponential_without_sign_STATE 109
+
+#define Checking_Comment_STATE 111
+#define Single_Line_Comment_STATE 112
+#define Multi_Line_Comment_STATE 113
+#define Checking_end_of_Multi_Line_Comment_STATE 114
+
+#define Checking_Exclamation_STATE 115
+#define Checking_Questionmark_STATE 116
+
+#define Reading_String_STATE 117
+#define Multi_line_string_check1_STATE 118
+#define Multi_line_string_check2_STATE 119
+#define Multi_line_FINALLY_STATE 121
+#define Multi_line_string_check4_STATE 122
+#define Multi_line_string_check5_STATE 123
+#define Multi_line_hex_STATE 124
+#define Multi_line_escape_sequence_STATE 125
+#define Multi_line_hex_num_STATE 126
+#define Single_line_hex_STATE 127
+#define Single_line_hex_num_STATE 128
+#define Escape_char_err_check_STATE 129
+
+#define Escape_sequence_STATE 1222
 int isKeyword(const char* word) {
     
     if (strcmp(word, "func") == 0) {
@@ -53,7 +81,8 @@ int isKeyword(const char* word) {
 
 void copyString(char *destination, char *source) {
   strcpy(destination, source);
-  free(source);
+//   if (source != NULL)
+    // free(source);
 }
 
 
@@ -82,7 +111,12 @@ Token get_token(FILE *file){
 
         switch (state) {
             case START:
-                if (symbol == '\n' || symbol == EOF) {
+
+                if (symbol == '\n') {
+                    state = START;
+                    
+
+                } else if (symbol == EOF) {
                     state = EOF_STATE;
 
 
@@ -173,21 +207,323 @@ Token get_token(FILE *file){
                     token.token_type = T_COMMA;
                     copyString(token.string_value->str, token_string->str);
                     return token;
+                
+                
                 } else if (isdigit(symbol)) {
                     appendToDynamicString(token_string, symbol);
                     state = Reading_Number_STATE;
 
 
+                } else if (symbol == '!') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Checking_Exclamation_STATE;
+
+
+                } else if (symbol == '?') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Checking_Questionmark_STATE;
+
+
                 } else if (isalpha(symbol)) {
                     appendToDynamicString(token_string, symbol);
                     state = Reading_Identifier_or_Keyword_STATE;
-                }
+               
 
+                } else if (symbol == '/') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Checking_Comment_STATE;
+                
+
+                } else if (symbol == '\"') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_String_STATE;
+                
+                
+                } else {
+                    token.token_type = T_ERR;
+                    return token;
+                }
                 break;
 
+
+            case Reading_String_STATE:
+                if (symbol == '\"') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_string_check1_STATE;
+                } else if (symbol == '\\'){
+                    appendToDynamicString(token_string, symbol);
+                    state = Escape_sequence_STATE;
+                } else if (symbol == '\n' || symbol == EOF) {
+                    token.token_type = T_ERR;
+                    return token;
+                } else {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_String_STATE;
+                }
+                break;
+
+            case Escape_sequence_STATE:
+                if (symbol == 'n') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_String_STATE;
+                } else if (symbol == 't') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_String_STATE;
+                } else if (symbol == 'r') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_String_STATE;
+                } else if (symbol == 'u') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Single_line_hex_STATE;
+                } else if (symbol == '\\') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_String_STATE;
+                } else if (symbol == '\"') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Escape_char_err_check_STATE;
+                } else {
+                    token.token_type = T_ERR;
+                    return token;
+                }
+                break;
+
+            case Escape_char_err_check_STATE:
+                if (symbol == '\"') {
+                    appendToDynamicString(token_string, symbol);
+                    token.token_type = T_SING_STRING;
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                } else if (symbol == '\n' || symbol == EOF) {
+                    token.token_type = T_ERR;
+                    return token;
+                } else {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_String_STATE;
+                }
+                break;
+
+            case Single_line_hex_STATE:
+                if (symbol == '{') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Single_line_hex_num_STATE;
+                } else {
+                    token.token_type = T_ERR;
+                    return token;
+                }
+                break;
+
+            case Single_line_hex_num_STATE:
+                if (isxdigit(symbol)) {
+                    appendToDynamicString(token_string, symbol);
+                    state = Single_line_hex_num_STATE;
+                } else if (symbol == '}') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_String_STATE;
+                } else {
+                    token.token_type = T_ERR;
+                    return token;
+                }
+                break;
+
+            case Multi_line_string_check1_STATE:
+                if (symbol == '\"') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_string_check2_STATE;
+                } else {
+                    ungetc(symbol, file);
+                    token.token_type = T_SING_STRING;
+                    copyString(token.string_value->str, token_string->str);
+                    return token;                    
+                }
+                break;
+
+         
+            case Multi_line_string_check2_STATE:
+                if (symbol == '\n') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_FINALLY_STATE;
+                } else if (symbol == '\"') {
+                    appendToDynamicString(token_string, symbol);
+                    token.token_type = T_SING_STRING;    
+                } else {
+                    ungetc(symbol, file);
+                    token.token_type = T_SING_STRING;
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                }
+                break;
+
+
+            case Multi_line_FINALLY_STATE:
+                if (symbol == '\"') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_string_check4_STATE;
+                } else if (symbol == '\\') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_escape_sequence_STATE;
+                } else if (symbol == EOF) {
+                    token.token_type = T_ERR;
+                    return token;
+                } else {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_FINALLY_STATE;
+                }
+                break;
+
+            case Multi_line_escape_sequence_STATE:
+                if (symbol == 'n') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_FINALLY_STATE;
+                } else if (symbol == 't') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_FINALLY_STATE;
+                } else if (symbol == 'r') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_FINALLY_STATE;
+                } else if (symbol == '\\') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_FINALLY_STATE;
+                } else if (symbol == '"') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_FINALLY_STATE;
+                } else if (symbol == 'u') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_hex_STATE;
+                } else {
+                    token.token_type = T_ERR;
+                    return token;
+                }
+                break;
+
+            case Multi_line_hex_STATE:
+                if (symbol == '{') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_hex_num_STATE;
+                } else {
+                    token.token_type = T_ERR;
+                    return token;
+                }
+                break;
+
+            case Multi_line_hex_num_STATE:
+                if (isxdigit(symbol)) {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_hex_num_STATE;
+                } else if (symbol == '}') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_FINALLY_STATE;
+                } else {
+                    token.token_type = T_ERR;
+                    return token;
+                }
+                break;
+
+            case Multi_line_string_check4_STATE:
+                if (symbol == '\"') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_line_string_check5_STATE;
+                } else {
+                    token.token_type = T_ERR;
+                    return token;
+                }
+                break;
+
+
+            case Multi_line_string_check5_STATE:
+                if (symbol == '"') {
+                    appendToDynamicString(token_string, symbol);
+                    token.token_type = T_MUL_STRING;
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                } else {
+                    token.token_type = T_ERR;
+                    return token;
+                }
+
+
+            case Checking_Questionmark_STATE:
+                if (symbol == '?') {
+                    token.token_type = T_BINARY_OP;
+                    appendToDynamicString(token_string, symbol);
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                } else {
+                    ungetc(symbol, file);
+                    token.token_type = T_ERR;
+                    return token;
+                }
+                break;
+
+
+            case Checking_Exclamation_STATE:
+                if (symbol == '=') {
+                    token.token_type = T_NOT_EQUAL;
+                    appendToDynamicString(token_string, symbol);
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                } else {
+                    ungetc(symbol, file);
+                    token.token_type = T_NOTNIL;
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                }
+                break;
+
+
+            case Checking_Comment_STATE:
+                if (symbol == '/') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Single_Line_Comment_STATE;
+                } else if (symbol == '*') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_Line_Comment_STATE;
+                } else {
+                    ungetc(symbol, file);
+                    token.token_type = T_DIVIDE;
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                }
+                break;
+
+
+            case Single_Line_Comment_STATE:
+                if (symbol == '\n' || symbol == EOF) {
+                    token.token_type = T_SING_COMMENT;
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                } else {
+                    appendToDynamicString(token_string, symbol);
+                    state = Single_Line_Comment_STATE;
+                }
+                break;
+
+
+            case Multi_Line_Comment_STATE:
+                if (symbol == '*') {
+                    appendToDynamicString(token_string, symbol);
+                    state = Checking_end_of_Multi_Line_Comment_STATE;
+                } else {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_Line_Comment_STATE;
+                }
+                break;
+
+
+            case Checking_end_of_Multi_Line_Comment_STATE:
+                if (symbol == '/') {
+                    appendToDynamicString(token_string, symbol);
+                    token.token_type = T_MUL_COMMENT;
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                } else {
+                    appendToDynamicString(token_string, symbol);
+                    state = Multi_Line_Comment_STATE;
+                }
+                break;
                 
+
             case Reading_Identifier_or_Keyword_STATE:
-                if (isalnum(symbol)) {
+                if (isalnum(symbol) || symbol == '_') {
                     appendToDynamicString(token_string, symbol);
                 } else {
                     ungetc(symbol, file);
@@ -210,7 +546,7 @@ Token get_token(FILE *file){
                     state = Reading_Number_STATE;
                 } else if (symbol == 'e' || symbol == 'E') {
                     appendToDynamicString(token_string, symbol);
-                    state = Reading_Exponencial_number_STATE;
+                    state = Checking_Exponential;
                     break;
                 } else if (symbol == '.') {
                     appendToDynamicString(token_string, symbol);
@@ -232,13 +568,13 @@ Token get_token(FILE *file){
                 break;
 
 
-            case Reading_Exponencial_number_STATE:
+            case Checking_Exponential:
                 if (isdigit(symbol)) {
                     appendToDynamicString(token_string, symbol);
-                    state = Reading_Exponencial_number_STATE;
+                    state = Reading_Exponential_without_sign_STATE;
                 } else if (symbol == '+' || symbol == '-') {
                     appendToDynamicString(token_string, symbol);
-                    state = Reading_Exponencial_number_STATE;
+                    state = Reading_Expontential_number_with_sign_STATE;
                 } else {
                     ungetc(symbol, file);
                     token.token_type = T_EXPONENT_INT;
@@ -249,6 +585,32 @@ Token get_token(FILE *file){
                 break;
 
 
+            case Reading_Exponential_without_sign_STATE:
+                if (isdigit(symbol)) {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_Exponential_without_sign_STATE;
+                } else {
+                    ungetc(symbol, file);
+                    token.token_type = T_EXPONENT_INT;
+                    token.double_value = atof(token_string->str);
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                }
+                break;
+
+
+            case Reading_Expontential_number_with_sign_STATE:
+                if (isdigit(symbol)) {
+                    appendToDynamicString(token_string, symbol);
+                    state = Reading_Expontential_number_with_sign_STATE;
+                } else {
+                    ungetc(symbol, file);
+                    token.token_type = T_EXPONENT_INT;
+                    token.double_value = atof(token_string->str);
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                }
+                break;
 
 
             case Less_or_LessEqual_STATE:
@@ -280,6 +642,7 @@ Token get_token(FILE *file){
                 }
                 break;
 
+
             case EQUAL_STATE_or_ASSIGN_STATE:
                 if (symbol == '=') {
                     token.token_type = T_EQUAL;
@@ -294,6 +657,7 @@ Token get_token(FILE *file){
                 }
                 break;
            
+
             case EOF_STATE:
                 if (symbol == EOF) {
                     token.token_type = T_EOF;

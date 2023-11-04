@@ -74,6 +74,8 @@ typedef enum{
 
   T_EMPTY, // EMPTY
 
+  T_UNDERSCORE_ID, // ( _ = ...)
+
 } token_type;
 
 
@@ -135,7 +137,8 @@ const char *tokenTypeNames[] = {
     "End of File",              // T_EOF
     "End of Line",              // T_EOL
     "Keyword",                   // T_KEYWORD
-    "Empty"                     // T_EMPTY
+    "Empty",                     // T_EMPTY
+    "Underscore Identifier"     // T_UNDERSCORE_ID
 };
 
 

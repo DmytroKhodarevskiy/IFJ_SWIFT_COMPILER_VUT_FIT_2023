@@ -26,12 +26,15 @@ int main(){
       break;
     }
 
-    // Token token = get_token(file, &position);
     Token token = get_token(file);
-    // printf("Token: %s\n", token.string_value);
+
+    if (token.token_type == T_ERR){
+      printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
+      printf("Error: Invalid token\n");
+      exit(1);
+    }
+
     printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
-    // free(token.string_value->str);
-      // printf("%d", strlen(token.string_value));
   }
   
   return 0;

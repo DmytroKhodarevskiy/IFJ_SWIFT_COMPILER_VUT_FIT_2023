@@ -1,31 +1,34 @@
-// Ukazka prace s retezci a vestavenymi funkcemi 
+var y : Int = 10  // global variable in main body
 
-write("Ahoj\n\"Sve'te \\\u{0022}", "\n")  // 042 oktalove = 34 decimalne = 22 hexadecimalne = znak uvozovek
+func foo(x x : Int) {  // void function (no return value)
+  let y = "hello" + "\n"  // local variable, scope for entire function
+  if (y == "hello\n") {
+    let y = 42 // new local variable, scope only in this block
+    write(y)        // prints 42
+  } else {
+    write(y)
+  }
+  write(y) // prints hello
+  
+  var i = 0
+  while i <= 10 {
+    i = i + 1   // local variable of the whole function is used 
+    incrGlobal()
+    write(i)
+    write("Insert non-empty input for quiting, otherwise next iteration.\n");
+    let x = readString()  // formal parameter behave in the function body as local variable, but cannot be modified, we can redefine it/hide it
+    if let x {
+      let inp = length(x)
+      if (inp != 0) { write(x, "\n")
+        return } else {}  // explicitly stops looping by exiting foo
+    } else {}
+  }
+}
 
-var s1 : String? = 
-  """
-   Toto 
-   je 
+func incrGlobal() { y = y + 1 }
 
-   nejaky 
-   text
- """  // ukoncujici uvozovky ovlivnuji implicitni odsazeni vnitrnich radku retezce
-var s2:String = (s1!) + ", ktery jeste trochu obohatime"
-write(s1, "\u{000020}", s2, "\u{0A}")
+foo(x: 7)
+write(y)  // prints global y
 
-var s1String = s1!
-var s1len = length(s1String)
-var s1_20ty_znak = s1len
-s1len = 4
-let s1_16ty_znak : Int = s1_20ty_znak - s1len
-let s11 = substring(of: s2, startingAt: s1_16ty_znak, endingBefore: s1_20ty_znak)
-write(s1len, " znaky od ", 16, ". znaku (index ", s1_16ty_znak, ") v \"", s2, "\":", s11, "\n")
-
-s1String = substring(of:s2,startingAt:15,endingBefore:19) ?? 
-"""
-viceradkovy
-"retezec"
-misto nil vysledku
-""" // vysledny retezec v s1 bude mit 4 znaky
-let s1len4 = length(s1String)
-write(s1len4, " znaky od ", 16, ". znaku v \"", s2, "\":", s1, "\n")
+// whitespaces and comment possible since now end-mark here
+    

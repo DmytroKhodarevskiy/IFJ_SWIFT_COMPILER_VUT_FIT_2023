@@ -1,0 +1,99 @@
+//EXPRESSION
+//EXPRESSION_LIST
+//TERM (FACTORS WITH * AND /)
+//FACTOR (NUMBERS AND PARENTHESES)
+
+[ASSIGNMENT] ::= id = [EXPRESSION]
+[ASSIGNMENT] ::= ''
+
+// expression = id*id
+// expression = expression + expression
+// expression_list = + id*id
+// expression_list = - id*id
+// expression_list = ''
+// expression_list = + expression_list
+// expression_list = - expression_list
+[EXPRESSION] ::= [TERM] [EXPRESSION_LIST]
+[EXPRESSION_LIST] ::= + [TERM] [EXPRESSION_LIST]
+[EXPRESSION_LIST] ::= - [TERM] [EXPRESSION_LIST]
+[EXPRESSION_LIST] ::= ''
+
+//	 id  
+//  FACTOR
+[TERM] ::= [FACTOR] [TERM_LIST]
+[TERM_LIST] ::= * [FACTOR] [TERM_LIST]
+[TERM_LIST] ::= / [FACTOR] [TERM_LIST]
+[TERM_LIST] ::= ''
+
+[FACTOR] ::= ( [EXPRESSION] ) 
+[FACTOR] ::= id 
+
+////////////////////////////////////////
+
+/*
+if (expression) {
+	statement_list
+	a = 5 + b
+	var a = 4
+} else {
+	statement_list
+}
+*/
+
+[STMT_LIST] ::= [STMT] [STMT_LIST]
+[STMT_LIST] ::= [KWRD_STMT] [STMT_LIST]
+[STMT_LIST] ::= ''
+
+// IF_STATEMENT
+[STMT] ::= if [IF_EXP]
+
+[IF_EXP] ::= ( [MB_LET_EXP]
+[IF_EXP] ::= [LET_STMT] { [STMT_LIST] } [MB_ELSE]
+
+[MB_LET_EXP] ::= [EXP] ) { [STMT_LIST] } [MB_ELSE]
+[MB_LET_EXP] ::= [LET_STMT] ) { [STMT_LIST] } [MB_ELSE] 
+[LET_STMT] ::= let id
+
+[MB_ELSE] ::= else { [STMT_LIST] }
+[MB_ELSE] ::= ''
+
+// LET_STATEMENT | VAR_STATEMENT
+[KWRD_STMT] ::= let [STMT_LET]
+[KWRD_STMT] ::= var [STMT_LET]
+
+[STMT_LET] ::= id [MB_STMT_LET]
+
+[MB_STMT_LET_LIST] ::= : [TYPE]
+[MB_STMT_LET_LIST] ::= = [EXP]
+
+// TYPE
+[TYPE] ::= String
+[TYPE] ::= Int
+[TYPE] ::= Double
+[TYPE] ::= String?
+[TYPE] ::= Int?
+[TYPE] ::= Double?
+[TYPE] ::= = [EXP]
+
+
+// EXPRESSION
+[STMT] ::= id [MB_ASSIGN]
+// [STMT] ::= ''
+
+[MB_ASSIGN] ::= = [EXP]
+[MB_ASSIGN] ::= [EXP_LIST]
+
+[EXP] ::= [T] [EXP_LIST]
+[EXP_LIST] ::= + [T] [EXP_LIST]
+[EXP_LIST] ::= - [T] [EXP_LIST]
+[EXP_LIST] ::= ''
+
+[T] ::= [FAC] [T_LIST]
+[T_LIST] ::= * [FAC] [T_LIST] 
+[T_LIST] ::= / [FAC] [T_LIST]
+[T_LIST] ::= ''
+
+[FAC] ::= ( [EXP] ) 
+[FAC] ::= id
+
+  

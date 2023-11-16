@@ -78,7 +78,6 @@ if (expression) {
 
 // EXPRESSION
 [STMT] ::= id [MB_ASSIGN]
-// [STMT] ::= ''
 
 [MB_ASSIGN] ::= = [EXP]
 [MB_ASSIGN] ::= [EXP_LIST]
@@ -95,5 +94,3 @@ if (expression) {
 
 [FAC] ::= ( [EXP] ) 
 [FAC] ::= id
-
-  

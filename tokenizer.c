@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "ctype.h"
 
 #include "tokenizer.h"
 #include "dynamic_string.c"
@@ -95,6 +96,7 @@ Token get_token(FILE *file){
         appendToDynamicString(token_string, symbol);
         copyString(token.string_value->str, token_string->str);
         return token;
+
 
       } else if (symbol == '-') {
         token.token_type = T_MINUS;

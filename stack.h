@@ -1,6 +1,13 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
+
+#define INITIAL_STACK_SIZE 10
+#define STACK_GROWTH_FACTOR 2
+
 //#define INITIAL_STACK_SIZE 10
 //#define STACK_GROWTH_FACTOR 2
 

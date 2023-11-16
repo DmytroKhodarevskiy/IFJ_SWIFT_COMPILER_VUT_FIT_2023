@@ -1,17 +1,4 @@
-
 #include "stack.h"
-#include <stdio.h>
-#include <stdlib.h>
-
-
-#define INITIAL_STACK_SIZE 10
-#define STACK_GROWTH_FACTOR 2
-//
-//typedef struct {
-//  Token *items;
-//  int top;
-//  int size;
-//} TokenStack;
 
 void initializeStack(TokenStack *stack) {
   stack->top = -1;
@@ -49,7 +36,6 @@ void push(TokenStack *stack, Token item) {
 
 Token pop(TokenStack *stack) {
   Token item;
-
   if (isEmpty(stack)) {
     fprintf(stderr, "Error: Stack underflow\n");
     exit(EXIT_FAILURE);

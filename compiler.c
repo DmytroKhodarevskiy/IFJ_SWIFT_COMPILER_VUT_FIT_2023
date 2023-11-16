@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "tokenizer.c"
 #include "stack.c"
 
@@ -45,6 +39,8 @@ int main(int argc, char* argv[]) {
     fprintf(outputFile, "StackToken %d type: %s, Token value: %s\n", i, tokenTypeNames[tokenStack.items[i].token_type], tokenStack.items[i].string_value->str);
     printf("StackToken %d type: %s, Token value: %s\n", i, tokenTypeNames[tokenStack.items[i].token_type], tokenStack.items[i].string_value->str);
   }
+
+  freeStack(&tokenStack);
 
   fclose(outputFile);
   fclose(file);

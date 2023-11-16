@@ -1,5 +1,4 @@
-StackToken 0 type: Keyword, Token value: while
-StackToken 1 type: Identifier, Token value: z
-StackToken 2 type: Less Than or Equal, Token value: <=
-StackToken 3 type: Keyword, Token value: if
-StackToken 4 type: Exponent Integer, Token value: 2e311231+3132313
+StackToken 0 type: Keyword, Token value: Int
+StackToken 1 type: Identifier, Token value: a
+StackToken 2 type: Assignment, Token value: =
+StackToken 3 type: Integer, Token value: 5

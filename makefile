@@ -6,7 +6,7 @@ CFLAGS = -std=c99 -Wall -Wextra -pedantic -lm -fcommon
 PROG = compiler.c
 
 # Output binary
-OUTPUT = compiler
+OUTPUT = compiler.exe
 
 .PHONY: all clean
 

@@ -76,6 +76,8 @@ typedef enum{
 
   T_UNDERSCORE_ID, // ( _ = ...)
 
+  T_NT, // NON TERMINAL
+
 } token_type;
 
 

@@ -117,7 +117,9 @@ Token get_token(FILE *file){
 
 
                 } else if (symbol == '>') {
+       
                     appendToDynamicString(token_string, symbol);
+   
                     state = Greater_or_GreaterEqual_STATE;
 
 
@@ -173,6 +175,8 @@ Token get_token(FILE *file){
                     token.token_type = T_COMMA;
                     copyString(token.string_value->str, token_string->str);
                     return token;
+
+
                 } else if (isdigit(symbol)) {
                     appendToDynamicString(token_string, symbol);
                     state = Reading_Number_STATE;
@@ -187,7 +191,7 @@ Token get_token(FILE *file){
 
                 
             case Reading_Identifier_or_Keyword_STATE:
-                if (isalnum(symbol)) {
+                if (isalnum(symbol) || symbol == '_') {
                     appendToDynamicString(token_string, symbol);
                 } else {
                     ungetc(symbol, file);

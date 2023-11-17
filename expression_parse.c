@@ -162,6 +162,7 @@ bool parse_expression(Token token, int *error, FILE* file) {
       push(&stack, token);
 
       printf("SHIFT\n");
+      print_stack(stack);
 
       token = get_token(file);
     } 

@@ -1,11 +1,12 @@
-#include <stdio.h>
-
 #ifndef _EXPR_PARSER_H
 #define _EXPR_PARSER_H
 
-typedef struct RULE {
-  char *left_side;
-  char *right_side;
+#include <stdio.h>
+#include "stack.h"
+
+typedef struct {
+  token_type left_side;
+  token_type right_side[4]; // Assuming the maximum size of right_side array is 4
 } Rule;
 
 typedef enum{
@@ -15,6 +16,8 @@ typedef enum{
   E, // error
   END, // END
 } Action_Letter;
+
+int perform_reduce(TokenStack *stack, int count);
 
 
 

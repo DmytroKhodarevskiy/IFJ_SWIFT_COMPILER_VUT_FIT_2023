@@ -4,7 +4,6 @@
 #include <ctype.h>
 
 #include "expression_parse.c"
-// #include "tokenizer.c"
 
 
 FILE* read_file(char* filename){
@@ -18,31 +17,28 @@ FILE* read_file(char* filename){
 
 // int main(int argc, char* argv[]){
 int main(){
-  
+
   FILE* file = read_file("test.txt");
   int error = 0;
-  bool lex_ok = false;
 
   while (true){
+
     if (feof(file)){
       break;
     }
 
 
     Token token = get_token(file);
-    // printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
     bool lex_ok;
 
-    if (token.token_type == T_TYPE_ID){
-      lex_ok = parse_expression(token, &error, file);
-      token = get_token(file);
+    if (token.token_type == T_TYPE_ID || token.token_type == T_LPAR){
+      lex_ok = parse_expression(token, &error, &file);
 
-      printf("%d\n", lex_ok);
+      printf("Syntax analysis: ");
+
+      if (lex_ok) printf("Syntax analysis OK\n");
+      else printf("Syntax analysis failed\n");
     }
-
- 
-    
-    // break;
 
     if (token.token_type == T_ERR){
       printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
@@ -50,16 +46,8 @@ int main(){
       exit(1);
     }
 
-
-
-    printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
+    // printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
   }
-  
-  printf("%daaaaaaaa\n", lex_ok);
-
-
-  if (lex_ok) printf("Lexical analysis OK\n");
-  else printf("Lexical analysis failed\n");
 
   return 0;
 }

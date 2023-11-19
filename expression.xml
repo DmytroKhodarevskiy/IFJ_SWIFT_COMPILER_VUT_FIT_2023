@@ -1,0 +1,32 @@
+<!-- 'i' is a terminal. Any <[a-zA-Z0-9-]*> is a nonterminal -->
+<!-- 'i' can be function call, variable, numeric or string literal -->
+
+<E>     -> ( <E> )
+<E>     -> id
+
+<!--Arithmetic rules-->
+<E>     -> <E> + <E>
+<E>     -> <E> - <E>
+<E>     -> <E> * <E>
+<E>     -> <E> / <E>git commit -m "Adding expression rules
+
+<!--Unary operators-->
+<E>     -> <E>!
+
+
+<!--Logical rules-->
+<E>     -> <E> < <E>
+<E>     -> <E> > <E>
+<E>     -> <E> <= <E>
+<E>     -> <E> >= <E>
+<E>     -> <E> == <E>
+<E>     -> <E> != <E>
+
+<!--Concat rule-->
+<E>     -> <E> ?? <E>
+
+<!--Rules for function call parsing-->
+<E>             -> [function-id](<argument-list>)
+<argument-list> -> <argument> <argument-list>
+<argument-list> -> [eps]
+<argument>      -> <expression>

@@ -15,7 +15,7 @@ Dynamic_string* createDynamicString() {
     dynamicString->str = (char*)malloc(INITIAL_SIZE);
     
     if (dynamicString->str == NULL) {
-        free(dynamicString); 
+        free(dynamicString);
         fprintf(stderr, "Memory allocation for string failed.\n");
         return NULL;
     }

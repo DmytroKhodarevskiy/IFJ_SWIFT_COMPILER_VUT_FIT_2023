@@ -50,6 +50,8 @@ int isKeyword(const char* word) {
     return 1;
   } else if (strcmp(word, "var") == 0) {
     return 1;
+  } else if (strcmp(word, "let") == 0) {
+    return 1;
   } else if (strcmp(word, "while") == 0) {
     return 1;
   } else if (strcmp(word, "return") == 0) {

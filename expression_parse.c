@@ -153,22 +153,23 @@ bool end_of_read(Token token) {
  * @param file A pointer to the file stream from which tokens are read.
  * @return `true` if parsing is successful; `false` if an error occurs.
  */
-bool parse_expression(Token token, int *error, FILE** file) {
+bool parse_expression(Token *token, int *error, FILE** file) {
   TokenStack stack;
   initializeStack(&stack);
 
-  while (!end_of_read(token) || stack.items[stack.top].token_type != T_NT || stack.top != 0) {
+  while (!end_of_read(*token) || stack.items[stack.top].token_type != T_NT || stack.top != 0) {
       print_stack(stack);
 
-      int column = get_index_from_token(token);
+      int column = get_index_from_token(*token);
       int row = get_index_from_token(last_terminal(stack));
 
       Action_Letter action_letter = precedence_table[row][column];
+      printf("row: %d, column: %d, action_letter: %d\n", row, column, action_letter);
 
       if (action_letter == S) {
         insert_edge(&stack);
-        push(&stack, token);
-        token = get_token(*file);
+        push(&stack, *token);
+        *token = get_token(*file);
       }
       else if (action_letter == R) {
         if(perform_reduce(&stack, count_of_token_before_edge(stack)) == -1){
@@ -177,8 +178,8 @@ bool parse_expression(Token token, int *error, FILE** file) {
         }
       }
       else if (action_letter == EQ) {
-          push(&stack, token);
-          token = get_token(*file);
+          push(&stack, *token);
+          *token = get_token(*file);
       }
       else if (action_letter == E) {
         *error = 1;

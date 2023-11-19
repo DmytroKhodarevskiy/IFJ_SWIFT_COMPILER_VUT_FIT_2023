@@ -31,8 +31,14 @@ int main(){
     Token token = get_token(file);
     bool lex_ok;
 
-    if (token.token_type == T_TYPE_ID || token.token_type == T_LPAR){
+    if (get_index_from_token(token) == 7 || get_index_from_token(token) == 5){
       lex_ok = parse_expression(token, &error, &file);
+      if (lex_ok) printf("Lexical analysis OK\n");
+      else {
+        printf("Lexical analysis failed\n");
+        return -1;
+      }
+    }
 
       printf("Syntax analysis: ");
 
@@ -46,7 +52,9 @@ int main(){
       exit(1);
     }
 
-    // printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
+
+
+    printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
   }
 
   return 0;

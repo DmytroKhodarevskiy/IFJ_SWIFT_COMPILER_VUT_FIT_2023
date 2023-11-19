@@ -19,24 +19,25 @@ FILE* read_file(char* filename){
 int main(){
 
   FILE* file = read_file("test.txt");
-  int *error = 0;
+  int error = 0;
 
   while (true){
+
     if (feof(file)){
       break;
     }
-
 
     Token token = get_token(file);
     bool lex_ok;
 
     if (token.token_type == T_TYPE_ID || token.token_type == T_LPAR){
-      lex_ok = parse_expression(token, error, &file);
-      if (lex_ok) printf("Lexical analysis OK\n");
-      else printf("Lexical analysis failed\n");
+      lex_ok = parse_expression(token, &error, &file);
+
+      printf("Syntax analysis: ");
+
+      if (lex_ok) printf("Syntax analysis OK\n");
+      else printf("Syntax analysis failed\n");
     }
-
-
 
     if (token.token_type == T_ERR){
       printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
@@ -44,10 +45,9 @@ int main(){
       exit(1);
     }
 
-
-
     // printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
   }
 
+  printf("\033[31mThis text is red.\033[0m\n");
   return 0;
 }

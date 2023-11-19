@@ -40,7 +40,7 @@ bool test(char *test_file) {
     }
     Token token = get_token(file);
     bool lex_ok;
-    if (token.token_type == T_TYPE_ID || token.token_type == T_LPAR){
+    if (get_index_from_token(token) == 7 || get_index_from_token(token) == 5){
       lex_ok = parse_expression(&token, &error, &file);
       unmute_stdout(saved_stdout);
       return lex_ok;

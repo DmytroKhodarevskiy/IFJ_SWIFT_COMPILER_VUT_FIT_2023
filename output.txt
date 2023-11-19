@@ -1,4 +1,0 @@
-StackToken 0 type: Keyword, Token value: Int
-StackToken 1 type: Identifier, Token value: a
-StackToken 2 type: Assignment, Token value: =
-StackToken 3 type: Integer, Token value: 5

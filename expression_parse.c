@@ -168,6 +168,7 @@ bool parse_expression(Token *token, int *error, FILE** file) {
       int row = get_index_from_token(last_terminal(stack));
 
       Action_Letter action_letter = precedence_table[row][column];
+      printf("row: %d, column: %d, action_letter: %d\n", row, column, action_letter);
 
       if (action_letter == S) {
         insert_edge(&stack);

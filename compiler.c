@@ -31,12 +31,11 @@ int main(){
     Token token = get_token(file);
     bool lex_ok;
 
-    if (get_index_from_token(token) == 7 || get_index_from_token(token) == 5){
+    if (get_index_from_token(token) != 8){
       lex_ok = parse_expression(&token, &error, &file);
       if (lex_ok) printf("Lexical analysis OK\n");
       else {
         printf("Lexical analysis failed\n");
-        return -1;
       }
     }
 

@@ -41,7 +41,7 @@ bool test(char *test_file) {
     Token token = get_token(file);
     bool lex_ok;
     if (token.token_type == T_TYPE_ID || token.token_type == T_LPAR){
-      lex_ok = parse_expression(token, &error, &file);
+      lex_ok = parse_expression(&token, &error, &file);
       unmute_stdout(saved_stdout);
       return lex_ok;
     }
@@ -51,63 +51,65 @@ bool test(char *test_file) {
 }
 
 
-void Perform_test_true(char *test_file) {
+void Perform_test_true(char *test_file, int *err) {
   // printf("Testing file: %s\n", test_file);
   bool ok = test(test_file);
   if (ok) {
     printf("\033[32m Test %s passed! \033[0m\n", test_file);
   } else {
+    (*err)++;
     printf("\033[31m Test %s failed... \033[0m\n", test_file);
   }
 
 }
 
-void Perform_test_false(char *test_file) {
+void Perform_test_false(char *test_file, int *err) {
   // printf("Testing file: %s\n", test_file);
   bool ok = test(test_file);
   if (!ok) {
     printf("\033[32m Test %s passed! \033[0m\n", test_file);
   } else {
+    (*err)++;
     printf("\033[31m Test %s failed... \033[0m\n", test_file);
   }
 
 }
 
 // Function to process each filename
-void processFile_true(const char *filename) {
+void processFile_true(const char *filename, int *err) {
     char *folder = malloc(strlen(filename) + strlen(folder) + 1);
     strcpy(folder, "tests/inputs/true/");
     strcat(folder, filename);
-    Perform_test_true(folder);
+    Perform_test_true(folder, err);
     free(folder);
 }
 
-void processFile_false(const char *filename) {
+void processFile_false(const char *filename, int *err) {
     char *folder = malloc(strlen(filename) + strlen(folder) + 1);
     strcpy(folder, "tests/inputs/false/");
     // printf("%s\n", folder);
     // printf("%s\n", filename);
     strcat(folder, filename);
     // folder[strlen(folder)] = '\0';
-    Perform_test_false(folder);
+    Perform_test_false(folder, err);
     free(folder);
 }
 
 // Function to process all files in the directory
-void processAllFiles(const char **filenames, int count, bool foldertype) {
+void processAllFiles(const char **filenames, int count, bool foldertype, int *err) {
     
     if (foldertype) {
       for (int i = 0; i < count; ++i) {
-        processFile_true(filenames[i]);
+        processFile_true(filenames[i], err);
       }
     } else {
       for (int i = 0; i < count; ++i) {
-        processFile_false(filenames[i]);
+        processFile_false(filenames[i], err);
       }
     }
 }
 
-void process_dir(const char *folderPath, bool foldertype) {
+void process_dir(const char *folderPath, bool foldertype, int *err) {
   // Allocate an initial array of string pointers
     DIR *dir;
     struct dirent *entry;
@@ -133,9 +135,9 @@ void process_dir(const char *folderPath, bool foldertype) {
         }
 
         // Resize the array if necessary
-        if (count >= size) {
+        if (count >= arr_size) {
             arr_size *= 2;
-            filenames = realloc(filenames, size * sizeof(char*));
+            filenames = realloc(filenames, arr_size * sizeof(char*));
             if (!filenames) {
                 perror("Realloc failed");
             }
@@ -152,7 +154,7 @@ void process_dir(const char *folderPath, bool foldertype) {
     }
 
     // Process all files
-    processAllFiles((const char **)filenames, count, foldertype);
+    processAllFiles((const char **)filenames, count, foldertype, err);
 
     // printf("%d files processed\n", count);
     // printf("%s file\n", filenames[0]);
@@ -178,11 +180,17 @@ int main() {
     // char **filenames;
     // int count = 0;
     // int arr_size = 10; // Initial size of the array
+    int err = 0;
 
-    process_dir(folderPathTrue, true);
-    process_dir(folderPathFalse, false);
+    process_dir(folderPathTrue, true, &err);
+    printf("\n");
+    process_dir(folderPathFalse, false, &err);
 
-    printf("All tests passed!\n");
+
+    if (err > 0) {
+      printf("\n\033[31m %d tests failed... Димончик работай \033[0m\n", err);
+    } else 
+    printf("\nAll tests passed!\n");
 
     // Cleanup
     // for (int i = 0; i < count; ++i) {

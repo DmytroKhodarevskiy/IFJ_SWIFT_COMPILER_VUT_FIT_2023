@@ -19,10 +19,10 @@ int precedence_table[size][size] = {
   {S,  S,  E,  S,  R,  S,  R,  S,  R},  // rel
   {R,  R,  R,  E,  R,  E,  R,  E,  R},  // !
   {S,  S,  S,  S,  S,  S,  R,  S,  R},  // ??
-  {S,  S,  S,  S,  S,  S,  EQ, S,  E}, // (
-  {R,  R,  R,  R,  R,  E,  R,  E,  R}, // )
-  {R,  R,  R,  R,  R,  E,  R,  E,  R}, // i
-  {S,  S,  S,  S,  S,  S,  E,  S,  END}  // $
+  {S,  S,  S,  S,  S,  S,  EQ, S,  E},  // (
+  {R,  R,  R,  R,  R,  E,  R,  E,  R},  // )
+  {R,  R,  R,  R,  R,  E,  R,  E,  R},  // i
+  {S,  S,  S,  S,  S,  S,  E,  S,  END} // $
 
 };
 
@@ -156,23 +156,23 @@ bool end_of_read(Token token) {
  * @param file A pointer to the file stream from which tokens are read.
  * @return `true` if parsing is successful; `false` if an error occurs.
  */
-bool parse_expression(Token token, int *error, FILE** file) {
+bool parse_expression(Token *token, int *error, FILE** file) {
 
   TokenStack stack;
   initializeStack(&stack);
 
-  while (!end_of_read(token) || stack.items[stack.top].token_type != T_NT || stack.top != 0) {
+  while (!end_of_read(*token) || stack.items[stack.top].token_type != T_NT || stack.top != 0) {
       print_stack(stack);
 
-      int column = get_index_from_token(token);
+      int column = get_index_from_token(*token);
       int row = get_index_from_token(last_terminal(stack));
 
       Action_Letter action_letter = precedence_table[row][column];
 
       if (action_letter == S) {
         insert_edge(&stack);
-        push(&stack, token);
-        token = get_token(*file);
+        push(&stack, *token);
+        *token = get_token(*file);
       }
 
       else if (action_letter == R) {
@@ -182,8 +182,8 @@ bool parse_expression(Token token, int *error, FILE** file) {
         }
       }
       else if (action_letter == EQ) {
-          push(&stack, token);
-          token = get_token(*file);
+          push(&stack, *token);
+          *token = get_token(*file);
       }
       else if (action_letter == E) {
         printf("Error: Invalid token\n");
@@ -209,21 +209,23 @@ int get_rule_index(Token tokens[], int count) {
       if(tokens[0].token_type == T_TYPE_ID || tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || tokens[0].token_type == T_FLOAT) return 1;
       else return -1;
     case 2:
-        if(tokens[0].token_type == T_NT && tokens[1].token_type == T_NOTNIL) return 5;
+        // printf("token 0: %d\n", tokens[0].token_type);
+        // printf("token 1: %d\n", tokens[1].token_type);
+        if(tokens[0].token_type == T_NT && tokens[1].token_type == T_NOTNIL) return 6;
         else return -1;
     case 3:
-        if(tokens[0].token_type == T_LPAR && tokens[1].token_type == T_NT && tokens[2].token_type == T_RPAR) return 0;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_PLUS && tokens[2].token_type == T_NT) return 2;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_MINUS && tokens[2].token_type == T_NT) return 3;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_MULTIPLY && tokens[2].token_type == T_NT) return 4;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_DIVIDE && tokens[2].token_type == T_NT) return 5;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_LESS && tokens[2].token_type == T_NT) return 7;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_GREATER && tokens[2].token_type == T_NT) return 8;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_LESS_EQUAL && tokens[2].token_type == T_NT) return 9;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_GREATER_EQUAL && tokens[2].token_type == T_NT) return 10;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_EQUAL && tokens[2].token_type == T_NT) return 11;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_NOT_EQUAL && tokens[2].token_type == T_NT) return 12;
-        else if(tokens[0].token_type == T_NT && tokens[1].token_type == T_BINARY_OP && tokens[2].token_type == T_NT) return 13;
+        if(     tokens[0].token_type == T_LPAR && tokens[1].token_type == T_NT            && tokens[2].token_type == T_RPAR) return 0;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_PLUS          && tokens[2].token_type == T_NT) return 2;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_MINUS         && tokens[2].token_type == T_NT) return 3;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_MULTIPLY      && tokens[2].token_type == T_NT) return 4;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_DIVIDE        && tokens[2].token_type == T_NT) return 5;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_LESS          && tokens[2].token_type == T_NT) return 7;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_GREATER       && tokens[2].token_type == T_NT) return 8;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_LESS_EQUAL    && tokens[2].token_type == T_NT) return 9;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_GREATER_EQUAL && tokens[2].token_type == T_NT) return 10;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_EQUAL         && tokens[2].token_type == T_NT) return 11;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_NOT_EQUAL     && tokens[2].token_type == T_NT) return 12;
+        else if(tokens[0].token_type == T_NT   && tokens[1].token_type == T_BINARY_OP     && tokens[2].token_type == T_NT) return 13;
         else return -1;
     default:
       return -1;
@@ -288,7 +290,7 @@ int perform_reduce(TokenStack *stack, int count) {
     tops[1] = stack->items[stack->top];
   }
   else if (count == 3){
-    tops[0] = stack->items[stack->top- 2];
+    tops[0] = stack->items[stack->top - 2];
     tops[1] = stack->items[stack->top - 1];
     tops[2] = stack->items[stack->top];
   }

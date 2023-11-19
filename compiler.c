@@ -48,6 +48,5 @@ int main(){
     // printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
   }
 
-  printf("\033[31mThis text is red.\033[0m\n");
   return 0;
 }

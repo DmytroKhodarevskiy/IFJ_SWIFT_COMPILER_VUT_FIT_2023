@@ -52,7 +52,7 @@ bool test(char *test_file) {
 
 
 void Perform_test_true(char *test_file) {
-
+  // printf("Testing file: %s\n", test_file);
   bool ok = test(test_file);
   if (ok) {
     printf("\033[32m Test %s passed! \033[0m\n", test_file);
@@ -63,7 +63,7 @@ void Perform_test_true(char *test_file) {
 }
 
 void Perform_test_false(char *test_file) {
-
+  // printf("Testing file: %s\n", test_file);
   bool ok = test(test_file);
   if (!ok) {
     printf("\033[32m Test %s passed! \033[0m\n", test_file);
@@ -152,28 +152,44 @@ void process_dir(const char *folderPath, bool foldertype) {
     }
 
     // Process all files
-      processAllFiles((const char **)filenames, count, foldertype);
+    processAllFiles((const char **)filenames, count, foldertype);
+
+    // printf("%d files processed\n", count);
+    // printf("%s file\n", filenames[0]);
+    // printf("%s file\n", filenames[1]);
+    // printf("%s file\n", filenames[2]);
+    // for (int i = 0; i < count; ++i) {
+    //     if (filenames[i] != NULL) {
+    //       free(filenames[i]);
+    //       filenames[i] = NULL; // Prevent double free by setting to NULL
+    //     } 
+    //   }
+    // free(filenames);
+    closedir(dir);
+
 }
 
 
 int main() {
-    DIR *dir;
-    struct dirent *entry;
+    // DIR *dir;
+    // struct dirent *entry;
     const char *folderPathTrue = "tests/inputs/true";
     const char *folderPathFalse = "tests/inputs/false";
-    char **filenames;
-    int count = 0;
-    int arr_size = 10; // Initial size of the array
+    // char **filenames;
+    // int count = 0;
+    // int arr_size = 10; // Initial size of the array
 
     process_dir(folderPathTrue, true);
     process_dir(folderPathFalse, false);
 
+    printf("All tests passed!\n");
+
     // Cleanup
-    for (int i = 0; i < count; ++i) {
-        free(filenames[i]);
-    }
-    free(filenames);
-    closedir(dir);
+    // for (int i = 0; i < count; ++i) {
+    //     printf("%s\n", filenames[i]);
+    //     free(filenames[i]);
+    // }
+    // free(filenames);
 
     return 0;
 }

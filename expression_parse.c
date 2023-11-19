@@ -38,8 +38,6 @@ void print_stack(TokenStack stack) {
 
 
 Token last_terminal(TokenStack stack) {
-  //print_stack(stack);
-  //printf("Token type: %s\n", stack.items[stack.top].string_value->str);
   for(int i = stack.top; i >= 0; i--)
     if(stack.items[i].token_type != T_NT ) return stack.items[i];
 
@@ -76,7 +74,7 @@ int count_of_token_before_edge(TokenStack stack){
   return count;
 }
 
-bool end_of_read(Token token, TokenStack stack) {
+bool end_of_read(Token token) {
   if (token.token_type == T_LBRACE) {
     return true;
   }
@@ -129,25 +127,22 @@ bool parse_expression(Token token, int *error, FILE** file) {
   Trow.token_type = T_DOLLAR;
   push(&stack, Trow);
 
-  Token edgeToken = init_token();
-  edgeToken.token_type = T_RD_EDGE;
+  // Token edgeToken = init_token();
+  // edgeToken.token_type = T_RD_EDGE;
   
   bool endRead = false;
 
   // while (!endRead || stack.items[stack.top].token_type != T_NT || stack.top != 1) {
   while (!( endRead && stack.items[stack.top].token_type == T_NT && stack.top == 1 )) {
 
-      if (!endRead) endRead = end_of_read(token, stack);
-      // endRead = end_of_read(token, stack);
+      if (!endRead) endRead = end_of_read(token);
 
-      //printf("End of read: %d\n", endRead);
-      print_stack(stack);
       printf("\n");
+      print_stack(stack);
 
       int column = get_index_from_token(token);
 
       int row = get_index_from_token(last_terminal(stack));
-     // printf("Last terminal: %s\n", last_terminal(stack).string_value->str);
 
       Action_Letter action_letter = precedence_table[row][column];
     //  printf("row: %d, column: %d, action_letter: %d\n", row, column, action_letter );
@@ -166,27 +161,28 @@ bool parse_expression(Token token, int *error, FILE** file) {
 
       if (action_letter == S) {
         if(!endRead) {
-          //printf("dfhdfhdfhdfhdfhdfhgdsgSHIFT\n");
+          printf("SHIFT\n");
           insert_edge(&stack);
           push(&stack, token);
         }
       }
 
       else if (action_letter == R) {
-
+        printf("REDUCE\n");
         if (perform_reduce(&stack, count_of_token_before_edge(stack)) == -1) {
           *error = 1;
           return false;
         }
 
         if (!endRead && token.token_type != T_RPAR) {
-        insert_edge(&stack);
-        push(&stack, token);}
+          insert_edge(&stack);
+          push(&stack, token);
+        }
 
       }
 
       else if (action_letter == EQ) {
-
+        printf("EQUAL\n");
         push(&stack, token);
 
         if (perform_reduce(&stack, count_of_token_before_edge(stack)) == -1) {
@@ -196,21 +192,16 @@ bool parse_expression(Token token, int *error, FILE** file) {
       }
 
       else if (action_letter == E) {
+        printf("Error: Invalid token\n");
         *error = 1;
         return false;
       }
 
-//      else if (action_letter == END) {
-//        print_stack(stack);
-//        return true;
-//      }
-
-//      if(endRead)
-//        printf("Action: End of read\n");
       if(!endRead || action_letter != S ) {
         if(token.token_type != T_RPAR || action_letter == EQ) token = get_token(*file);
       }
-      //if(token.token_type == T_RPAR) printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
+
+      print_stack(stack);
   }
 
   print_stack(stack);
@@ -244,19 +235,9 @@ Rule rules[] = {
 int get_rule_index(Token tokens[]) {
   int match = 0;
 
-  // printf("tokens: %s, %s, %s, %s\n", tokens[0].string_value->str, tokens[1].string_value->str, tokens[2].string_value->str, tokens[3].string_value->str);
-  // printf("tokens: %d, %d, %d, %d\n", tokens[0].token_type, tokens[1].token_type, 
-  // tokens[2].token_type, tokens[3].token_type);
-
   for (int i = 0; i < 14; i++) {
 
     for (int j = 0; j < 4; j++) {
-
-      // if (i == 6) {
-      //   printf("toks: %d %d %d %d\n", tokens[0].token_type, tokens[1].token_type, tokens[2].token_type, tokens[3].token_type);
-
-      //   printf("rules: %d %d %d %d\n", rules[i].right_side[0], rules[i].right_side[1], rules[i].right_side[2], rules[i].right_side[3]);
-      // }
 
       if (rules[i].right_side[j] == tokens[j].token_type) {
         match++;
@@ -314,10 +295,6 @@ void perform_rule(int rule_index, TokenStack *stack) {
       push(stack, Etoken);
   }
 
-//  Token token;
-//  token.token_type = T_TYPE_ID;
-//  token.string_value->str = rules[rule_index].left_side;
-//  push(stack, token);
 }
 
 //void perform_reduce(TokenStack *stack) {
@@ -356,9 +333,7 @@ void perform_rule(int rule_index, TokenStack *stack) {
 //}
 
 int perform_reduce(TokenStack *stack, int count) {
-  //printf("Count: %d\n", count);
 
-  //print_stack(*stack);
   Token tops[4];
   tops[0] = init_token();
   tops[1] = init_token();
@@ -368,14 +343,9 @@ int perform_reduce(TokenStack *stack, int count) {
   if(count == -1) return -1;
 
   else if (count == 1){
-//      if(stack->items[stack->top].token_type == T_TYPE_ID || stack->items[stack->top].token_type == T_DOUBLE || stack->items[stack->top].token_type == T_INT){
-          tops[0] = stack->items[stack->top];
-//      }
-//      else return -1;
+      tops[0] = stack->items[stack->top];
   }
   else if (count == 2){
-      // tops[0] = stack->items[stack->top];
-      // tops[1] = stack->items[stack->top - 1];
       tops[0] = stack->items[stack->top - 1 ];
       tops[1] = stack->items[stack->top];
   }
@@ -385,30 +355,12 @@ int perform_reduce(TokenStack *stack, int count) {
       tops[2] = stack->items[stack->top];
   }
 
-  // printf("Rule index: \n" );
   int rule_index = get_rule_index(tops);
-
-  // printf("Rule index: %d\n", rule_index);
 
   if(rule_index == -1) {
     return -1;
   } 
   else perform_rule(rule_index, stack);
- // print_stack(*stack);
-
-//  int rule_index = get_rule_index(tokens);
-//  printf("Rule index: %d\n", rule_index);
-//  if(rule_index == -1){
-//      return -1;
-//  }
-//
-//
-//  perform_rule(rule_index, stack);
-
-  // while (top.token_type != T_LPAR) {
-  // top = pop(stack);
-  // }
-  // pop(stack);
-  // push(stack, top);
+ 
   return 0;
 }

@@ -19,7 +19,7 @@ FILE* read_file(char* filename){
 int main(){
 
   FILE* file = read_file("test.txt");
-  int *error = 0;
+  int error = 0;
 
   while (true){
     if (feof(file)){
@@ -30,10 +30,13 @@ int main(){
     Token token = get_token(file);
     bool lex_ok;
 
-    if (token.token_type == T_TYPE_ID || token.token_type == T_LPAR){
-      lex_ok = parse_expression(token, error, &file);
+    if (get_index_from_token(token) == 7 || get_index_from_token(token) == 5){
+      lex_ok = parse_expression(token, &error, &file);
       if (lex_ok) printf("Lexical analysis OK\n");
-      else printf("Lexical analysis failed\n");
+      else {
+        printf("Lexical analysis failed\n");
+        return -1;
+      }
     }
 
 
@@ -46,7 +49,7 @@ int main(){
 
 
 
-    // printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
+    printf("Token type: %s, Token value: %s\n", tokenTypeNames[token.token_type], token.string_value->str);
   }
 
   return 0;

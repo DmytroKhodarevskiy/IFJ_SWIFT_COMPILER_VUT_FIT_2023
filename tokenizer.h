@@ -80,8 +80,6 @@ typedef enum{
 
   T_DOLLAR, // $
 
-  T_NT, // NON TERMINAL
-
 } token_type;
 
 

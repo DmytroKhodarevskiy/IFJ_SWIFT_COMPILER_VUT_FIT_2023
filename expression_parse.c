@@ -8,36 +8,100 @@
 
 #include "stack.c"
 #include "tokenizer.c"
-#define size 9
 
-typedef struct token_symbol {
-  char *string;
-  int index;
-} Token_Symbol;
+#define size 9
 
 int precedence_table[size][size] = {
 
-// +-  */  rel !   ??  (   )   i   $
+// +-  */  rel  !  ??  (    )  i   $
   {R,  S,  R,  S,  R,  S,  R,  S,  R},  // +-
   {R,  R,  R,  S,  R,  S,  R,  S,  R},  // */
   {S,  S,  E,  S,  R,  S,  R,  S,  R},  // rel
   {R,  R,  R,  E,  R,  E,  R,  E,  R},  // !
   {S,  S,  S,  S,  S,  S,  R,  S,  R},  // ??
   {S,  S,  S,  S,  S,  S,  EQ, S,  E},  // (
-  {R,  R,  R,  R,  R,  E,  S,  E,  R},  // )
-  {R,  R,  R,  R,  R,  E,  S,  E,  R},  // i
-  {S,  S,  S,  S,  S,  S,  E,  S,  END} // $ 
+  {R,  R,  R,  R,  R,  E,  R,  E,  R},  // )
+  {R,  R,  R,  R,  R,  E,  R,  E,  R},  // i
+  {S,  S,  S,  S,  S,  S,  E,  S,  END} // $
 
 };
 
+/**
+ * Prints the current state of the token stack.
+ *
+ * @param stack The token stack to be printed.
+ */
 void print_stack(TokenStack stack) {
-  printf("[$] ");
+  printf("[$]\t");
   for (int i = 0; i <= stack.top; i++) {
-    printf("[%d] ", stack.items[i].token_type);
+    if(stack.items[i].token_type == T_RD_EDGE) printf("[RD]\t");
+    else printf("[%s]\t", stack.items[i].string_value->str);
   }
   printf("\n");
 }
 
+/**
+ * Finds the last terminal token in the stack.
+ *
+ * @param stack The stack from which to find the last terminal token.
+ * @return The last terminal token if found; otherwise, a token indicating an empty or error state.
+ */
+Token last_terminal(TokenStack stack) {
+  Token token = init_token();
+  token.token_type = T_EMPTY;
+  if(isEmpty(&stack)) {
+    return token;
+  }
+  for(int i = stack.top; i >= 0; i--){
+    if(stack.items[i].token_type != T_NT ) return stack.items[i];
+  }
+  return token;
+}
+
+/**
+ * Inserts a reduction edge token in the stack. If the top token is non-terminal,
+ * the edge token is inserted before it; otherwise, it's placed on top of the stack.
+ *
+ * @param stack A pointer to the stack where the edge token will be inserted.
+ */
+void insert_edge(TokenStack *stack) {
+
+  Token edgeToken = init_token();
+  edgeToken.token_type = T_RD_EDGE;
+  Token token;
+
+  if(stack->items[stack->top].token_type == T_NT){
+    token = pop(stack);
+    push(stack, edgeToken);
+    push(stack, token);
+  }
+
+  else{
+    push(stack, edgeToken);
+  }
+}
+
+/**
+ * Counts the number of tokens before encountering a reduction edge token in the stack.
+ *
+ * @param stack The stack to be scanned for the count.
+ * @return The number of tokens before the reduction edge token; -1 if edge not found.
+ */
+int count_of_token_before_edge(TokenStack stack){
+    int count = 0;
+    for(int i = stack.top; stack.items[i].token_type != T_RD_EDGE; i--){
+      if(i == 0 && count == 0) return -1;
+      count++;
+    }
+    return count;
+}
+
+/**
+ * Maps a given token to its corresponding index in the precedence table.
+ *
+ * @param token The token to be mapped.
+ * @return The index of the token in the precedence table.
+ */
 int get_index_from_token(Token token) {
   switch (token.token_type) {
     case T_PLUS:
@@ -66,293 +130,204 @@ int get_index_from_token(Token token) {
     case T_DOUBLE:
     case T_FLOAT:
       return 7;
-    case T_EOF:
-      return 8;
     default:
       return 8;
   }
 }
 
-// bool parse_expression(Token token_string[], int token_string_size, int *error) {
-//   TokenStack stack;
-//   initializeStack(&stack);
-
-//   for (int i = 0; i < token_string_size; i++) {
-//     Token token = token_string[i];
-//     int column = get_index_from_token(token);
-//     int row = get_index_from_token(stack.items[stack.top]);
-
-//     Action_Letter action_letter = precedence_table[row][column];
-
-//     if (action_letter == S) {
-//       push(&stack, token);
-//     } 
-    
-//     else if (action_letter == R) {
-//       // Token top = stack.items[stack.top];
-//       // while (top.token_type != T_LPAR) {
-//         // top = pop(&stack);
-//       // }
-//       perform_reduce(&stack);
-//     } 
-    
-//     else if (action_letter == EQ) {
-//       perform_reduce(&stack);
-//     } 
-    
-//     else if (action_letter == E) {
-//       error = 1;
-//       return false;
-//     } 
-    
-//     else if (action_letter == END) {
-//       return true;
-//     }
-//   }
-// }
-
-bool end_of_expr(Token token) {
-  if (token.token_type == T_LBRACE) {
-    return true;
+/**
+ * Checks if the end of the input stream (represented by a specific token) is reached.
+ *
+ * @param token The token to check for the end-of-stream condition.
+ * @return `true` if the end of the stream is reached; `false` otherwise.
+ */
+bool end_of_read(Token token) {
+  if (get_index_from_token(token) == 8) {
+      return true;
   }
-
   return false;
 }
 
-bool parse_expression(Token token, int *error, FILE* file) {
+/**
+ * Parses an expression using an operator precedence parsing method.
+ *
+ * @param token The current token to be parsed.
+ * @param error A pointer to an integer where the error state will be stored (0 for no error, 1 for error).
+ * @param file A pointer to the file stream from which tokens are read.
+ * @return `true` if parsing is successful; `false` if an error occurs.
+ */
+bool parse_expression(Token *token, int *error, FILE** file) {
+
   TokenStack stack;
   initializeStack(&stack);
 
-  // while (end_of_expr(token) == false || isEmpty(&stack) == false) {
-  // while (end_of_expr(token) == false && strcmp(stack.items[stack.top].string_value->str, "E")) {
-  // while (end_of_expr(token) == false && stack.items[stack.top].token_type != T_NT) {
-  while (!(end_of_expr(token) == true && stack.items[stack.top].token_type == T_NT && stack.top == 0)) {
-  
-    int column = get_index_from_token(token);
+  while (!end_of_read(*token) || stack.items[stack.top].token_type != T_NT || stack.top != 0) {
+      print_stack(stack);
 
-    Token Trow = init_token();
+      int column = get_index_from_token(*token);
+      int row = get_index_from_token(last_terminal(stack));
 
-    int row;
+      Action_Letter action_letter = precedence_table[row][column];
+      printf("row: %d, column: %d, action_letter: %d\n", row, column, action_letter);
 
-    if (stack.top != -1) {
-      Trow = stack.items[stack.top];
-      row = get_index_from_token(Trow);
+      if (action_letter == S) {
+        insert_edge(&stack);
+        push(&stack, *token);
+        *token = get_token(*file);
+      }
 
-      if (strcmp(Trow.string_value->str, "E") == 0) {
-        if (stack.top > 0) {
-          Trow = stack.items[stack.top - 1];
-          row = get_index_from_token(Trow);
+      else if (action_letter == R) {
+        if(perform_reduce(&stack, count_of_token_before_edge(stack)) == -1){
+          *error = 1;
+          return false;
         }
-        else
-          row = 8;
       }
-
-    }
-
-    else {
-      row = 8;
-    }
-    
-
-    Action_Letter action_letter = precedence_table[row][column];
-
-    printf("row: %d, column: %d, action_letter: %d\n", row, column, action_letter);
-
-    if (action_letter == S) {
-      push(&stack, token);
-
-      printf("SHIFT\n");
-      print_stack(stack);
-
-      token = get_token(file);
-    } 
-    
-    else if (action_letter == R) {
-      printf("REDUCE\n");
-      perform_reduce(&stack, error);
-      print_stack(stack);
-      if (*error == 1) {
+      else if (action_letter == EQ) {
+          push(&stack, *token);
+          *token = get_token(*file);
+      }
+      else if (action_letter == E) {
+        printf("Error: Invalid token\n");
+        *error = 1;
         return false;
       }
-      printf("REDUCE DONE\n");
-    } 
-    
-    else if (action_letter == EQ) {
-      perform_reduce(&stack, error);
-      if (*error == 1) {
-        return false;
-      }
-    } 
-    
-    else if (action_letter == E) {
-      *error = 1;
-      return false;
-    } 
-    
-    else if (action_letter == END) {
-      return true;
-    }
-
   }
 
+  print_stack(stack);
   return true;
 }
 
-// Rule rules[] = {
-//   {"E",               {"(",             "E",              ")",              NULL}},
-//   {"E",               {"id",            NULL,             NULL,             NULL}},
-//   {"E",               {"E",             "+",              "E",              NULL}},
-//   {"E",               {"E",             "-",              "E",              NULL}},
-//   {"E",               {"E",             "*",              "E",              NULL}},
-//   {"E",               {"E",             "/",              "E",              NULL}},
-//   {"E",               {"E",             "!",              NULL,             NULL}},
-//   {"E",               {"E",             "<",              "E",              NULL}},
-//   {"E",               {"E",             ">",              "E",              NULL}},
-//   {"E",               {"E",             "<=",             "E",              NULL}},
-//   {"E",               {"E",             ">=",             "E",              NULL}},
-//   {"E",               {"E",             "==",             "E",              NULL}},
-//   {"E",               {"E",             "!=",             "E",              NULL}},
-//   {"E",               {"E",             "??",             "E",              NULL}},
-//   {"E",               {"[function-id]", "(",              "<argument-list>", ")"}},
-//   {"<argument-list>", {"<argument>",    "<argument-list>", NULL,            NULL}},
-//   {"<argument-list>", {NULL,            NULL,              NULL,            NULL}},
-//   {"<argument>",      {"<expression>",  NULL,              NULL,            NULL}},
-//   {NULL,              {NULL,            NULL,              NULL,            NULL}}
-// };
-
-Rule rules[] = {
-  {T_NT,               {T_LPAR,           T_NT,              T_RPAR,            T_EMPTY}},
-  {T_NT,               {T_TYPE_ID,        T_EMPTY,           T_EMPTY,           T_EMPTY}},
-  {T_NT,               {T_NT,             T_PLUS,            T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_MINUS,           T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_MULTIPLY,        T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_DIVIDE,          T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_NOTNIL,          T_EMPTY,           T_EMPTY}},
-  {T_NT,               {T_NT,             T_LESS,            T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_GREATER,         T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_LESS_EQUAL,      T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_GREATER_EQUAL,   T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_EQUAL,           T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_NOT_EQUAL,       T_NT,              T_EMPTY}},
-  {T_NT,               {T_NT,             T_BINARY_OP,       T_NT,              T_EMPTY}},
-
-
-  // {T_NT,               {"[function-id]", "(",              "<argument-list>", T_RBRACE}},
-  // {"<argument-list>", {"<argument>",    "<argument-list>", T_EMPTY,            T_EMPTY}},
-  // {"<argument-list>", {T_EMPTY,            T_EMPTY,              T_EMPTY,            T_EMPTY}},
-  // {"<argument>",      {"<expression>",  T_EMPTY,             T_EMPTY,            T_EMPTY}},
-  {T_EMPTY,              {T_EMPTY,            T_EMPTY,              T_EMPTY,            T_EMPTY}}
-};
-
-// int get_rule_index(Token tokens[]) {
-int get_rule_index(token_type token_types[]) {
-
-  
-  int match = 0;  
-
-  // for (int i = 0; i < 18; i++) {
-  for (int i = 0; i < 14; i++) {
-    for (int j = 0; j < 4; j++) {
-      // printf("rules[%d].right_side[%d]: %d\n", i, j, rules[i].right_side[j]);
-      // printf("token_types[%d]: %d\n", 3-j, token_types[3-j]);
-      // printf("\n\n\n");
-      if (rules[i].right_side[j] == token_types[3-j]) {
-        match++;
-      }
-    }
-
-    if (match == 4) {
-      return i;
-    }
-    else {
-      match = 0;
-    }
-  }
-
-  return -1;
-
+/**
+ * Determines the index of the grammar rule to be applied based on the given tokens.
+ *
+ * @param tokens An array of tokens to be analyzed.
+ * @param count The number of tokens in the array.
+ * @return The index of the grammar rule; -1 if no rule matches.
+ */
+int get_rule_index(Token tokens[], int count) {
+  switch (count) {
+    case 1:
+      // E -> i
+      if(tokens[0].token_type == T_TYPE_ID || tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || tokens[0].token_type == T_FLOAT) return 1;
+      else return -1;
+    case 2:
+        // E -> E!
+        if(tokens[0].token_type == T_NT && tokens[1].token_type == T_NOTNIL) return 6;
+        else return -1;
+    case 3:
+        if(tokens[0].token_type == T_NT && tokens[2].token_type == T_NT)
+        {
+          switch (tokens[1].token_type) {
+            // E -> E + E
+            case T_PLUS:
+                    return 2;
+            // E -> E - E
+            case T_MINUS:
+                    return 3;
+            // E -> E * E
+            case T_MULTIPLY:
+                    return 4;
+            // E -> E / E
+            case T_DIVIDE:
+                    return 5;
+            // E -> E < E
+            case T_LESS:
+                    return 7;
+            // E -> E > E
+            case T_GREATER:
+                    return 8;
+            // E -> E <= E
+            case T_LESS_EQUAL:
+                    return 9;
+            // E -> E >= E
+            case T_GREATER_EQUAL:
+                    return 10;
+            // E -> E == E
+            case T_EQUAL:
+                    return 11;
+            // E -> E != E
+            case T_NOT_EQUAL:
+                    return 12;
+            // E -> E ?? E
+            case T_BINARY_OP:
+                    return 13;
+            default:
+                    return -1;
+            }
+        }
+        // E -> (E)
+        else if(tokens[0].token_type == T_LPAR && tokens[1].token_type == T_NT && tokens[2].token_type == T_RPAR) return 0;
+        else return -1;
+        default:
+        return -1;
+        }
 }
 
+/**
+ * Applies a grammar rule to the token stack based on the rule index.
+ *
+ * @param rule_index The index of the grammar rule to be applied.
+ * @param stack A pointer to the token stack to which the rule will be applied.
+ */
 void perform_rule(int rule_index, TokenStack *stack) {
-  
+
   Token Etoken = init_token();
   Etoken.string_value->str = "E";
   Etoken.token_type = T_NT;
 
-  printf("rule_index: %d\n", rule_index);
-
   if (rule_index == 1) {
-    pop(stack);
-    push(stack, Etoken);
+      pop(stack);
+      pop(stack);
+      push(stack, Etoken);
+  }
+  else if (rule_index == 6) {
+      pop(stack);
+      pop(stack);
+      pop(stack);
+      push(stack, Etoken);
+  }
+  else{
+      pop(stack);
+      pop(stack);
+      pop(stack);
+      pop(stack);
+      push(stack, Etoken);
   }
 
-  if (rule_index == 6) {
-    pop(stack);
-    pop(stack);
-    push(stack, Etoken);
-  }
-
-  if (rule_index == 0 ||
-      rule_index == 2 ||
-      rule_index == 3 ||
-      rule_index == 4 ||
-      rule_index == 5 ||
-      rule_index == 7 ||
-      rule_index == 8 ||
-      rule_index == 9 ||
-      rule_index == 10 ||
-      rule_index == 11 ||
-      rule_index == 12 ||
-      rule_index == 13) {
-    pop(stack);
-    pop(stack);
-    pop(stack);
-    push(stack, Etoken);
-  }
-
-  // Token token;
-  // token.token_type = T_TYPE_ID;
-  // token.string_value->str = rules[rule_index].left_side;
-  // push(stack, token);
 }
 
-void perform_reduce(TokenStack *stack, int *error) {
+/**
+ * Performs a reduce operation on the stack based on the given count of tokens.
+ *
+ * @param stack A pointer to the stack on which the reduce operation will be performed.
+ * @param count The number of tokens to be considered for the reduction.
+ * @return 0 if the reduction is successful; -1 if an error occurs or no rule applies.
+ */
+int perform_reduce(TokenStack *stack, int count) {
+  Token tops[3];
+  tops[0] = init_token();
+  tops[1] = init_token();
+  tops[2] = init_token();
+  if(count == -1) return -1;
 
-  token_type token_types[4] = {T_EMPTY, T_EMPTY, T_EMPTY, T_EMPTY};
-
-  if (stack->top != -1)
-    token_types[3] = stack->items[stack->top].token_type;
-
-  if (stack->top > 0)
-    token_types[2] = stack->items[stack->top - 1].token_type;
-
-  if (stack->top > 1)
-    token_types[1] = stack->items[stack->top - 2].token_type;
-
-  if (stack->top > 2)
-    token_types[0] = stack->items[stack->top - 3].token_type;
-
-  // printf("top1: %s\n", tokens[0].string_value->str);
-  // printf("top2: %s\n", tokens[1].string_value->str);
-  // printf("top3: %s\n", tokens[2].string_value->str);
-  // printf("top4: %s\n", tokens[3].string_value->str);
-
-
-  int rule_index = get_rule_index(token_types);
-
-  if (rule_index == -1) {
-    *error = 1;
-    return;
+  else if (count == 1){
+    tops[0] = stack->items[stack->top];
   }
-  // printf("top4: %s\n", tokens[3].string_value->str);
+  else if (count == 2){
+    tops[0] = stack->items[stack->top - 1];
+    tops[1] = stack->items[stack->top];
+  }
+  else if (count == 3){
+    tops[0] = stack->items[stack->top - 2];
+    tops[1] = stack->items[stack->top - 1];
+    tops[2] = stack->items[stack->top];
+  }
 
-  perform_rule(rule_index, stack);
+  int rule_index = get_rule_index(tops, count);
 
-  // while (top.token_type != T_LPAR) {
-    // top = pop(stack);
-  // }
-  // pop(stack);
-  // push(stack, top);
+  if(rule_index == -1) {
+    return -1;
+  } 
+  else perform_rule(rule_index, stack);
+  return 0;
 }
-
-

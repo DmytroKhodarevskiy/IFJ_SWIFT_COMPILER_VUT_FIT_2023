@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include "stack.h"
 
-typedef struct RULE {
+typedef struct {
   token_type left_side;
-  token_type right_side[4];
+  token_type right_side[4]; // Assuming the maximum size of right_side array is 4
 } Rule;
 
 typedef enum{
@@ -17,7 +17,8 @@ typedef enum{
   END, // END
 } Action_Letter;
 
-void perform_reduce(TokenStack *stack, int *error);
+int perform_reduce(TokenStack *stack, int count);
+
 
 
 

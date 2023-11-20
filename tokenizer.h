@@ -82,8 +82,10 @@ typedef enum{
   T_EMPTY, // EMPTY
 
   T_UNDERSCORE_ID, // ( _ = ...)
+  T_RD_EDGE, // edge of right side of rule
+  T_NT, // ( <non-terminal> = ...)
 
-  T_NT, // NON TERMINAL
+  T_DOLLAR, // $
 
 } token_type;
 

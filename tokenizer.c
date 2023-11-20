@@ -49,11 +49,19 @@
 
 #define special_underscore_STATE 132
 
+#define CheckifArrowState 133
+
+
+Token lookaheadToken;
+bool hasPeeked = false;
+
 int isKeyword(const char* word) {
     
     if (strcmp(word, "func") == 0) {
         return 1;
     } else if (strcmp(word, "var") == 0) {
+        return 1;
+    } else if (strcmp(word, "let") == 0) {
         return 1;
     } else if (strcmp(word, "while") == 0) {
         return 1;
@@ -91,6 +99,14 @@ void copyString(char *destination, char *source) {
 }
 
 
+Token peekNextToken(FILE *file) {
+    if (!hasPeeked) {
+        lookaheadToken = get_token(file);
+        hasPeeked = true;
+    }
+    return lookaheadToken;
+}
+
 
 Token init_token(){
   Token token;
@@ -104,6 +120,12 @@ Token init_token(){
 }
 
 Token get_token(FILE *file){
+
+    if (hasPeeked) {
+        hasPeeked = false;
+        return lookaheadToken;
+    }
+
     Dynamic_string *token_string;
     token_string = createDynamicString();
 
@@ -150,10 +172,8 @@ Token get_token(FILE *file){
 
 
                 } else if (symbol == '-') {
-                    token.token_type = T_MINUS;
                     appendToDynamicString(token_string, symbol);
-                    copyString(token.string_value->str, token_string->str);
-                    return token;
+                    state = CheckifArrowState;
 
 
                 } else if (symbol == '*') {
@@ -161,7 +181,6 @@ Token get_token(FILE *file){
                     appendToDynamicString(token_string, symbol);
                     copyString(token.string_value->str, token_string->str);
                     return token;
-
 
                 } else if (symbol == '=') {
                     appendToDynamicString(token_string, symbol);
@@ -259,6 +278,18 @@ Token get_token(FILE *file){
                 
                 } else {
                     token.token_type = T_ERR;
+                    return token;
+                }
+                break;
+            
+            case CheckifArrowState:
+                if (symbol == '>') {
+                    appendToDynamicString(token_string, symbol);
+                    token.token_type = T_ARROW;
+                    copyString(token.string_value->str, token_string->str);
+                    return token;
+                } else {
+                    token.token_type = T_MINUS;
                     return token;
                 }
                 break;

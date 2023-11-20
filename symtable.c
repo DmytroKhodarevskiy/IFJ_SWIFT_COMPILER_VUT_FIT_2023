@@ -1,0 +1,492 @@
+#include "symtable.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+
+
+/////////////////////          Helpful functions
+
+int height(AVLNode* node) {
+    if (node == NULL)
+        return 0;
+    return node->height;
+}
+
+
+
+int getBalance(AVLNode* node) {
+    if (node == NULL)
+        return 0;
+    return height(node->left) - height(node->right);
+}
+
+
+AVLNode* rightRotate(AVLNode* y) {
+    AVLNode* x = y->left;
+    AVLNode* T2 = x->right;
+
+   
+    x->right = y;
+    y->left = T2;
+
+    
+    y->height = max(height(y->left), height(y->right)) + 1;
+    x->height = max(height(x->left), height(x->right)) + 1;
+
+   
+    return x;
+}
+
+
+AVLNode* leftRotate(AVLNode* x) {
+    AVLNode* y = x->right;
+    AVLNode* T2 = y->left;
+
+    
+    y->left = x;
+    x->right = T2;
+
+
+    x->height = max(height(x->left), height(x->right)) + 1;
+    y->height = max(height(y->left), height(y->right)) + 1;
+
+   
+    return y;
+}
+
+AVLNode* findminValueNode(AVLNode* node) {
+    AVLNode* current = node;
+    while (current->left != NULL)
+        current = current->left;
+    return current;
+}
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////
+
+
+
+/**
+ * @brief Creates a new symbol table
+ * 
+ * 
+ * @return SymTable* Pointer to the newly created symbol table
+ */
+SymTable* create_SymTable() {
+    SymTable* newTable = (SymTable*)malloc(sizeof(SymTable));
+    if (newTable == NULL) {
+        fprintf(stderr, "Memory allocation for SymTable failed\n");
+        return NULL;
+    }
+
+    newTable->root = NULL;
+    return newTable;
+}
+
+
+/**
+ * @brief Searches the symbol table for a symbol with the given name
+ * 
+ * 
+ * @param table The symbol table to search
+ * @param name The name of the symbol to search for
+ * @return AVLNode* Pointer to the node containing the symbol, or NULL if the symbol is not found
+ */
+AVLNode* search_SymTable(SymTable* table, char* key) {
+    AVLNode* current = table->root;
+    while (current != NULL) {
+        int compareResult = strcmp(current->key, key);
+
+        if (compareResult == 0) {
+            return current;
+        } else if (compareResult > 0) {
+            current = current->left;
+        } else {
+            current = current->right;
+        }
+    }
+    return NULL;
+}
+
+
+
+
+/**
+ * @brief Creates a new AVL node with the given key and data
+ * 
+ * 
+ * @param key The key of the new symbol
+ * @param data The data of the new symbol
+ * @return AVLNode* Pointer to the newly created node
+ */
+AVLNode* create_AVLNode(char* key, SymData data) {
+    AVLNode* node = (AVLNode*)malloc(sizeof(AVLNode));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation for AVLNode failed\n");
+        return NULL;
+    }
+    
+    node->key = key;  
+    node->data = data;        
+    node->left = NULL;        
+    node->right = NULL;      
+    node->height = 1;         
+    return node;
+}
+
+
+
+
+
+
+
+/**
+ * @brief Inserts a new symbol into the symbol table
+ * 
+ * 
+ * @param table The symbol table to insert into
+ * @param key The key of the new symbol
+ * @param data The data of the new symbol
+ * @return AVLNode* Pointer to the newly created node
+ */
+AVLNode* insert_AVLNode(AVLNode* node, char* key, SymData data) {
+   
+    if (node == NULL)
+        return(create_AVLNode(key, data));
+
+    if (strcmp(key, node->key) < 0)
+        node->left = insert_AVLNode(node->left, key, data);
+    else if (strcmp(key, node->key) > 0)
+        node->right = insert_AVLNode(node->right, key, data);
+    else  
+        return node;
+
+    
+    node->height = 1 + max(height(node->left), height(node->right));
+
+   
+    int balance = getBalance(node);
+
+
+    if (balance > 1 && strcmp(key, node->left->key) < 0)
+        return rightRotate(node);
+
+    
+    if (balance < -1 && strcmp(key, node->right->key) > 0)
+        return leftRotate(node);
+
+    
+    if (balance > 1 && strcmp(key, node->left->key) > 0) {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+
+   
+    if (balance < -1 && strcmp(key, node->right->key) < 0) {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+
+    return node;
+}
+
+
+
+/**
+ * @brief Inserts a new symbol into the symbol table
+ * 
+ * 
+ * @param table The symbol table to insert into
+ * @param key The key of the new symbol
+ * @param data The data of the new symbol
+ */
+void insert_SymTable(SymTable* table, char* key, SymData data) {
+    table->root = insert_AVLNode(table->root, key, data);
+}
+
+
+
+/**
+ * @brief Deletes a node from the tree
+ * 
+ * 
+ * @param root The root of the subtree to delete from
+ * @param key The key of the node to delete
+ * @return AVLNode* Pointer to the new root of the subtree
+ */
+
+AVLNode* deleteNode(AVLNode* root, char* key) {
+    if (root == NULL)
+        return root;
+
+    if (strcmp(key, root->key) < 0)
+        root->left = deleteNode(root->left, key);
+
+    else if (strcmp(key, root->key) > 0)
+        root->right = deleteNode(root->right, key);
+
+    else {
+        if ((root->left == NULL) || (root->right == NULL)) {
+            AVLNode* temp = root->left ? root->left : root->right;
+
+            if (temp == NULL) {
+                temp = root;
+                root = NULL;
+            } else {
+               
+                *root = *temp; 
+            }
+            free(temp);
+        } else {
+            AVLNode* temp = findminValueNode(root->right);
+
+            root->key = temp->key;
+            root->data = temp->data; 
+
+
+            root->right = deleteNode(root->right, temp->key);
+        }
+    }
+    if (root == NULL)
+        return root;
+
+    root->height = 1 + max(height(root->left), height(root->right));
+    int balance = getBalance(root);
+
+ 
+    if (balance > 1 && getBalance(root->left) >= 0)
+        return rightRotate(root);
+
+  
+    if (balance > 1 && getBalance(root->left) < 0) {
+        root->left = leftRotate(root->left);
+        return rightRotate(root);
+    }
+
+    if (balance < -1 && getBalance(root->right) <= 0)
+        return leftRotate(root);
+
+    if (balance < -1 && getBalance(root->right) > 0) {
+        root->right = rightRotate(root->right);
+        return leftRotate(root);
+    }
+
+    return root;
+}
+
+
+
+
+
+/**
+ * @brief Deletes the given symbol from the symbol table
+ * 
+ * 
+ * @param table The symbol table to delete from
+ * @param key The key of the symbol to delete
+ */
+void delete_SymTable(SymTable* table, char* key) {
+    table->root = deleteNode(table->root, key);
+}
+
+
+
+
+/**
+ * 
+ * @brief Inserts Function into the symbol table
+ * 
+ * @param table The symbol table to insert into
+ * @param key The key of the new symbol
+ * @param returnType The return type of the function
+ * @param paramTypes The parameter types of the function
+ * @param paramCount The number of parameters of the function
+ */
+void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, ListFuncParam* paramTypes, int paramCount) {
+    if (table == NULL)
+        return;
+
+
+
+    SymTable* local_SymTable = create_SymTable();
+    if (local_SymTable == NULL) {
+        return;
+    }
+    SymData functionData;
+    functionData.name = key; 
+    functionData.dtype = FUNC; 
+    functionData.returnType = returnType;
+    functionData.paramTypes = *paramTypes; 
+    functionData.paramCount = paramCount;
+    functionData.isDefined = false;
+    functionData.canbeChanged = false;
+    functionData.isFunction = true;
+    functionData.isGlobal = true; 
+    functionData.local_SymTable = local_SymTable;
+
+    insert_SymTable(table, functionData.name, functionData);
+}
+
+
+
+
+
+
+
+
+/**
+ * Adds a new parameter to the parameter list.
+ *
+ * @param list The head of the parameter list.
+ * @param paramName The name of the parameter.
+ * @param dataType The data type of the parameter.
+ * @return The head of the updated parameter list.
+ */
+ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType) {
+   ListFuncParam* newParam = (ListFuncParam*)malloc(sizeof(ListFuncParam));
+    if (newParam == NULL) {
+        // Handle memory allocation failure
+        return NULL;
+    }
+
+    // Allocate memory for the parameter name and copy it
+    newParam->name = (char*)malloc(strlen(paramName) + 1); // +1 for null terminator
+    if (newParam->name == NULL) {
+        // Handle memory allocation failure
+        free(newParam);
+        return NULL;
+    }
+    strcpy(newParam->name, paramName);
+
+    newParam->dataType = dataType;
+    newParam->next = NULL;
+
+    // Append to the list
+    if (list == NULL) {
+        return newParam;
+    } else {
+        ListFuncParam* current = list;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newParam;
+        return list;
+    }
+}
+
+
+
+
+
+int countParams(ListFuncParam* params) {
+    int count = 0;
+    ListFuncParam* current = params;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+
+
+void printFuncParamList(ListFuncParam* list) {
+    const ListFuncParam* current = list;
+    while (current != NULL) {
+        printf("Parameter Name: %s, Data Type: %d\n", current->name, current->dataType);
+        current = current->next;
+    }
+}
+
+
+
+
+
+
+
+// FUNCTIONS FOR PRINTING THE SYMBOL TABLE AND TREE
+void print_SymData(SymData* data) {
+    if (!data) return;
+
+    printf("Name: %s, DataType: %d, isDefined: %d, canbeChanged: %d, isGlobal: %d, isFunction: %d",
+           data->name, data->dtype, data->isDefined, data->canbeChanged, data->isGlobal, data->isFunction);
+
+    if (data->isFunction) {
+        printf(", ReturnType: %d, ParamCount: %d\n", data->returnType, data->paramCount);
+        ListFuncParam* param = &data->paramTypes;
+        while (param) {
+            printf("    Param: %s, DataType: %d\n", param->name, param->dataType);
+            param = param->next;
+        }
+    } else {
+        printf("\n");
+    }
+}
+
+void inOrderTraversal(AVLNode* node) {
+    if (node == NULL) {
+        return;
+    }
+    inOrderTraversal(node->left);
+    printf("Key: %s, ", node->key);
+    print_SymData(&node->data);
+    inOrderTraversal(node->right);
+}
+
+/**
+ * @brief Printing the symbol table
+ * 
+ * 
+ * @param table The symbol table to print
+ */
+void print_SymTable(SymTable* table) {
+    if (table == NULL || table->root == NULL) {
+        printf("Symbol table is empty or not initialized.\n");
+        return;
+    }
+
+    printf("Symbol Table Contents:\n");
+    inOrderTraversal(table->root);
+    printf("\n");
+}
+
+
+
+
+void printSpaces(int count) {
+    for (int i = 0; i < count; i++) {
+        printf("   ");
+    }
+}
+
+
+void print_AVLTree(AVLNode* node, int space) {
+    if (node == NULL) return;
+
+
+    space += 5;
+
+    print_AVLTree(node->right, space);
+
+    printf("\n");
+    printSpaces(space);
+    printf("%s\n", node->key);
+
+    print_AVLTree(node->left, space);
+}
+
+void printTree(SymTable* table) {
+    if (table == NULL || table->root == NULL) {
+        printf("Symbol table is empty or not initialized.\n");
+        return;
+    }
+
+    print_AVLTree(table->root, 0);
+}

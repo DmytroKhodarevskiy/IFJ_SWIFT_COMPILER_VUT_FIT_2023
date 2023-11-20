@@ -4,6 +4,10 @@
 #ifndef _TOKENIZER_H
 #define _TOKENIZER_H
 
+
+
+
+
 typedef enum{
   //Double, else, func, if, Int, let, nil, return, String,
   //var, while
@@ -63,6 +67,9 @@ typedef enum{
   T_NOT_EQUAL, // !=
   T_ASSIGN, // =
   T_EQUAL, // ==
+  T_ARROW, // ->
+
+
 
   T_NOTNIL, // !
   T_BINARY_OP, // ??
@@ -147,9 +154,8 @@ const char *tokenTypeNames[] = {
 
 
 
-
-
-
+Token get_token(FILE *file);
+Token peekNextToken(FILE *file);
 
 
 #endif // _TOKENIZER_H

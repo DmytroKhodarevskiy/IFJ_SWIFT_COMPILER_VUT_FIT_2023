@@ -40,6 +40,10 @@ if (expression) {
 }
 */
 
+
+[PROGRAM] ::= [STMT_LIST]
+[PROGRAM] ::= programs
+
 [STMT_LIST] ::= [STMT] [STMT_LIST]
 [STMT_LIST] ::= [KWRD_STMT] [STMT_LIST]
 [STMT_LIST] ::= ''
@@ -94,3 +98,4 @@ if (expression) {
 
 [FAC] ::= ( [EXP] ) 
 [FAC] ::= id
+

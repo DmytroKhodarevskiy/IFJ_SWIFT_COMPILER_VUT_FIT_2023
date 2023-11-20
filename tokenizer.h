@@ -84,6 +84,7 @@ typedef enum{
   T_UNDERSCORE_ID, // ( _ = ...)
 
   T_NT, // NON TERMINAL
+  T_RD_EDGE, // REDUCE EDGE
 
 } token_type;
 
@@ -147,7 +148,7 @@ const char *tokenTypeNames[] = {
     "End of Line",              // T_EOL
     "Keyword",                   // T_KEYWORD
     "Empty",                     // T_EMPTY
-    "Underscore Identifier"     // T_UNDERSCORE_ID
+    "Underscore Identifier",     // T_UNDERSCORE_ID
 };
 
 

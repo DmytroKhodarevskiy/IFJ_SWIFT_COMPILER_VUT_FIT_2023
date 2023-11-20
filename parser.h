@@ -1,6 +1,7 @@
 #ifndef parser_h
 #define parser_h
 
+#include <stdbool.h>
 
 
 typedef enum {

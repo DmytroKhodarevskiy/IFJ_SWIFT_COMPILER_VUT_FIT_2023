@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 // Tokenizer type.  You need to fill in the type as part of your implementation.
 #ifndef _TOKENIZER_H

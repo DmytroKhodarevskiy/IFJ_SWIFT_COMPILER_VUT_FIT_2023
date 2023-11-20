@@ -1,13 +1,8 @@
-#include "tokenizer.c"
 #include "symtable.c"
 #include <stdio.h>
 #include <string.h>
 #include "parser.h"
-
-
-
-
-
+#include "expression_parse.c"
 
 FILE* read_file(char* filename){
   FILE* file = fopen(filename, "r");
@@ -17,7 +12,6 @@ FILE* read_file(char* filename){
   }
   return file;
 }
-
 
 
 void parsing() {

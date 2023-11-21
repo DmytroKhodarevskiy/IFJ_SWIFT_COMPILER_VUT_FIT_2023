@@ -21,8 +21,10 @@ TEST_OUTPUT = test_expression_parse.exe
 
 # Compile the program
 $(OUTPUT): $(PROG)
+# $(CC) -o $(OUTPUT) $(PROG)
 	$(CC) $(CFLAGS) -o $(OUTPUT) $(PROG)
 	./$(OUTPUT)
+	rm -f $(OUTPUT)
 
 # Clean up generated files
 clean:

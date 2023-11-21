@@ -86,8 +86,7 @@ typedef enum{
   T_RD_EDGE, // edge of right side of rule
   T_NT, // ( <non-terminal> = ...)
 
-  T_DOLLAR, // $
-
+  T_T, // ( <terminal> = ...)
 } token_type;
 
 
@@ -106,7 +105,7 @@ typedef struct {
 
   token_type token_type;
   keyword keyword_type;
-
+  token_type grammar_token_type;
   Dynamic_string *string_value;
   int int_value;
   double double_value;

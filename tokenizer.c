@@ -105,7 +105,7 @@ Token peekNextToken(FILE *file) {
 
 Token init_token(){
   Token token;
-
+  token.grammar_token_type = T_T;
   token.token_type = T_EMPTY; 
   token.int_value = 0;
   token.double_value = 0.0;

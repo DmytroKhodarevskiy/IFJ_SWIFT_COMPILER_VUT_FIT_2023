@@ -1,1 +1,5 @@
-a+ a
+let a: Double
+let b: Double
+if(a==a){
+}else{
+}

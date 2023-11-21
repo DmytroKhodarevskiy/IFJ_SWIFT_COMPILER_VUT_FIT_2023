@@ -313,12 +313,6 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
     if (table == NULL)
         return;
 
-
-
-    SymTable* local_SymTable = create_SymTable();
-    if (local_SymTable == NULL) {
-        return;
-    }
     SymData functionData;
     functionData.name = key; 
     functionData.dtype = FUNC; 
@@ -329,7 +323,7 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
     functionData.canbeChanged = false;
     functionData.isFunction = true;
     functionData.isGlobal = true; 
-    functionData.local_SymTable = local_SymTable;
+    functionData.local_SymTable =  create_SymTable();
 
     insert_SymTable(table, functionData.name, functionData);
 }
@@ -346,39 +340,41 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
  *
  * @param list The head of the parameter list.
  * @param paramName The name of the parameter.
+ * @param prefix The prefix of the parameter.
  * @param dataType The data type of the parameter.
  * @return The head of the updated parameter list.
  */
-ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType) {
-   ListFuncParam* newParam = (ListFuncParam*)malloc(sizeof(ListFuncParam));
-    if (newParam == NULL) {
-        // Handle memory allocation failure
-        return NULL;
-    }
+ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType, ParamPrefix prefix) {
+  ListFuncParam* newParam = (ListFuncParam*)malloc(sizeof(ListFuncParam));
+  if (newParam == NULL) {
+    // Handle memory allocation failure
+    return NULL;
+  }
 
-    // Allocate memory for the parameter name and copy it
-    newParam->name = (char*)malloc(strlen(paramName) + 1); // +1 for null terminator
-    if (newParam->name == NULL) {
-        // Handle memory allocation failure
-        free(newParam);
-        return NULL;
-    }
-    strcpy(newParam->name, paramName);
+  // Allocate memory for the parameter name and copy it
+  newParam->name = (char*)malloc(strlen(paramName) + 1); // +1 for null terminator
+  if (newParam->name == NULL) {
+    // Handle memory allocation failure
+    free(newParam);
+    return NULL;
+  }
+  strcpy(newParam->name, paramName);
+  
+  newParam->prefix = prefix;
+  newParam->dataType = dataType;
+  newParam->next = NULL;
 
-    newParam->dataType = dataType;
-    newParam->next = NULL;
-
-    // Append to the list
-    if (list == NULL) {
-        return newParam;
-    } else {
-        ListFuncParam* current = list;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = newParam;
-        return list;
+  // Append to the list
+  if (list == NULL) {
+    return newParam;
+  } else {
+    ListFuncParam* current = list;
+    while (current->next != NULL) {
+      current = current->next;
     }
+    current->next = newParam;
+    return list;
+  }
 }
 
 
@@ -400,14 +396,36 @@ int countParams(ListFuncParam* params) {
 void printFuncParamList(ListFuncParam* list) {
     const ListFuncParam* current = list;
     while (current != NULL) {
-        printf("Parameter Name: %s, Data Type: %d\n", current->name, current->dataType);
+        printf("Parameter Name: %s, Data Type: %d, Prefix: %d\n", current->name, current->dataType, current->prefix);
         current = current->next;
     }
 }
 
 
+/**
+ * Searches the symbol table for a symbol with the given key and returns its data.
+ * If the symbol is not found, sets an error flag.
+ *
+ * @param table The symbol table to search in.
+ * @param key The key of the item to search for.
+ * @param error Pointer to an int where the error flag will be set (0 for no error, 1 for error).
+ * @return The SymData of the found item, or an undefined value if not found.
+ */
+SymData getSymDataByKey(SymTable* table, char* key) {
 
+    if (table == NULL || key == NULL) {
+        fprintf(stderr, "Node not found\n");
+        exit(1);
+    }
 
+    AVLNode* foundNode = search_SymTable(table, key);
+    if (foundNode == NULL) {
+        fprintf(stderr, "Node not found\n");
+        exit(1);
+    }
+
+    return foundNode->data;
+}
 
 
 
@@ -422,7 +440,7 @@ void print_SymData(SymData* data) {
         printf(", ReturnType: %d, ParamCount: %d\n", data->returnType, data->paramCount);
         ListFuncParam* param = &data->paramTypes;
         while (param) {
-            printf("    Param: %s, DataType: %d\n", param->name, param->dataType);
+            printf("Param: %s, DataType: %d , Prefixes: %d\n", param->name, param->dataType, param->prefix);
             param = param->next;
         }
     } else {

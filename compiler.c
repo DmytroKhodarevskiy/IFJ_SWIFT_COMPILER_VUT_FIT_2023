@@ -43,7 +43,6 @@ int main(){
 
     // c = a + b
     Data data = init_data();
-    // printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPOKAMAKLONILSIATIHORAZRIAZHAIUSTVOL\n");
     instr_node *head = NULL;
     // data.op2.id_name = token_b.string_value;
     data.op1.id_name = token_a.string_value->str;
@@ -52,17 +51,12 @@ int main(){
     generate_code(&head, data, GEN_MOVE);
     generate_code(&head, data, GEN_PUSH);
 
-    // printf("head: %s", head->instr);
-    // printf("head: %s", head->next->instr);
-    // printf("head: %s", head->next->next->instr);
-
     data.op1.id_name = token_b.string_value->str;
     data.op1.int_val = token_b.int_value;
     generate_code(&head, data, GEN_CREATE_ID);
     generate_code(&head, data, GEN_MOVE);
     generate_code(&head, data, GEN_PUSH);
 
-    // printf("asdassssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss%s\n", data.op1.id_name);
     generate_code(&head, data, GEN_ADD);
 
     data.op1.id_name = "c";

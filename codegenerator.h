@@ -8,14 +8,19 @@ typedef struct instr_node {
 } instr_node;
 
 typedef enum {
-  GEN_CREATE_ID, // id
-  GEN_ADD, // +
-  GEN_SUB, // -
-  GEN_BEGIN_EXPR, // begin expr
+  GEN_CREATE_ID, // define global id, id_name must be in data.op1.id_name
+  GEN_ADD, // add two values from stack (top two) and push result to stack
+  GEN_SUB, // subtract two values from stack (top two) and push result to stack
+  GEN_MUL, // multiply two values from stack (top two) and push result to stack
+  GEN_DIV, // divide two values from stack (top two) and push result to stack
+  GEN_BEGIN_EXPR, // begin expression, clear stack
   GEN_PUSH, // push to stack
-  GEN_ASSIGN, // =
-  GEN_WRITE, // printf
-  GEN_MOVE // move
+  GEN_ASSIGN, // assign value from the stack to data.op1.id_name
+  GEN_WRITE, // write value of data.op1.id_name to stdout
+  GEN_MOVE, // move int value in data.op1.int_val to data.op1.id_name
+  GEN_MAIN, // generate main function
+  GEN_FUNC_START, // generate function start
+  GEN_FUNC_END // generate function end
 } gencode;
 
 typedef struct Operand {
@@ -28,7 +33,7 @@ typedef struct Data {
   Operand op1;
   Operand op2;
   char *func_name;
-  char *func_param[];
+  Operand func_param[];
 } Data;
 
 /*

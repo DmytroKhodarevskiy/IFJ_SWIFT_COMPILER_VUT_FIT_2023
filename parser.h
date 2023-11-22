@@ -3,13 +3,7 @@
 
 
 
-typedef enum {
-    PREFIX_NONE,
-    PREFIX_WITH,
-    PREFIX_OF,
-    PREFIX_BY,
-    PREFIX_UNDERSCORE
-} ParamPrefix;
+
 
 
 
@@ -23,7 +17,7 @@ void parseElseBlock(FILE* file);
 void parseFunction(FILE* file);
 ListFuncParam* parseParamList(FILE* file);
 DataType parseType(FILE* file);
-ParamPrefix parsePrefixFunction(FILE* file);
+ParamPrefix parsePrefixFunction(Token PrefixToken, FILE* file);
 
 
 

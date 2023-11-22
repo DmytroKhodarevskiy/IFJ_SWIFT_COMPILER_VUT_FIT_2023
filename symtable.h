@@ -13,14 +13,20 @@ typedef enum {
     TYPE_DOUBLE_NULLABLE, 
     TYPE_STRING_NULLABLE, 
     TYPE_VOID, 
-    FUNC
+    FUNC,
+    TYPE_UNKNOWN,
 } DataType;
 
 
+typedef enum {
+    PREFIX_UNDERSCORE,
+    PREFIX_DEFAULT,
+} ParamPrefix;
 
 
 typedef struct FuncParam {
-    char* name; 
+    char* name;
+    ParamPrefix prefix; 
     DataType dataType;
     struct FuncParam* next;
 } ListFuncParam;
@@ -29,6 +35,7 @@ typedef struct FuncParam {
 
 
 typedef struct {
+    //TODO CHANGE TO DYNAMIC STRING MB
     char* name;              // Name of the symbol (variable, function, etc.)
     DataType dtype;          // Data type of the symbol
     bool isDefined;          // Whether the function has been defined
@@ -39,6 +46,7 @@ typedef struct {
     ListFuncParam paramTypes;    // Array of parameter types
     int paramCount;          // Number of parameters
     struct SymTable* local_SymTable; // Local symbol table of the function
+    bool isNil;               // Whether the symbol is nil
 } SymData;
 
 typedef struct AVLNode {
@@ -74,10 +82,10 @@ int getBalanceFactor(AVLNode* node);
 void updateHeight(AVLNode* node);
 AVLNode* findminValueNode(AVLNode* node);
 
-
+SymData getSymDataByKey(SymTable* table, char* key); 
 
 void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, ListFuncParam* paramTypes, int paramCount);
-ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType);
+ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType, ParamPrefix prefix);
 int countParams(ListFuncParam* params);
 
 

@@ -17,7 +17,7 @@ typedef enum{
   END, // END
 } Action_Letter;
 
-int perform_reduce(TokenStack *stack, int count);
+int perform_reduce(SymTable *table,TokenStack *stack, int count, token_type *expression_type);
 
 
 

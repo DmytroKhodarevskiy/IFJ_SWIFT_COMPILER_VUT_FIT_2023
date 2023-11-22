@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 // Tokenizer type.  You need to fill in the type as part of your implementation.
 #ifndef _TOKENIZER_H
@@ -82,10 +83,10 @@ typedef enum{
   T_EMPTY, // EMPTY
 
   T_UNDERSCORE_ID, // ( _ = ...)
+  T_RD_EDGE, // edge of right side of rule
+  T_NT, // ( <non-terminal> = ...)
 
-  T_NT, // NON TERMINAL
-  T_RD_EDGE, // REDUCE EDGE
-
+  T_T, // ( <terminal> = ...)
 } token_type;
 
 
@@ -104,7 +105,7 @@ typedef struct {
 
   token_type token_type;
   keyword keyword_type;
-
+  token_type grammar_token_type;
   Dynamic_string *string_value;
   int int_value;
   double double_value;
@@ -148,7 +149,7 @@ const char *tokenTypeNames[] = {
     "End of Line",              // T_EOL
     "Keyword",                   // T_KEYWORD
     "Empty",                     // T_EMPTY
-    "Underscore Identifier",     // T_UNDERSCORE_ID
+    "Underscore Identifier"     // T_UNDERSCORE_ID
 };
 
 

@@ -1,1 +1,2 @@
-let a : Int = 5
+let c : Int = 10
+let b : Int

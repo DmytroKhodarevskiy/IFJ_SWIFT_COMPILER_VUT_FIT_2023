@@ -16,16 +16,17 @@
 #define ERR_INTERNAL           99
 //#define DEBUG_MSG       1
 
-typedef struct MemoryList {
-    void* current;
-    struct MemoryList* next;
-} MemoryList;
+typedef struct MemoryBlockNode {
+    void *block;  // Pointer to the allocated memory block
+    struct MemoryBlockNode *next;  // Pointer to the next node in the list
+} MemoryBlockNode;
+
+MemoryBlockNode *memoryListHead = NULL;
 
 extern int linenum;
 extern int prgPass;
 
 void *safe_MemoryBlock(size_t size);
-void free_MemoryBlock(void* current);
 void free_all();
 void exitWithError(char* messsage, int ErrCode);
 int printDebugMessage(const char* message, ...);

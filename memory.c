@@ -11,15 +11,33 @@
 
 
 void *safe_MemoryBlock(size_t size) {
-    
-}
+    void *block = malloc(size);
+    if (block == NULL) {
 
-void free_MemoryBlock(void* current) {
-    
+        exitWithError("Memory allocation failed", ERR_INTERNAL);
+    }
+
+    MemoryBlockNode *node = (MemoryBlockNode *)malloc(sizeof(MemoryBlockNode));
+    if (node == NULL) {
+
+        exitWithError("Memory allocation failed", ERR_INTERNAL);
+    }
+
+    node->block = block;
+    node->next = memoryListHead;
+    memoryListHead = node;
+
+    return block;
 }
 
 void free_all() {
-    
+    MemoryBlockNode *current = memoryListHead;
+    while (current != NULL) {
+        MemoryBlockNode *next = current->next;
+        free(current->block);  
+        free(current);         
+        current = next;
+    }
 }
 
 void exitWithError(char* masssage, int ErrCode) {

@@ -17,32 +17,35 @@ int main(int argc, char* argv[]){
     FILE *file;
 
     // If there is an argument (file name), open that file.
-    // if (argc > 1) {
-    //     file = fopen(argv[1], "r"); // Opens the file for reading.
-    //     if (file == NULL) {
-    //         perror("Error opening file");
-    //         return 1;
-    //     }
-    // } else {
-    //     // If no file is specified, read from stdin.
-    //     file = stdin;
-    // }
+    if (argc > 1) {
+        file = fopen(argv[1], "r"); // Opens the file for reading.
+        if (file == NULL) {
+            perror("Error opening file");
+            return 1;
+        }
+    } else {
+        // If no file is specified, read from stdin.
+        file = stdin;
+    }
 
 
     Token token;
     // int error = 0;
     // int lex_ok = 1;
-    // while (token.token_type != T_EOF) {
-    //     token = init_token();
-    //     token = get_token(file);
+    while (token.token_type != T_EOF) {
+        token = init_token();
+        token = get_token(file);
 
-    //     if (token.token_type == T_ERR) {
-    //         exitWithError("Lexical analysis failed\n", ERR_LEX);
-    //         break;
-    //     }
-    // }
+        printf("TOKEN TYPE: %d\n", token.token_type);
+        printf("TOKEN STRING: %s\n", token.string_value->str);
+
+        if (token.token_type == T_ERR) {
+            exitWithError("Lexical analysis failed\n", ERR_LEX);
+            break;
+        }
+    }
     
-
+    printf("Lexical analysis OK\n");
     // if (get_index_from_token(token) != 8){
     //   lex_ok = parse_expression(&token, &error, &file);
     //   else {
@@ -70,7 +73,7 @@ int main(int argc, char* argv[]){
     // token_b.string_value->str = "b";
 
 
-    // c = a + b
+    // // c = a + b
     // Data data = init_data();
     // instr_node *head = NULL;
 
@@ -128,7 +131,9 @@ int main(int argc, char* argv[]){
     // print_list(head);
 
     // pop_list_to_file(&head);
-    fclose(file);
-    free_all();
-    exitWithError("", ERR_OK);
+
+    // fclose(file);
+    // free_all();
+    // printMemoryList();
+    // exitWithError("", ERR_OK);
 }

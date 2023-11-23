@@ -16,14 +16,41 @@ void *safeRealloc(void *ptr, size_t newSize) {
     return newBlock;
 }
 
+void printMemoryList() {
+    printf("Memory listadwd:\n");
+    MemoryBlockNode *current = memoryListHead;
+    printf("Memory list:\n");
+    while (current != NULL) {
+        printf("Node: %p\n", current);
+        printf("Memory block: %p\n", current->block);
+        current = current->next;
+    }
+}
+
 void* resizeMemoryBlock(void *block, size_t newSize) {
     MemoryBlockNode *current = memoryListHead;
+    // while (current != NULL) {
+    //     if (current->block == block) {
+    //         // Found the block in the linked list
+    //         // printf("Resizing memory block: %p\n", current->block);
+    //         current->block = safeRealloc(current->block, newSize);
+    //         // current. = newSize; // Update the size
+    //         printf("Resized memory block: %p\n", current->block);
+    //         return current->block;
+    //     }
+    //     current = current->next;
+    // }
+
     while (current != NULL) {
         if (current->block == block) {
             // Found the block in the linked list
-            current->block = safeRealloc(current->block, newSize);
-            // current. = newSize; // Update the size
-            return current->block;
+            void *newBlock = safeRealloc(current->block, newSize); // Resize the block
+            if (newBlock != current->block) {
+                // Update the block address in the linked list
+                current->block = newBlock;
+            }
+            printf("Resized memory block: %p\n", current->block);
+            return newBlock;
         }
         current = current->next;
     }
@@ -108,7 +135,7 @@ void exitWithError(char* masssage, int ErrCode) {
         break;
     }
     fprintf(stderr, "\033[35m\033[1m%s\n\033[0m", masssage);
-    free_all();
+    // free_all();
     exit(ErrCode);
 }
 

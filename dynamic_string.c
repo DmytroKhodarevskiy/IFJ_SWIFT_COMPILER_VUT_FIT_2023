@@ -8,6 +8,8 @@ Dynamic_string* createDynamicString() {
     // Dynamic_string* dynamicString = (Dynamic_string*)malloc(sizeof(Dynamic_string));
     Dynamic_string* dynamicString = (Dynamic_string*)safe_MemoryBlock(sizeof(Dynamic_string));
 
+    // printf("DYNAMIC STRING POINTER: %p\n", dynamicString);
+
     if (dynamicString == NULL) {
         printf("Memory allocation failed.\n");
         return NULL;
@@ -15,6 +17,8 @@ Dynamic_string* createDynamicString() {
 
     dynamicString->str = (char*)safe_MemoryBlock(INITIAL_SIZE);
     
+    // printf("DYNAMIC STRING STRING POINTER: %p\n", dynamicString->str);
+
     if (dynamicString->str == NULL) {
         free(dynamicString);
         fprintf(stderr, "Memory allocation for string failed.\n");
@@ -40,15 +44,19 @@ void appendToDynamicString(Dynamic_string* dynamicString, char content) {
         unsigned int newAllocSize = (dynamicString->allocSize * 2); 
 
         // char* newStr = resizeMemoryBlock(dynamicString->str, newAllocSize);
+        // printf("POINTER: %p\n", dynamicString->str);
+        // printMemoryList();
         char *newStr = (char*)resizeMemoryBlock(dynamicString->str, newAllocSize);
+        // printf("RESIZED POINTER: %p\n", newStr);
+        // dynamicString->str = newStr;
         // char* newStr = (char*)realloc(dynamicString->str, newAllocSize);
 
-        // if (newStr == NULL) {
-            // printf("Memory reallocation failed.\n");
-            // return;
-        // }
+        if (newStr == NULL) {
+            printf("Memory reallocation failed.\n");
+            return;
+        }
 
-        // dynamicString->str = newStr;
+        dynamicString->str = newStr;
         dynamicString->allocSize = newAllocSize;
     }
 

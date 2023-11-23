@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define ERR_NO                 0
+#define ERR_OK                 0
 #define ERR_LEX                1 
 #define ERR_SYNTAX             2 
 #define ERR_SEMANT_FUNC_ARG    3
@@ -24,12 +24,11 @@ typedef struct MemoryBlockNode {
 MemoryBlockNode *memoryListHead = NULL;
 
 extern int linenum;
-extern int prgPass;
 
 void *safe_MemoryBlock(size_t size);
 void free_all();
 void exitWithError(char* messsage, int ErrCode);
-int printDebugMessage(const char* message, ...);
-int printDebugMessage2(const char* message, ...);
+// int printDebugMessage(const char* message, ...);
+// int printDebugMessage2(const char* message, ...);
 
 #endif /* memory_h */

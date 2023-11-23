@@ -43,9 +43,6 @@ void free_all() {
 void exitWithError(char* masssage, int ErrCode) {
     switch (ErrCode)
     {
-    case ERR_NO:
-        fprintf(stderr,"There aren't any errors");
-        break;
     case ERR_LEX:
         fprintf(stderr,"Error in the program within the lexical analysis (incorrect structure of the current lexeme) line: %d",linenum);
         break;
@@ -82,26 +79,26 @@ void exitWithError(char* masssage, int ErrCode) {
     exit(ErrCode);
 }
 
-int printDebugMessage(const char* messsage, ...) {
-    #ifdef DEBUG_MSG
-    va_list args;
-    va_start(args, messsage);
-    int ret = vfprintf(stderr, messsage, args);
-    va_end(args);
-    return ret;
-    #else
-    return 0;
-    #endif
-}
+// int printDebugMessage(const char* messsage, ...) {
+//     #ifdef DEBUG_MSG
+//     va_list args;
+//     va_start(args, messsage);
+//     int ret = vfprintf(stderr, messsage, args);
+//     va_end(args);
+//     return ret;
+//     #else
+//     return 0;
+//     #endif
+// }
 
-int printDebugMessage2(const char* messsage, ...) {
-    #ifdef DEBUG_MSG
-    va_list args;
-    va_start(args, messsage);
-    int ret = vfprintf(stderr, messsage, args);
-    va_end(args);
-    return ret;
-    #else
-    return 0;
-    #endif
-}
+// int printDebugMessage2(const char* messsage, ...) {
+//     #ifdef DEBUG_MSG
+//     va_list args;
+//     va_start(args, messsage);
+//     int ret = vfprintf(stderr, messsage, args);
+//     va_end(args);
+//     return ret;
+//     #else
+//     return 0;
+//     #endif
+// }

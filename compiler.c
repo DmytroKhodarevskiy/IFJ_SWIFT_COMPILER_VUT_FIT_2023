@@ -9,10 +9,25 @@
 #include "codegenerator.c"
 
 
-// int main(int argc, char* argv[]){
-int main(){
+// int main(){
+int main(int argc, char* argv[]){
 
     // parsing();
+
+    FILE *file;
+
+    // If there is an argument (file name), open that file.
+    if (argc > 1) {
+        file = fopen(argv[1], "r"); // Opens the file for reading.
+        if (file == NULL) {
+            perror("Error opening file");
+            return 1;
+        }
+    } else {
+        // If no file is specified, read from stdin.
+        file = stdin;
+    }
+
 
     // if (get_index_from_token(token) != 8){
     //   lex_ok = parse_expression(&token, &error, &file);
@@ -44,13 +59,31 @@ int main(){
     // c = a + b
     Data data = init_data();
     instr_node *head = NULL;
+
+    Operand op1, op2;
+
+    op1.id_name = "param1";
+    op2.id_name = "param2";
+
+    op1.int_val = 55;
+    op2.int_val = 66;
     // data.op2.id_name = token_b.string_value;
+    // *data.func_param = op1;
+    // *(data.func_param+1) = op2;
+    data.func_param = malloc(2 * sizeof(Operand));
+    if (data.func_param == NULL) {
+        // Handle allocation error
+    }
+
+    data.func_param[0] = op1;
+    printf("data.func_param[0].id_naaaaaaame: %s\n", data.func_param[0].id_name);
+    data.func_param[1] = op2;
 
     data.func_name = "foo";
     generate_code(&head, data, GEN_FUNC_START);
 
     data.op1.id_name = "a";
-    data.op1.int_val = 56;
+    data.op1.int_val = 6;
     generate_code(&head, data, GEN_CREATE_ID);
     generate_code(&head, data, GEN_MOVE);
     generate_code(&head, data, GEN_PUSH);
@@ -71,6 +104,14 @@ int main(){
     generate_code(&head, data, GEN_FUNC_END);
 
     generate_code(&head, data, GEN_MAIN);
+
+    print_list(head);
+
+    printf("=====================================\n");
+
+    generate_code(&head, data, GEN_FUNC_CALL);
+
+    print_list(head);
 
     pop_list_to_file(&head);
 

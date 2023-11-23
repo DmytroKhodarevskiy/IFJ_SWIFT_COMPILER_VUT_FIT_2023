@@ -20,7 +20,8 @@ typedef enum {
   GEN_MOVE, // move int value in data.op1.int_val to data.op1.id_name
   GEN_MAIN, // generate main function
   GEN_FUNC_START, // generate function start
-  GEN_FUNC_END // generate function end
+  GEN_FUNC_END, // generate function end
+  GEN_FUNC_CALL // generate function call
 } gencode;
 
 typedef struct Operand {
@@ -33,7 +34,7 @@ typedef struct Data {
   Operand op1;
   Operand op2;
   char *func_name;
-  Operand func_param[];
+  Operand *func_param;
 } Data;
 
 /*

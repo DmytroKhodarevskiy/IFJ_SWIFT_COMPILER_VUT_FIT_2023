@@ -7,7 +7,7 @@ PUSHFRAME
 DEFVAR LF@%%retval
 MOVE LF@%%retval nil@nil
 DEFVAR GF@a
-MOVE GF@a int@56
+MOVE GF@a int@6
 PUSHS GF@a
 DEFVAR GF@b
 MOVE GF@b int@7
@@ -22,6 +22,10 @@ RETURN
 
 
 LABEL $$main
-CREATEFRAME
-PUSHFRAME
-DEFVAR LF@%%retval_main
+DEFVAR GF@%%retval_main
+CALL $foo
+CALL $foo
+CALL $foo
+CALL $foo
+CALL $foo
+CALL $foo

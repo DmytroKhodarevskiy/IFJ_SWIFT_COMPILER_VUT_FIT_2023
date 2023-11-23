@@ -3,6 +3,19 @@
 
 #include "codegenerator.h"
 
+//TODO: replace string with vsprintf
+
+void print_list(const instr_node *head) {
+    const instr_node *current = head;
+    int count = 0;
+    
+    while (current != NULL) {
+        printf("Node %d: %s", count, current->instr);
+        current = current->next;
+        count++;
+    }
+}
+
 int create_file(FILE **file) {
     *file = fopen("IFJ23.code", "w");
 
@@ -21,6 +34,9 @@ void generate_header(FILE *file) {
 }
 
 void add_instr(instr_node **head, char *instr) {
+
+    // printf("instruction to add to list: %s\n", instr);
+
     instr_node *new_node = malloc(sizeof(instr_node));
     if (new_node == NULL) {
         // Handle memory allocation error
@@ -29,10 +45,13 @@ void add_instr(instr_node **head, char *instr) {
     }
 
     new_node->instr = instr;
+    // printf("new_node->instr: %s\n", new_node->instr);
     new_node->next = NULL;
 
     // If the list is empty, make the new node the head
     if (*head == NULL) {
+
+        printf("head is null\n");
         *head = new_node;
     } else {
         // Traverse the list to find the last node
@@ -41,8 +60,10 @@ void add_instr(instr_node **head, char *instr) {
             current = current->next;
         }
 
+        printf("current->instr: %s\n", current->instr);
         // Insert the new node at the end of the list
         current->next = new_node;
+        printf("new_node->instr: %s\n", new_node->instr);
     }
 }
 
@@ -111,11 +132,7 @@ void MAIN(instr_node **head, char *string) {
   add_instr(head, string);
   string = "LABEL $$main\n";
   add_instr(head, string);
-  string = "CREATEFRAME\n";
-  add_instr(head, string);
-  string = "PUSHFRAME\n";
-  add_instr(head, string);
-  string = "DEFVAR LF@%%retval_main\n";
+  string = "DEFVAR GF@%%retval_main\n";
   add_instr(head, string);
 }
 
@@ -127,6 +144,32 @@ void FUNC_START(instr_node **head, char *func_name, char *string) {
   string = "DEFVAR LF@%%retval\n";
   add_instr(head, string);
   string = "MOVE LF@%%retval nil@nil\n";
+  add_instr(head, string);
+}
+
+void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, char *string) {
+  // string = "CREATEFRAME\n";
+  sprintf(string, "CREATEFRAME\n");
+  add_instr(head, string);
+
+  // while (func_param != NULL) {
+  //   sprintf(string, "DEFVAR TF@%s\n", func_param->id_name);
+  //   add_instr(head, string);
+  //   sprintf(string, "MOVE TF@%s int@%d\n", func_param->id_name, func_param->int_val);
+  //   add_instr(head, string);
+  //   func_param++;
+  // }
+  for (int i = 0; i < 2; i++) {
+
+    sprintf(string, "DEFVAR TF@%s\n", func_param[i].id_name);
+    // printf("string: %s\n", string);
+    add_instr(head, string);
+
+    sprintf(string, "MOVE TF@%s int@%d\n", func_param[i].id_name, func_param[i].int_val);
+    add_instr(head, string);
+  }
+
+  sprintf(string, "CALL $%s\n", func_name);
   add_instr(head, string);
 }
 
@@ -151,28 +194,41 @@ int generate_code(instr_node **head, Data data, gencode gencode) {
 
   switch (gencode) {
 
+    char *id_name_create;
+    char *id_name_assign;
+    char *id_name_write;
+    char *id_name_push;
+    char *retval;
+    char *id_name_move;
+    char *func_name;
+    int int_val;
+    // Operand func_param[10];
+
     // define data.op1.id_name to global
     case GEN_CREATE_ID:
-        char *id_name_create = data.op1.id_name;
+        // char *id_name_create;
+        id_name_create = data.op1.id_name;
         CREATE_ID(head, id_name_create, string);
         break;
     
     // moves int value in data.op1.int_val to data.op1.id_name
     case GEN_MOVE:
-        int int_val = data.op1.int_val;
-        char *id_name_move = data.op1.id_name;
+        int_val = data.op1.int_val;
+        id_name_move = data.op1.id_name;
         MOVE(head, id_name_move, int_val, string);
         break;
     
     // pop value from expression to data.op1.id_name
     case GEN_ASSIGN:
-        char *id_name_assign = data.op1.id_name;
+        // char *id_name_assign;
+        id_name_assign = data.op1.id_name;
         ASSIGN(head, id_name_assign, string);
         break;
     
     // write value of data.op1.id_name
     case GEN_WRITE:
-        char *id_name_write = data.op1.id_name;
+        // char *id_name_write;
+        id_name_write = data.op1.id_name;
         WRITE(head, id_name_write, string);
         break;
     
@@ -183,7 +239,8 @@ int generate_code(instr_node **head, Data data, gencode gencode) {
     
     // push value of data.op1.id_name to stack
     case GEN_PUSH:
-        char *id_name_push = data.op1.id_name;
+        // char *id_name_push;
+        id_name_push = data.op1.id_name;
         PUSH(head, id_name_push, string);
         break;
     
@@ -214,14 +271,31 @@ int generate_code(instr_node **head, Data data, gencode gencode) {
 
     // generate function start
     case GEN_FUNC_START:
-        char *func_name = data.func_name;
+        // char *func_name;
+        func_name = data.func_name;
         FUNC_START(head, func_name, string);
         break;
 
     // generate function end
     case GEN_FUNC_END:
-        char *retval = data.op1.id_name;
+        // char *retval;
+        retval = data.op1.id_name;
         FUNC_END(head, retval, string);
+        break;
+
+    // generate function call
+    case GEN_FUNC_CALL:
+        // char *func_name;
+        // Operand *func_param;
+        func_name = data.func_name;
+        // printf("dara.func_name: %s\n", data.func_name);
+        // printf("dara.func_param1.id: %s\n", data.func_param[0].id_name);
+        // printf("dara.func_param2.id: %s\n", data.func_param[1].id_name);
+        // printf("dara.func_param1.int_val: %d\n", data.func_param[0].int_val);
+        // printf("dara.func_param2.int_val: %d\n", data.func_param[1].int_val);
+        // printf("---------------------------\n");
+        // func_param = data.func_param;
+        FUNC_CALL(head, func_name, data.func_param, string);
         break;
 
     // Add default case to handle unexpected values
@@ -229,86 +303,6 @@ int generate_code(instr_node **head, Data data, gencode gencode) {
         // Handle unexpected case
         break;
   }
-
-
-
-  // // define data.op1.id_name to global
-  // if (gencode == GEN_CREATE_ID) {
-  //   char *id_name = data.op1.id_name;
-  //   // sprintf(string, "DEFVAR GF@%s\n", id_name);
-  //   // add_instr(head, string);
-  //   CREATE_ID(head, id_name, string);
-  // }
-
-  // // moves int value in data.op1.int_val to data.op1.id_name
-  // if (gencode == GEN_MOVE) {
-  //     int int_val = data.op1.int_val;
-  //     char *id_name = data.op1.id_name;
-  //     // sprintf(string,"MOVE GF@%s int@%d\n", id_name, value);
-  //     // add_instr(head, string);
-  //     MOVE(head, id_name, int_val, string);
-  // }
- 
-  // // pop value from expression to data.op1.id_name
-  // if (gencode == GEN_ASSIGN) {
-  //   char *id_name = data.op1.id_name;
-  //   // sprintf(string, "POPS GF@%s\n", id_name);
-  //   // add_instr(head, string);
-  //   ASSIGN(head, id_name, string);
-  // }
-
-  // // write value of data.op1.id_name
-  // if (gencode == GEN_WRITE) {
-  //   char *id_name = data.op1.id_name;
-  //   // sprintf(string, "WRITE GF@%s\n", id_name);
-  //   // add_instr(head, string);
-  //   WRITE(head, id_name, string);
-  // }
-
-  // // begin expression, clear stack
-  // if (gencode == GEN_BEGIN_EXPR) {
-  //   // string = "CLEARS\n";
-  //   // add_instr(head, string);
-  //   BEGIN_EXPR(head, string);
-  // }
-
-  // // push value of data.op1.id_name to stack
-  // if (gencode == GEN_PUSH) {
-  //   char *id_name = data.op1.id_name;
-  //   // sprintf(string, "PUSHS GF@%s\n", id_name);
-  //   // add_instr(head, string);
-  //   PUSH(head, id_name, string);
-  // }
-
-  // // add two values from stack (top two) and push result to stack
-  // if (gencode == GEN_ADD) {
-  //   // string = "ADDS\n";
-  //   // add_instr(head, string);
-  //   ADD(head, string);
-  // }
-
-  // if (gencode == GEN_SUB) {
-  //   // string = "SUBS\n";
-  //   // add_instr(head, string);
-  //   SUB(head, string);
-  // }
-
-  // if (gencode == GEN_MUL) {
-  //   // string = "MULS\n";
-  //   // add_instr(head, string);
-  //   MUL(head, string);
-  // }
-
-  // if (gencode == GEN_DIV) {
-  //   // string = "DIVS\n";
-  //   // add_instr(head, string);
-  //   DIV(head, string);
-  // }
-
-  // if (gencode == GEN_MAIN) {
-  //   MAIN(head, string);
-  // }
-
 
   return EXIT_SUCCESS;
 }
@@ -320,27 +314,21 @@ void pop_list_to_file(instr_node **head) {
     return;
   }
   instr_node *current = *head;
-  int cnt = 5;
+  int cnt = 6;
   while (current != NULL) {
     // printf("instruction to print to file on line %d: %s", cnt, current->instr);
     fprintf(file, "%s", current->instr);
     cnt++;
     instr_node *tmp = current;
     current = current->next;
-    printf("instruction to print to file on line %d: %s", cnt, tmp->instr);
+    // printf("instruction to print to file on line %d: %s", cnt, tmp->instr);
     // free(tmp->instr);
     tmp->instr = NULL;
-    printf("instruction to prindawdawdwat to file on line %d: %s\n", cnt, tmp->instr);
+    // printf("instruction to prindawdawdwat to file on line %d: %s\n", cnt, tmp->instr);
     free(tmp);
   }
   fclose(file);
 }
-
-// int generate_code(FILE *file) {
-//   generate_header(file);
-//   generate_main(file);
-//   return EXIT_SUCCESS;
-// }
 
 void destroy_file() {
   remove("IFJ23.code"); 

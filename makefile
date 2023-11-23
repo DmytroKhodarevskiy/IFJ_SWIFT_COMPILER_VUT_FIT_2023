@@ -23,7 +23,7 @@ TEST_OUTPUT = test_expression_parse.exe
 $(OUTPUT): $(PROG)
 # $(CC) -o $(OUTPUT) $(PROG)
 	$(CC) $(CFLAGS) -o $(OUTPUT) $(PROG)
-	./$(OUTPUT)
+	./$(OUTPUT) test.txt
 	rm -f $(OUTPUT)
 
 # Clean up generated files

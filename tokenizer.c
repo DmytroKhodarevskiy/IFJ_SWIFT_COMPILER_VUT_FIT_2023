@@ -1,5 +1,6 @@
 #include "tokenizer.h"
 #include "dynamic_string.c"
+#include "memory.h"
 
 #define START 100
 
@@ -46,6 +47,7 @@
 
 #define CheckifArrowState 133
 
+int linenum = 1;
 
 Token lookaheadToken;
 bool hasPeeked = false;
@@ -135,6 +137,7 @@ Token get_token(FILE *file){
     case START:
 
       if (symbol == '\n') {
+        linenum++;
         state = START;
 
 

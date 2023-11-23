@@ -106,6 +106,7 @@ typedef struct {
 
   token_type token_type;
   keyword keyword_type;
+  int line_number;
 
   Dynamic_string *string_value;
   int int_value;

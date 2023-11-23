@@ -44,34 +44,34 @@ void exitWithError(char* masssage, int ErrCode) {
     switch (ErrCode)
     {
     case ERR_LEX:
-        fprintf(stderr,"Error in the program within the lexical analysis (incorrect structure of the current lexeme) line: %d",linenum);
+        fprintf(stderr,"Error in the program within the lexical analysis (incorrect structure of the current lexeme) line: %d\n",linenum);
         break;
     case ERR_SYNTAX:
-        fprintf(stderr,"Error in the parsing program line: %d",linenum);
+        fprintf(stderr,"Error in the parsing program line: %d\n",linenum);
         break;
     case ERR_SEMANT_FUNC_ARG:
-        fprintf(stderr,"Semantic error in the program - undefined function, variable redefinition line: %d",linenum);
+        fprintf(stderr,"Semantic error in the program - undefined function, variable redefinition line: %d\n",linenum);
         break;
     case ERR_SEMANT_PARAM:
-        fprintf(stderr,"Wrong number/type of parameters when calling the function or wrong type of return value from function line: %d",linenum);
+        fprintf(stderr,"Wrong number/type of parameters when calling the function or wrong type of return value from function line: %d\n",linenum);
         break;
     case ERR_SEMANT_UNDF_VALUE:
-        fprintf(stderr,"Semantic error in program - use of undefined or uninitialized for variable line: %d",linenum);
+        fprintf(stderr,"Semantic error in program - use of undefined or uninitialized for variable line: %d\n",linenum);
         break;
     case ERR_SEMANT_RETURN:
-        fprintf(stderr,"Missing/overrun expression in the return statement from the function line: %d",linenum);
+        fprintf(stderr,"Missing/overrun expression in the return statement from the function line: %d\n",linenum);
         break;
     case ERR_SEMANT_TYPE:
-        fprintf(stderr,"Type compatibility semantic error in arithmetic, string, and relational expressions line: %d",linenum);
+        fprintf(stderr,"Type compatibility semantic error in arithmetic, string, and relational expressions line: %d\n",linenum);
         break;
     case ERR_SEMANT_UNDF_TYPE:
-        fprintf(stderr,"The variable or parameter type is not specified and cannot be inferred from the expression used line: %d",linenum);
+        fprintf(stderr,"The variable or parameter type is not specified and cannot be inferred from the expression used line: %d\n",linenum);
         break;
     case ERR_SEMANT_OTHER:
-        fprintf(stderr,"Other semantic errors: %d",linenum);
+        fprintf(stderr,"Other semantic errors: %d\n",linenum);
         break;
     case ERR_INTERNAL:
-        fprintf(stderr,"Internal compiler error, i.e. not affected by the input program line: %d",linenum);
+        fprintf(stderr,"Internal compiler error, i.e. not affected by the input program line: %d\n",linenum);
         break;
     }
     fprintf(stderr, "%s\n", masssage);

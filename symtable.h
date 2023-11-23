@@ -9,12 +9,14 @@ typedef enum {
     TYPE_INT, 
     TYPE_DOUBLE, 
     TYPE_STRING,
+    TYPE_NIL,
     TYPE_INT_NULLABLE, 
     TYPE_DOUBLE_NULLABLE, 
     TYPE_STRING_NULLABLE, 
     TYPE_VOID, 
     FUNC,
     TYPE_UNKNOWN,
+    TYPE_BOOL,
 } DataType;
 
 
@@ -46,7 +48,7 @@ typedef struct {
     ListFuncParam paramTypes;    // Array of parameter types
     int paramCount;          // Number of parameters
     struct SymTable* local_SymTable; // Local symbol table of the function
-    bool isNil;            // Whether the symbol is nil
+    bool isNil;               // Whether the symbol is nil
 } SymData;
 
 typedef struct AVLNode {

@@ -36,7 +36,7 @@ void print_stack(TokenStack stack);
  *
  * @param expression_type The token type to be printed.
  */
-void print_expression_type(token_type expression_type);
+void print_expression_type(DataType expression_type);
 //-----------------------------------------------------------
 //CONVERTERS
 /**
@@ -61,7 +61,7 @@ token_type convert_symType_to_tokenType(DataType type);
  * @param rule_type The type of the rule to be applied.
  * @return The token type of the result of the operation.
  */
-token_type get_token_type(Token op1, Token op3, int rule_type);
+DataType get_token_type(Token op1, Token op3, int rule_type);
 
 /**
  * Finds the last terminal token in the stack.
@@ -112,7 +112,7 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
  * @param count The number of tokens in the array.
  * @return The index of the grammar rule; -1 if no rule matches.
  */
-int get_rule_index(SymTable *table,Token tokens[], int count, token_type *expression_type);
+int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expression_type);
 
 /**
  * Applies a grammar rule to the token stack based on the rule index.
@@ -120,7 +120,7 @@ int get_rule_index(SymTable *table,Token tokens[], int count, token_type *expres
  * @param rule_index The index of the grammar rule to be applied.
  * @param stack A pointer to the token stack to which the rule will be applied.
  */
-void perform_rule(int rule_index, TokenStack *stack, token_type *expression_type);
+void perform_rule(int rule_index, TokenStack *stack, DataType *expression_type);
 
 /**
  * Performs a reduce operation on the stack based on the given count of tokens.
@@ -129,7 +129,7 @@ void perform_rule(int rule_index, TokenStack *stack, token_type *expression_type
  * @param count The number of tokens to be considered for the reduction.
  * @return 0 if the reduction is successful; -1 if an error occurs or no rule applies.
  */
-int perform_reduce(SymTable *table,TokenStack *stack, int count, token_type *expression_type);
+int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type);
 
 
 

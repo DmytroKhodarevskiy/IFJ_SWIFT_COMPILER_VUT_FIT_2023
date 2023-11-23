@@ -1,6 +1,3 @@
-
-//#include "tokenizer.c"
-//#include "symtable.c"
 #include "expression_parse.c"
 #include <stdio.h>
 #include <string.h>
@@ -42,6 +39,7 @@ void parsing() {
     globalFuncData.paramTypes.prefix = PREFIX_DEFAULT;
     globalFuncData.paramCount = 0; // No parameters
     globalFuncData.local_SymTable = NULL; // Initially, no local symbol table
+    globalFuncData.isNil = false;
 
     insert_SymTable(Globaltable, globalFuncData.name, globalFuncData);
 
@@ -63,7 +61,6 @@ void parsing() {
 void parseStatementList(FILE* file) {
     while (true) {
         Token nextToken = peekNextToken(file);
-        
         if (nextToken.token_type == T_RBRACE || nextToken.token_type == T_EOF) {
             break;
         }
@@ -77,8 +74,8 @@ void parseStatementList(FILE* file) {
 
 void parseStatement(Token token, FILE* file) {
     if (token.token_type != T_KEYWORD) {
-        printf("Error: Expected a keyword starting a statement\n");
-        return;
+        fprintf(stderr, "Error: Expected a keyword starting a statement\n");
+        exit(2); // Syntactic analysis error
     }
 
     if (strcmp(token.string_value->str, "func") == 0) {
@@ -90,49 +87,130 @@ void parseStatement(Token token, FILE* file) {
     } else if (strcmp(token.string_value->str, "let") == 0 || strcmp(token.string_value->str, "var") == 0) {
         parseLetOrVarStatement(file, token);
     } else {
-        fprintf(stderr, "Error: Unexpected keyword '%s'\n", token.string_value->str);
-        exit(1);
+        // Handle assignment statement
+        parseAssignmentStatement(file, token);
     }
 }
 
 
 
+void parseAssignmentStatement(FILE* file, Token variableToken) {
+
+    if (variableToken.token_type != T_TYPE_ID) {
+        fprintf(stderr, "Error: Expected an identifier for assignment\n");
+        exit(2);
+    }
+
+
+    Token assignToken = get_token(file);
+    if (assignToken.token_type != T_ASSIGN) {
+        fprintf(stderr, "Error: Expected '=' after identifier\n");
+        exit(2);
+    }
+
+    
+    DataType rhsType = parse_expression(Globaltable, &assignToken, &error, &file);
+
+    printf("token type: %s, token value: %s\n", tokenTypeNames[assignToken.token_type], assignToken.string_value->str);
+
+    AVLNode* node = search_SymTable(Globaltable, variableToken.string_value->str);
+    if (node == NULL) {
+        fprintf(stderr, "Error: Variable '%s' not declared\n", variableToken.string_value->str);
+        exit(5);
+    }
+
+    SymData* variableData = &node->data;
+
+
+    if (variableData->dtype != rhsType && !(variableData->dtype == TYPE_DOUBLE && rhsType == TYPE_INT)) {
+        fprintf(stderr, "Error: Type mismatch in assignment");
+        exit(7); 
+    }
+
+    variableData->isDefined = true;
+    if (!variableData->dtype) {
+        variableData->dtype = rhsType;
+    }
+
+}
+
+bool isNullableType(DataType type) {
+    return type == TYPE_INT_NULLABLE || type == TYPE_DOUBLE_NULLABLE || type == TYPE_STRING_NULLABLE;
+}
+
+
+
+
 
 void parseLetOrVarStatement(FILE* file, Token keywordToken) {
-    SymData VariableData;
+    SymData VariableData = {0}; // Initialize SymData
+    bool typeSpecified = false;
+    bool assignmentPresent = false;
     VariableData.canbeChanged = (strcmp(keywordToken.string_value->str, "var") == 0);
 
     Token identifierToken = get_token(file);
     if (identifierToken.token_type != T_TYPE_ID) {
         fprintf(stderr, "Error: Expected identifier after '%s'\n", keywordToken.string_value->str);
-        exit(1);
+        exit(2); // Syntactic analysis error
     }
 
     VariableData.name = identifierToken.string_value->str; // Copy the variable name
 
     Token nextToken = peekNextToken(file); // Look ahead without consuming the token
 
-    // Check if there is a type specifier or an assignment
+    // Check if there is a type specifier
     if (nextToken.token_type == T_COLON) {
         get_token(file); // Consume the colon token
         VariableData.dtype = parseType(file); // Parse the type after the colon
-    } else if (nextToken.token_type == T_ASSIGN) {
-        // If there is an assignment, the type can be inferred from the expression
-        get_token(file); // Consume the '=' token
-        // TODO: Parse the expression and infer the type.
-        // VariableData.dtype = inferTypeFromExpression(parse_expression(file));
-    } else {
-        // Neither a type nor an assignment is provided
-        fprintf(stderr, "Error: Variable declaration must include a type or an initializer\n");
-        exit(1);
+        typeSpecified = true;
     }
 
-    // Check if the variable is already defined
+    // Check for assignment
+    nextToken = peekNextToken(file);
+    if (nextToken.token_type == T_ASSIGN) {
+        get_token(file); // Consume the assignment token
+        assignmentPresent = true;
+
+        Token assignToken = get_token(file); // Get the token for the assignment value
+        DataType VariableAssignType;
+
+        if (strcmp(assignToken.string_value->str, "nil") == 0) {
+            VariableAssignType = TYPE_NIL;
+            VariableData.isNil = true;
+        } else {
+            VariableAssignType = parse_expression(Globaltable, &assignToken, &error, &file);
+            //fseek(file, -strlen(assignToken.string_value->str), SEEK_CUR);
+            //assignToken = get_token(file);
+            printf("token type: %s, token value: %s\n", tokenTypeNames[assignToken.token_type], assignToken.string_value->str);
+
+        }
+
+        // Check type compatibility, allowing nil for nullable types
+        if (!typeSpecified) {
+            VariableData.dtype = VariableAssignType;
+        } else if (VariableAssignType != TYPE_NIL && VariableData.dtype != VariableAssignType && !(VariableData.dtype == TYPE_DOUBLE && VariableAssignType == TYPE_INT)) {
+            fprintf(stderr, "Error: Type mismatch in assignment\n");
+            exit(7); // Semantic error of type compatibility
+        } else if (VariableAssignType == TYPE_NIL && !isNullableType(VariableData.dtype)) {
+            fprintf(stderr, "Error: Cannot assign 'nil' to a non-nullable type\n");
+            exit(7); // Semantic error of type compatibility
+        }
+    } 
+
+    // Check if either type or assignment is specified
+    if (!typeSpecified && !assignmentPresent) {
+        fprintf(stderr, "Error: Variable declaration must specify a type or an initializer\n");
+        exit(2); // Syntactic analysis error
+    }
+
+    // Update or insert the variable into the symbol table
     VariableData.isDefined = (search_SymTable(Globaltable, VariableData.name) != NULL);
-
-    insert_SymTable(Globaltable, VariableData.name, VariableData); // Insert the variable into the symbol table
+    if (VariableData.isDefined) {
+        updateSymData(Globaltable, VariableData.name, VariableData);
+    } else {
+        insert_SymTable(Globaltable, VariableData.name, VariableData);
+    }
 }
-
 
 
 
@@ -146,10 +224,11 @@ void parseWhileStatement(FILE* file) {
         exit(1);
     }
 
-    if(!parse_expression(Globaltable,&hui,&error,&file)) {
+    if(!parse_expression(Globaltable, &hui,&error,&file)) {
         fprintf(stderr,"ERRRRRRORRRRR EXPRESSSSION ALERT ALERT ALERT\n");
         exit(1);
     }
+    printf("token type: %s, token value: %s\n", tokenTypeNames[hui.token_type], hui.string_value->str);
 
 
     if (hui.token_type != T_LBRACE) {
@@ -192,10 +271,10 @@ void parseIfStatement(FILE* file) {
             exit(1);
         }
 
-        if(!parse_expression(Globaltable,&openParen,&error,&file)) {
-            fprintf(stderr,"ERRRRRRORRRRR EXPRESSSSION ALERT ALERT ALERT\n");
-            exit(1);
-        }
+
+        parse_expression(Globaltable, &openParen, &error, &file);
+        printf("token type: %s, token value: %s\n", tokenTypeNames[openParen.token_type], openParen.string_value->str);
+
 
         if (openParen.token_type != T_LBRACE) {
             fprintf(stderr,"Error: Expected '{' after if condition\n");
@@ -215,6 +294,7 @@ void parseIfStatement(FILE* file) {
 
 
     Token elseToken = get_token(file);
+    printf("Token type: %s, Token value: %s\n", tokenTypeNames[elseToken.token_type], elseToken.string_value->str);
     if (elseToken.token_type != T_KEYWORD || strcmp(elseToken.string_value->str, "else") != 0) {
         fprintf(stderr,"Error: 'else' clause is required after 'if'\n");
         exit(1);
@@ -297,8 +377,8 @@ void parseFunction(FILE* file) {
     // Check if it's a return statement, check the return type for non-void functions
     if (strcmp(statementToken.string_value->str, "return") == 0) {
         hasReturnStatement = true;
-        // Here, you would parse the return statement
-        // DataType exprType = parseReturnType(file);
+        // Token token = get_token(file);
+        // DataType exprType = parse_expression(Globaltable, &token ,&error,file);
         // if (return_type != TYPE_VOID && exprType != return_type) {
         //     fprintf(stderr, "Error: Return type does not match function return type\n");
         //     exit(1);

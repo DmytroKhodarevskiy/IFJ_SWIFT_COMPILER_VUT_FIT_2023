@@ -1,5 +1,8 @@
-let a: Double
-let b: Double
-if(a==a){
+var a: Int? = 5
+if(a){
 }else{
+ var a = 1
 }
+
+
+

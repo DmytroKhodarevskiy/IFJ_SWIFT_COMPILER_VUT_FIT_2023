@@ -135,9 +135,11 @@ Token get_token(FILE *file){
     case START:
 
       if (symbol == '\n') {
-        state = START;
-
-
+//          token.token_type = T_EOL;
+//          appendToDynamicString(token_string, symbol);
+//          copyString(token.string_value->str, token_string->str);
+//          return token;
+          state = START;
       } else if (symbol == '\t') {
         state = START;
 

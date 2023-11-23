@@ -7,7 +7,30 @@
 
 #include "memory.h"
 
+void *safeRealloc(void *ptr, size_t newSize) {
+    void *newBlock = realloc(ptr, newSize);
+    if (newBlock == NULL && newSize != 0) {
+        // Reallocation failed
+        exitWithError("Memory reallocation failed", ERR_INTERNAL);
+    }
+    return newBlock;
+}
 
+void* resizeMemoryBlock(void *block, size_t newSize) {
+    MemoryBlockNode *current = memoryListHead;
+    while (current != NULL) {
+        if (current->block == block) {
+            // Found the block in the linked list
+            current->block = safeRealloc(current->block, newSize);
+            // current. = newSize; // Update the size
+            return current->block;
+        }
+        current = current->next;
+    }
+
+    // If the block was not found in the linked list
+    exitWithError("Block not found in memory list", ERR_INTERNAL);
+}
 
 
 void *safe_MemoryBlock(size_t size) {
@@ -33,48 +56,58 @@ void *safe_MemoryBlock(size_t size) {
 void free_all() {
     MemoryBlockNode *current = memoryListHead;
     while (current != NULL) {
+        // printf("Freeing memory block: %p\n", current->block);
+        // MemoryBlockNode *next = current->next;
+        // printf("Freeing node: %p\n", current);
+        // free(current->block);  
+        // free(current);         
+        // current = next;
+
+        printf("Freeing memory block: %p\n", current->block);
         MemoryBlockNode *next = current->next;
-        free(current->block);  
-        free(current);         
+        free(current->block);
+        printf("Freeing node: %p\n", current);
+        free(current);
         current = next;
     }
+    memoryListHead = NULL;
 }
 
 void exitWithError(char* masssage, int ErrCode) {
     switch (ErrCode)
     {
     case ERR_LEX:
-        fprintf(stderr,"Error in the program within the lexical analysis (incorrect structure of the current lexeme) line: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mError in the program within the lexical analysis (incorrect structure of the current lexeme) line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SYNTAX:
-        fprintf(stderr,"Error in the parsing program line: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mError in the parsing program line:\033[0m %d\n",linenum);
         break;
     case ERR_SEMANT_FUNC_ARG:
-        fprintf(stderr,"Semantic error in the program - undefined function, variable redefinition line: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mSemantic error in the program - undefined function, variable redefinition line:\033[0m %d\n",linenum);
         break;
     case ERR_SEMANT_PARAM:
-        fprintf(stderr,"Wrong number/type of parameters when calling the function or wrong type of return value from function line: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mWrong number/type of parameters when calling the function or wrong type of return value from function line:\033[0m %d\n",linenum);
         break;
     case ERR_SEMANT_UNDF_VALUE:
-        fprintf(stderr,"Semantic error in program - use of undefined or uninitialized for variable line: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mSemantic error in program - use of undefined or uninitialized for variable line:\033[0m %d\n",linenum);
         break;
     case ERR_SEMANT_RETURN:
-        fprintf(stderr,"Missing/overrun expression in the return statement from the function line: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mMissing/overrun expression in the return statement from the function line:\033[0m %d\n",linenum);
         break;
     case ERR_SEMANT_TYPE:
-        fprintf(stderr,"Type compatibility semantic error in arithmetic, string, and relational expressions line: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mType compatibility semantic error in arithmetic, string, and relational expressions line:\033[0m %d\n",linenum);
         break;
     case ERR_SEMANT_UNDF_TYPE:
-        fprintf(stderr,"The variable or parameter type is not specified and cannot be inferred from the expression used line: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mThe variable or parameter type is not specified and cannot be inferred from the expression used line:\033[0m %d\n",linenum);
         break;
     case ERR_SEMANT_OTHER:
-        fprintf(stderr,"Other semantic errors: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mOther semantic errors:\033[0m %d\n",linenum);
         break;
     case ERR_INTERNAL:
-        fprintf(stderr,"Internal compiler error, i.e. not affected by the input program line: %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mInternal compiler error, i.e. not affected by the input program line:\033[0m %d\n",linenum);
         break;
     }
-    fprintf(stderr, "%s\n", masssage);
+    fprintf(stderr, "\033[35m\033[1m%s\n\033[0m", masssage);
     free_all();
     exit(ErrCode);
 }

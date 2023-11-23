@@ -236,6 +236,7 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
 
       else if (action_letter == R) {
         if(perform_reduce(table, &stack, count_of_token_before_edge(stack), &expression_type) == -1){
+          freeStack(&stack);
           *error = 1;
           printf("Error: Invalid token\n");
           return expression_type;
@@ -243,17 +244,22 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
       }
       else if (action_letter == EQ) {
           push(&stack, *token);
-          *token = get_token(*file);
+          eol = fgetc(*file);
+          ungetc(eol, *file);
+          if(eol == '\n' || eol == '\r') EOL = true;
+          else *token = get_token(*file);
       }
       else if (action_letter == E) {
-        printf("Error: Invalid token\n");
-        *error = 1;
+            freeStack(&stack);
+            printf("Error: Invalid token\n");
+            *error = 1;
         return expression_type;
       }
       else if (action_letter == END) {
-        //printf("Expression type: %d\n", expression_type);
-        //print_expression_type(expression_type);
-       // printf("Expression OK\n");
+            //printf("Expression type: %d\n", expression_type);
+            //print_expression_type(expression_type);
+           // printf("Expression OK\n");
+        freeStack(&stack);
         return expression_type;
       }
   }

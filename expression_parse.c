@@ -18,9 +18,20 @@ int precedence_table[size][size] = {
 
 };
 
+
 bool is_nullable(DataType type){
   if(type == TYPE_INT_NULLABLE || type == TYPE_DOUBLE_NULLABLE || type == TYPE_STRING_NULLABLE) return true;
   else return false;
+}
+
+bool restricted_operations_with_operation(DataType expression_type, char *operation){
+  if((strcmp(operation, "+") == 0) || (strcmp(operation, "-") == 0) || (strcmp(operation, "*") == 0) || (strcmp(operation, "/") == 0)){
+      if(is_nullable(expression_type)){
+          printf("Error: Cannot use %s operator on nullable type\n", operation);
+          return false;
+      }
+  }
+  return true;
 }
 token_type convert_symType_to_tokenType(DataType type){
         switch (type) {
@@ -94,6 +105,7 @@ DataType get_token_type(Token op1, Token op3, int rule_type){
     if((op1.token_type == T_INT && op3.token_type == T_DOUBLE) || (op1.token_type == T_DOUBLE && op3.token_type == T_INT)){
       return TYPE_DOUBLE;
     }
+
     if(op1.token_type != op3.token_type) {
       return TYPE_UNKNOWN;
     }
@@ -292,6 +304,7 @@ int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expressi
 
         if(tokens[0].grammar_token_type == T_NT && tokens[2].grammar_token_type == T_NT)
         {
+            restricted_operations_with_operation(*expression_type, tokens[1].string_value->str);
           switch (tokens[1].token_type) {
             // E -> E + E
             case T_PLUS:

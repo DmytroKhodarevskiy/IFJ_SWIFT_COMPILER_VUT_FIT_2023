@@ -104,14 +104,17 @@ DataType get_token_type(Token op1, Token op3, int rule_type){
     }
   return TYPE_BOOL;
 case 3:
-    if(op1.token_type != op3.token_type) {
-      return TYPE_UNKNOWN;
-    }
+
     if(op1.token_type == T_KEYWORD && op3.token_type == T_KEYWORD) return TYPE_NIL;
     else if (op1.token_type == T_KEYWORD) return convert_tokenType_to_symType(op3.token_type);
     else if (op3.token_type == T_KEYWORD) return convert_tokenType_to_symType(op1.token_type);
-
-    default:
+    else if(op1.token_type != T_KEYWORD && op3.token_type != T_KEYWORD) {
+          if(op1.token_type != op3.token_type) {
+            return TYPE_UNKNOWN;
+          }
+          else return convert_tokenType_to_symType(op1.token_type);
+    }
+default:
         return TYPE_UNKNOWN;
 
   }
@@ -192,23 +195,31 @@ int get_index_from_token(Token token) {
 
 
 DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file) {
-
   TokenStack stack;
   initializeStack(&stack);
   DataType expression_type = TYPE_UNKNOWN;
-
+  int eol;
+  bool EOL = false;
+  int row;
+  int column;
   while (true) {
-      //print_stack(stack);
-      int column = get_index_from_token(*token);
-      int row = get_index_from_token(last_terminal(stack));
+     // print_stack(stack);
+
+      if(EOL) column = 8;
+      else column = get_index_from_token(*token);
+      row = get_index_from_token(last_terminal(stack));
+
 
       Action_Letter action_letter = precedence_table[row][column];
       //printf("Action: %d row: %d column: %d\n", action_letter, row, column);
       if (action_letter == S) {
         insert_edge(&stack);
         push(&stack, *token);
-        *token = get_token(*file);
-        //printf("Token: %s\n", token->string_value->str);
+        eol = fgetc(*file);
+        ungetc(eol, *file);
+        if(eol == '\n' || eol == '\r') EOL = true;
+        else *token = get_token(*file);
+
       }
 
       else if (action_letter == R) {

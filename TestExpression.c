@@ -100,6 +100,40 @@ DataType test5() {
     return type;
 }
 
+DataType test6() {
+    FILE *file = fopen("tests_for_exp/6", "r");
+    int error = 0;
+    SymTable* table = create_SymTable();
+    if (table == NULL) {
+        fprintf(stderr, "Failed to create symbol table.\n");
+        return 1;
+    }
+    // Create a new symbol
+    add_symbol(table, "a", TYPE_INT_NULLABLE, true);
+    add_symbol(table, "b", TYPE_INT, false);
+    Token token = get_token(file);
+    DataType type = parse_expression(table, &token, &error, &file);
+    free(table);
+    return type;
+}
+
+DataType test7() {
+    FILE *file = fopen("tests_for_exp/7", "r");
+    int error = 0;
+    SymTable* table = create_SymTable();
+    if (table == NULL) {
+        fprintf(stderr, "Failed to create symbol table.\n");
+        return 1;
+    }
+    // Create a new symbol
+    add_symbol(table, "a", TYPE_INT, false);
+    add_symbol(table, "b", TYPE_INT, false);
+    Token token = get_token(file);
+    DataType type = parse_expression(table, &token, &error, &file);
+    free(table);
+    return type;
+}
+
 int main() {
     DataType test_1 = test1();
     if(test_1 == TYPE_INT){
@@ -154,6 +188,30 @@ int main() {
         print_expression_type(TYPE_BOOL);
         printf("Actual: -> ");
         print_expression_type(test_5);
+    }
+
+    DataType test_6 = test6();
+
+    if(test_6 == TYPE_INT){
+        printf("Test 6 passed\n");
+    }
+    else{
+        printf("Test 6 failed\nExpected: -> ");
+        print_expression_type(TYPE_INT);
+        printf("Actual: -> ");
+        print_expression_type(test_6);
+    }
+
+    DataType test_7 = test7();
+
+    if(test_7 == TYPE_INT){
+        printf("Test 7 passed\n");
+    }
+    else{
+        printf("Test 7 failed\nExpected: -> ");
+        print_expression_type(TYPE_INT);
+        printf("Actual: -> ");
+        print_expression_type(test_7);
     }
 
     return 0;

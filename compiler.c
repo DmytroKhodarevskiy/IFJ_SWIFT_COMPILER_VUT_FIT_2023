@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+//#include "expression_parse.c"
+
+
 
 // #include "expression_parse.c"
 #include "memory.c"

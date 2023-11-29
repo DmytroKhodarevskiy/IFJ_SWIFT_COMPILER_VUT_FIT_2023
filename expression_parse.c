@@ -5,7 +5,7 @@
 
 int precedence_table[size][size] = {
 
-//         +-      */      rel     !       ??      (       )       i       $
+// +-  */ rel  !   ??  (   )   i   $
   {R,  S,  R,  S,  R,  S,  R,  S,  R},  // +-
   {R,  R,  R,  S,  R,  S,  R,  S,  R},  // */
   {S,  S,  E,  S,  S,  S,  R,  S,  R},  // rel
@@ -287,7 +287,8 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
             //printf("Expression type: %d\n", expression_type);
             //print_expression_type(expression_type);
            // printf("Expression OK\n");f
-          // printf("token: %s\n", token->string_value->str);
+        fseek(*file, -strlen(token->string_value->str), SEEK_CUR);
+        printf("token: %s\n", token->string_value->str);
         freeStack(&stack);
         return expression_type;
       }

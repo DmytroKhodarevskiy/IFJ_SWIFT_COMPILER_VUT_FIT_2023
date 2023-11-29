@@ -12,3 +12,5 @@ void PROGRAM(FILE *file);
 void MB_STMT_LET_VAR(FILE *file);
 void TYPE(FILE *file);
 void MB_ASSIGN_EXPR(FILE *file);
+void WHILE_EXP(FILE *file);
+void PARAM_LIST(FILE *file);

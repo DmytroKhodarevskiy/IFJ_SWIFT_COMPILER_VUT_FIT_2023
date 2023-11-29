@@ -48,8 +48,6 @@ void STMT_LIST(FILE *file){
   current_token = peekNextToken(file);
   // printf("token list asd awd: %s\n", current_token.string_value->str);
   
-  // if (token.token_type != T_TYPE_ID &&
-      // token.token_type != T_KEYWORD) return;
   if (!(current_token.token_type == T_TYPE_ID ||
       current_token.token_type == T_KEYWORD)) return;
 
@@ -138,7 +136,7 @@ void STMT(FILE *file){
 
   else if (current_token.token_type == T_KEYWORD &&
            ((strcmp(str, "let") == 0) ||
-            (strcmp(str, "var") == 0))){  // let or var
+            (strcmp(str, "var") == 0))) {  // let or var
           // get_token(file); // get let
 
           current_token = get_token(file); // get id
@@ -149,10 +147,73 @@ void STMT(FILE *file){
           MB_STMT_LET_VAR(file);
       }
 
+  else if (current_token.token_type == T_KEYWORD &&
+           (strcmp(str, "return") == 0)) { // return
+
+           EXP(file);
+      }
+
+  else if (current_token.token_type == T_KEYWORD &&
+           (strcmp(str, "while") == 0)) { // while
+
+           WHILE_EXP(file);
+
+           current_token = get_token(file); // get {
+
+           if (current_token.token_type != T_LBRACE){
+             exitWithError("Syntax error: expected on while {\n", ERR_SYNTAX);
+           }
+
+           current_token = peekNextToken(file);
+           if (current_token.token_type != T_RBRACE){
+             STMT_LIST(file);
+             if (current_token.token_type != T_RBRACE){
+               exitWithError("Syntax error: expected on while }\n", ERR_SYNTAX);
+             }
+             current_token = get_token(file); // get }
+           }
+           else {
+             current_token = get_token(file); // get }
+           }
+      }  
+
+  else if (current_token.token_type == T_KEYWORD &&
+            (strcmp(str, "func") == 0)) { // func
+
+              current_token = get_token(file); // get id
+              if (current_token.token_type != T_TYPE_ID){
+                exitWithError("Syntax error: expected function name\n", ERR_SYNTAX);
+              }
+
+              current_token = get_token(file); // get (
+              if (current_token.token_type != T_LPAR){
+                exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
+              }
+
+              PARAM_LIST(file);
+              // WORKING HERE
+              /////////////////
+              /////////////////
+              /////////////////
+
+
+            }
+
   else {
-    return;
-    // exitWithError("Syntax error: expected if, while, return, let, var, id, func\n", ERR_SYNTAX);
+    // return;
+    exitWithError("Syntax error: expected if, while, return, let, var, id, func\n", ERR_SYNTAX);
   }
+}
+
+void PARAM_LIST(FILE *file){ //current token is (
+
+  current_token = peekNextToken(file);
+
+  if (!(current_token.token_type == T_TYPE_ID ||
+      current_token.token_type == T_UNDERSCORE_ID)) return;
+
+  PARAM(file);
+  PARAM_LIST(file);
 }
 
 void MB_STMT_LET_VAR(FILE *file){ //current token is id
@@ -206,6 +267,22 @@ void TYPE(FILE *file){ //current token is :
 
   else {
     exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
+  }
+}
+
+void WHILE_EXP(FILE *file){ //current token is while
+  // current_token = get_token(file); // get (
+  current_token = peekNextToken(file); // get (
+  char *str = current_token.string_value->str;
+
+  if (current_token.token_type == T_LPAR){
+          // get_token(file); // get (
+          EXP(file);
+          // get_token(file); // get )
+  }
+
+  else {
+    exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
   }
 }
 

@@ -88,6 +88,8 @@ typedef enum{
 
   T_DOLLAR, // $
 
+  T_T
+
 } token_type;
 
 
@@ -104,8 +106,10 @@ typedef struct
 
 typedef struct {
 
+  token_type grammar_token_type;
   token_type token_type;
   keyword keyword_type;
+
   int line_number;
 
   Dynamic_string *string_value;

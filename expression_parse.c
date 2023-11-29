@@ -1,24 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdbool.h>
-
 #include "expression_parse.h"
-
-#include "stack.c"
-#include "tokenizer.c"
 
 #define size 9
 
+
 int precedence_table[size][size] = {
 
-// +-  */  rel  !  ??  (    )  i   $
+//         +-      */      rel     !       ??      (       )       i       $
   {R,  S,  R,  S,  R,  S,  R,  S,  R},  // +-
   {R,  R,  R,  S,  R,  S,  R,  S,  R},  // */
-  {S,  S,  E,  S,  R,  S,  R,  S,  R},  // rel
+  {S,  S,  E,  S,  S,  S,  R,  S,  R},  // rel
   {R,  R,  R,  E,  R,  E,  R,  E,  R},  // !
-  {S,  S,  S,  S,  S,  S,  R,  S,  R},  // ??
+  {S,  S,  R,  S,  S,  S,  R,  S,  R},  // ??
   {S,  S,  S,  S,  S,  S,  EQ, S,  E},  // (
   {R,  R,  R,  R,  R,  E,  R,  E,  R},  // )
   {R,  R,  R,  R,  R,  E,  R,  E,  R},  // i
@@ -26,11 +18,74 @@ int precedence_table[size][size] = {
 
 };
 
-/**
- * Prints the current state of the token stack.
- *
- * @param stack The token stack to be printed.
- */
+bool findNewLineInFile(FILE *file) {
+    if (file == NULL) {
+        // File is not open
+        return false;
+    }
+
+    char ch;
+    while ((ch = fgetc(file)) != EOF) {
+        if (ch == '\n') {
+            // Newline character found
+            return true;
+        }
+        if (!isspace(ch)) {
+            // Non-space character found, put it back and return
+            ungetc(ch, file);
+            return false;
+        }
+    }
+
+    // Reached end of file without finding a newline or non-space character
+    return false;
+}
+
+
+bool is_nullable(DataType type){
+  if(type == TYPE_INT_NULLABLE || type == TYPE_DOUBLE_NULLABLE || type == TYPE_STRING_NULLABLE || type == TYPE_NIL) return true;
+  else return false;
+}
+
+bool restricted_operations_with_operation(DataType expression_type, char *operation){
+  if((strcmp(operation, "+") == 0) || (strcmp(operation, "-") == 0) || (strcmp(operation, "*") == 0) || (strcmp(operation, "/") == 0)){
+      if(is_nullable(expression_type)){
+          fprintf(stderr,"Error: Cannot use %s operator on nullable type or nil\n", operation);
+          return false;
+      }
+  }
+  return true;
+}
+token_type convert_symType_to_tokenType(DataType type){
+        switch (type) {
+        case TYPE_INT:
+          return T_INT;
+        case TYPE_DOUBLE:
+          return T_DOUBLE;
+        case TYPE_STRING:
+          return T_SING_STRING;
+        case TYPE_NIL:
+          return T_KEYWORD;
+        default:
+            return T_EMPTY;
+        }
+}
+
+DataType convert_tokenType_to_symType(token_type type){
+        switch (type) {
+        case T_INT:
+          return TYPE_INT;
+        case T_DOUBLE:
+          return TYPE_DOUBLE;
+        case T_SING_STRING:
+          return TYPE_STRING;
+        case T_KEYWORD:
+          return TYPE_NIL;
+        default:
+            return TYPE_UNKNOWN;
+        }
+}
+
 void print_stack(TokenStack stack) {
   printf("[$]\t");
   for (int i = 0; i <= stack.top; i++) {
@@ -40,37 +95,94 @@ void print_stack(TokenStack stack) {
   printf("\n");
 }
 
-/**
- * Finds the last terminal token in the stack.
- *
- * @param stack The stack from which to find the last terminal token.
- * @return The last terminal token if found; otherwise, a token indicating an empty or error state.
- */
+
+void print_expression_type(DataType expression_type){
+  switch (expression_type) {
+    case TYPE_INT:
+      printf("int\n");
+      break;
+    case TYPE_DOUBLE:
+      printf("double\n");
+      break;
+    case TYPE_UNKNOWN:
+      printf("undefined\n");
+      break;
+    case TYPE_STRING:
+      printf("string\n");
+      break;
+    case TYPE_NIL:
+        printf("nil\n");
+        break;
+    case TYPE_BOOL:
+        printf("bool\n");
+        break;
+    case TYPE_INT_NULLABLE:
+        printf("int?\n");
+        break;
+    case TYPE_DOUBLE_NULLABLE:
+        printf("double?\n");
+        break;
+    case TYPE_STRING_NULLABLE:
+        printf("string?\n");
+    break;
+    default:
+      printf("error\n");
+      break;
+  }
+}
+
+DataType get_token_type(Token op1, Token op3, int rule_type){
+
+  switch (rule_type) {
+  case 1:
+    if((op1.token_type == T_INT && op3.token_type == T_DOUBLE) || (op1.token_type == T_DOUBLE && op3.token_type == T_INT)){
+      return TYPE_DOUBLE;
+    }
+
+    if(op1.token_type != op3.token_type) {
+      return TYPE_UNKNOWN;
+    }
+    else return convert_tokenType_to_symType(op1.token_type);
+  case 2:
+    if(op1.token_type != op3.token_type) {
+      return TYPE_UNKNOWN;
+    }
+  return TYPE_BOOL;
+case 3:
+
+    if(op1.token_type == T_KEYWORD && op3.token_type == T_KEYWORD) return TYPE_NIL;
+    else if (op1.token_type == T_KEYWORD) return convert_tokenType_to_symType(op3.token_type);
+    else if (op3.token_type == T_KEYWORD) return convert_tokenType_to_symType(op1.token_type);
+    else if(op1.token_type != T_KEYWORD && op3.token_type != T_KEYWORD) {
+          if(op1.token_type != op3.token_type) {
+            return TYPE_UNKNOWN;
+          }
+          else return convert_tokenType_to_symType(op1.token_type);
+    }
+default:
+        return TYPE_UNKNOWN;
+
+  }
+}
+
 Token last_terminal(TokenStack stack) {
   Token token = init_token();
-  token.token_type = T_EMPTY;
   if(isEmpty(&stack)) {
     return token;
   }
   for(int i = stack.top; i >= 0; i--){
-    if(stack.items[i].token_type != T_NT ) return stack.items[i];
+    if(stack.items[i].grammar_token_type != T_NT ) return stack.items[i];
   }
   return token;
 }
 
-/**
- * Inserts a reduction edge token in the stack. If the top token is non-terminal,
- * the edge token is inserted before it; otherwise, it's placed on top of the stack.
- *
- * @param stack A pointer to the stack where the edge token will be inserted.
- */
 void insert_edge(TokenStack *stack) {
 
   Token edgeToken = init_token();
   edgeToken.token_type = T_RD_EDGE;
   Token token;
 
-  if(stack->items[stack->top].token_type == T_NT){
+  if(stack->items[stack->top].grammar_token_type == T_NT){
     token = pop(stack);
     push(stack, edgeToken);
     push(stack, token);
@@ -81,12 +193,6 @@ void insert_edge(TokenStack *stack) {
   }
 }
 
-/**
- * Counts the number of tokens before encountering a reduction edge token in the stack.
- *
- * @param stack The stack to be scanned for the count.
- * @return The number of tokens before the reduction edge token; -1 if edge not found.
- */
 int count_of_token_before_edge(TokenStack stack){
     int count = 0;
     for(int i = stack.top; stack.items[i].token_type != T_RD_EDGE; i--){
@@ -96,12 +202,6 @@ int count_of_token_before_edge(TokenStack stack){
     return count;
 }
 
-/**
- * Maps a given token to its corresponding index in the precedence table.
- *
- * @param token The token to be mapped.
- * @return The index of the token in the precedence table.
- */
 int get_index_from_token(Token token) {
   switch (token.token_type) {
     case T_PLUS:
@@ -129,151 +229,188 @@ int get_index_from_token(Token token) {
     case T_INT:
     case T_DOUBLE:
     case T_FLOAT:
-      return 7;
+    case T_SING_STRING:
+    case T_KEYWORD:
+      if(token.token_type == T_KEYWORD && (strcmp(token.string_value->str, "nil") != 0)) return 8;
+      else return 7;
     default:
       return 8;
   }
 }
 
-/**
- * Checks if the end of the input stream (represented by a specific token) is reached.
- *
- * @param token The token to check for the end-of-stream condition.
- * @return `true` if the end of the stream is reached; `false` otherwise.
- */
-bool end_of_read(Token token) {
-  if (get_index_from_token(token) == 8) {
-      return true;
-  }
-  return false;
-}
 
-/**
- * Parses an expression using an operator precedence parsing method.
- *
- * @param token The current token to be parsed.
- * @param error A pointer to an integer where the error state will be stored (0 for no error, 1 for error).
- * @param file A pointer to the file stream from which tokens are read.
- * @return `true` if parsing is successful; `false` if an error occurs.
- */
-bool parse_expression(Token *token, int *error, FILE** file) {
-
+DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file) {
   TokenStack stack;
   initializeStack(&stack);
+  DataType expression_type = TYPE_UNKNOWN;
+  bool EOL = false;
+  int row;
+  int column;
+  while (true) {
+     // print_stack(stack);
 
-  while (!end_of_read(*token) || stack.items[stack.top].token_type != T_NT || stack.top != 0) {
-      print_stack(stack);
+      if(EOL) column = 8;
+      else column = get_index_from_token(*token);
+      row = get_index_from_token(last_terminal(stack));
 
-      int column = get_index_from_token(*token);
-      int row = get_index_from_token(last_terminal(stack));
 
       Action_Letter action_letter = precedence_table[row][column];
-      printf("row: %d, column: %d, action_letter: %d\n", row, column, action_letter);
-
+      //printf("Action: %d row: %d column: %d\n", action_letter, row, column);
       if (action_letter == S) {
         insert_edge(&stack);
         push(&stack, *token);
+        EOL = findNewLineInFile(*file);
         *token = get_token(*file);
       }
 
       else if (action_letter == R) {
-        if(perform_reduce(&stack, count_of_token_before_edge(stack)) == -1){
+        if(perform_reduce(table, &stack, count_of_token_before_edge(stack), &expression_type) == -1){
+          freeStack(&stack);
           *error = 1;
-          return false;
+          printf("Error: Invalid token\n");
+          return expression_type;
         }
       }
       else if (action_letter == EQ) {
           push(&stack, *token);
+          EOL = findNewLineInFile(*file);
           *token = get_token(*file);
       }
       else if (action_letter == E) {
-        printf("Error: Invalid token\n");
-        *error = 1;
-        return false;
+            expression_type = TYPE_UNKNOWN;
+            freeStack(&stack);
+            printf("Error: Invalid token\n");
+            *error = 1;
+        return expression_type;
+      }
+      else if (action_letter == END) {
+            //printf("Expression type: %d\n", expression_type);
+            //print_expression_type(expression_type);
+           // printf("Expression OK\n");f
+          // printf("token: %s\n", token->string_value->str);
+        freeStack(&stack);
+        return expression_type;
       }
   }
-
-  print_stack(stack);
-  return true;
 }
 
-/**
- * Determines the index of the grammar rule to be applied based on the given tokens.
- *
- * @param tokens An array of tokens to be analyzed.
- * @param count The number of tokens in the array.
- * @return The index of the grammar rule; -1 if no rule matches.
- */
-int get_rule_index(Token tokens[], int count) {
+int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expression_type) {
   switch (count) {
     case 1:
       // E -> i
-      if(tokens[0].token_type == T_TYPE_ID || tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || tokens[0].token_type == T_FLOAT) return 1;
-      else return -1;
+      //if(tokens[0].token_type == T_KEYWORD && strcmp(tokens[0].string_value->str, "nil") == 0);
+//      if(tokens[0].token_type == T_TYPE_ID) tokens[0].token_type = convert_symType_to_tokenType(search_SymTable(table, tokens[0].string_value->str)->data.dtype);
+//      if(tokens[0].token_type == T_TYPE_ID || tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || tokens[0].token_type == T_KEYWORD || tokens[0].token_type == T_SING_STRING) {
+//        *expression_type = convert_tokenType_to_symType(tokens[0].token_type);
+//        return 1;
+//      }
+        //printf("Token: %s\n", tokens[0].string_value->str);
+        if(tokens[0].token_type == T_TYPE_ID){
+          AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
+          if(node == NULL) {
+            fprintf(stderr, "Error: Variable %s is not defined\n", tokens[0].string_value->str);
+            return -1;
+          }
+          *expression_type = node->data.dtype;
+          if(is_nullable(*expression_type)){
+              if(node->data.isNil) *expression_type = TYPE_NIL;
+          }
+          return 1;
+        }
+        if(tokens[0].token_type == T_TYPE_ID || tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || (tokens[0].token_type == T_KEYWORD && strcmp(tokens[0].string_value->str, "nil") == 0) || tokens[0].token_type == T_SING_STRING) {
+          *expression_type = convert_tokenType_to_symType(tokens[0].token_type);
+          //print_expression_type(*expression_type);
+          return 1;
+        }
+        else return -1;
     case 2:
         // E -> E!
-        if(tokens[0].token_type == T_NT && tokens[1].token_type == T_NOTNIL) return 6;
+        //print_expression_type(*expression_type);
+        if(*expression_type == TYPE_NIL){
+          *expression_type = TYPE_UNKNOWN;
+            fprintf(stderr, "Error: Cannot use ! operator on nil\n");
+            return -1;
+        }
+        if(tokens[0].grammar_token_type == T_NT && tokens[1].token_type == T_NOTNIL) {
+            if (!is_nullable(*expression_type)) {
+                fprintf(stderr, "Error: Cannot use ! operator on non-nullable type\n");
+                return -1;
+            }
+            *expression_type -= 4;
+            return 6;
+        }
         else return -1;
     case 3:
-        if(tokens[0].token_type == T_NT && tokens[2].token_type == T_NT)
+
+        if(tokens[0].grammar_token_type == T_NT && tokens[2].grammar_token_type == T_NT)
         {
+            restricted_operations_with_operation(*expression_type, tokens[1].string_value->str);
           switch (tokens[1].token_type) {
             // E -> E + E
             case T_PLUS:
+            *expression_type = get_token_type(tokens[0], tokens[2], 1);
                     return 2;
             // E -> E - E
             case T_MINUS:
+                    *expression_type = get_token_type(tokens[0], tokens[2], 1);
                     return 3;
             // E -> E * E
             case T_MULTIPLY:
+                    *expression_type = get_token_type(tokens[0], tokens[2], 1);
                     return 4;
             // E -> E / E
             case T_DIVIDE:
+                    *expression_type = get_token_type(tokens[0], tokens[2], 1);
                     return 5;
             // E -> E < E
             case T_LESS:
+                    *expression_type = get_token_type(tokens[0], tokens[2], 2);
                     return 7;
             // E -> E > E
             case T_GREATER:
+                    *expression_type = get_token_type(tokens[0], tokens[2], 2);
                     return 8;
             // E -> E <= E
             case T_LESS_EQUAL:
+                    *expression_type =  get_token_type(tokens[0], tokens[2], 2);
                     return 9;
             // E -> E >= E
             case T_GREATER_EQUAL:
+                    *expression_type = get_token_type(tokens[0], tokens[2], 2);
                     return 10;
             // E -> E == E
             case T_EQUAL:
+                    *expression_type = get_token_type(tokens[0], tokens[2], 2);
                     return 11;
             // E -> E != E
             case T_NOT_EQUAL:
+                    *expression_type = get_token_type(tokens[0], tokens[2], 2);
                     return 12;
             // E -> E ?? E
             case T_BINARY_OP:
+                    *expression_type = get_token_type(tokens[0], tokens[2], 3);
                     return 13;
             default:
                     return -1;
             }
         }
         // E -> (E)
-        else if(tokens[0].token_type == T_LPAR && tokens[1].token_type == T_NT && tokens[2].token_type == T_RPAR) return 0;
+        else if(tokens[0].token_type == T_LPAR && tokens[1].grammar_token_type == T_NT && tokens[2].token_type == T_RPAR){
+//            *expression_type = *expression_type;
+            return 0;
+        }
         else return -1;
         default:
         return -1;
         }
 }
 
-/**
- * Applies a grammar rule to the token stack based on the rule index.
- *
- * @param rule_index The index of the grammar rule to be applied.
- * @param stack A pointer to the token stack to which the rule will be applied.
- */
-void perform_rule(int rule_index, TokenStack *stack) {
+void perform_rule(int rule_index, TokenStack *stack, DataType *expression_type) {
 
   Token Etoken = init_token();
   Etoken.string_value->str = "E";
-  Etoken.token_type = T_NT;
+  Etoken.grammar_token_type = T_NT;
+  Etoken.token_type = convert_symType_to_tokenType(*expression_type);
 
   if (rule_index == 1) {
       pop(stack);
@@ -296,14 +433,7 @@ void perform_rule(int rule_index, TokenStack *stack) {
 
 }
 
-/**
- * Performs a reduce operation on the stack based on the given count of tokens.
- *
- * @param stack A pointer to the stack on which the reduce operation will be performed.
- * @param count The number of tokens to be considered for the reduction.
- * @return 0 if the reduction is successful; -1 if an error occurs or no rule applies.
- */
-int perform_reduce(TokenStack *stack, int count) {
+int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type) {
   Token tops[3];
   tops[0] = init_token();
   tops[1] = init_token();
@@ -323,11 +453,10 @@ int perform_reduce(TokenStack *stack, int count) {
     tops[2] = stack->items[stack->top];
   }
 
-  int rule_index = get_rule_index(tops, count);
-
+  int rule_index = get_rule_index(table,tops, count, expression_type);
   if(rule_index == -1) {
     return -1;
   } 
-  else perform_rule(rule_index, stack);
+  else perform_rule(rule_index, stack, expression_type);
   return 0;
 }

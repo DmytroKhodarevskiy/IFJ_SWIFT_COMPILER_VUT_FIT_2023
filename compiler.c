@@ -5,7 +5,7 @@
 
 // #include "expression_parse.c"
 #include "memory.c"
-#include "parser.c"
+#include "parse.c"
 #include "codegenerator.c"
 
 
@@ -28,24 +28,27 @@ int main(int argc, char* argv[]){
         file = stdin;
     }
 
+    printf("file: %s\n", argv[1]);
+    Parse(file);
 
-    Token token;
-    // int error = 0;
-    // int lex_ok = 1;
-    while (token.token_type != T_EOF) {
-        token = init_token();
-        token = get_token(file);
 
-        printf("TOKEN TYPE: %d\n", token.token_type);
-        printf("TOKEN STRING: %s\n", token.string_value->str);
+    // Token token;
+    // // int error = 0;
+    // // int lex_ok = 1;
+    // while (token.token_type != T_EOF) {
+    //     token = init_token();
+    //     token = get_token(file);
 
-        if (token.token_type == T_ERR) {
-            exitWithError("Lexical analysis failed\n", ERR_LEX);
-            break;
-        }
-    }
+    //     printf("TOKEN TYPE: %d\n", token.token_type);
+    //     printf("TOKEN STRING: %s\n", token.string_value->str);
+
+    //     if (token.token_type == T_ERR) {
+    //         exitWithError("Lexical analysis failed\n", ERR_LEX);
+    //         break;
+    //     }
+    // }
     
-    printf("Lexical analysis OK\n");
+    // printf("Lexical analysis OK\n");
     // if (get_index_from_token(token) != 8){
     //   lex_ok = parse_expression(&token, &error, &file);
     //   else {

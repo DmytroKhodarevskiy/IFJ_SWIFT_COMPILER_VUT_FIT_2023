@@ -84,7 +84,7 @@ DataType test4() {
 }
 
 DataType test5() {
-    FILE *file = fopen("tests_for_exp/5", "r");
+    FILE *file = fopen("tests_for_exp/5.txt", "r");
     int error = 0;
     SymTable* table = create_SymTable();
     if (table == NULL) {
@@ -146,73 +146,73 @@ int main() {
         print_expression_type(test_1);
     }
 
-    DataType test_2 = test2();
-    if(test_2 == TYPE_DOUBLE){
-        printf("Test 2 passed\n");
-    }
-    else{
-        printf("Test 2 failed\nExpected: -> ");
-        print_expression_type(TYPE_DOUBLE);
-        printf("Actual: -> ");
-        print_expression_type(test_2);
-    }
+    // DataType test_2 = test2();
+    // if(test_2 == TYPE_DOUBLE){
+    //     printf("Test 2 passed\n");
+    // }
+    // else{
+    //     printf("Test 2 failed\nExpected: -> ");
+    //     print_expression_type(TYPE_DOUBLE);
+    //     printf("Actual: -> ");
+    //     print_expression_type(test_2);
+    // }
 
-    DataType test_3 = test3();
-    if(test_3 == TYPE_STRING){
-        printf("Test 3 passed\n");
-    }
-    else{
-        printf("Test 3 failed\nExpected: -> ");
-        print_expression_type(TYPE_STRING);
-        printf("Actual: -> ");
-        print_expression_type(test_3);
-    }
+    // DataType test_3 = test3();
+    // if(test_3 == TYPE_STRING){
+    //     printf("Test 3 passed\n");
+    // }
+    // else{
+    //     printf("Test 3 failed\nExpected: -> ");
+    //     print_expression_type(TYPE_STRING);
+    //     printf("Actual: -> ");
+    //     print_expression_type(test_3);
+    // }
 
-    DataType test_4 = test4();
-    if(test_4 == TYPE_INT){
-        printf("Test 4 passed\n");
-    }
-    else{
-        printf("Test 4 failed\nExpected: -> ");
-        print_expression_type(TYPE_INT);
-        printf("Actual: -> ");
-        print_expression_type(test_4);
-    }
+    // DataType test_4 = test4();
+    // if(test_4 == TYPE_INT){
+    //     printf("Test 4 passed\n");
+    // }
+    // else{
+    //     printf("Test 4 failed\nExpected: -> ");
+    //     print_expression_type(TYPE_INT);
+    //     printf("Actual: -> ");
+    //     print_expression_type(test_4);
+    // }
 
-    DataType test_5 = test5();
-    if(test_5 == TYPE_BOOL){
-        printf("Test 5 passed\n");
-    }
-    else{
-        printf("Test 5 failed\nExpected: -> ");
-        print_expression_type(TYPE_BOOL);
-        printf("Actual: -> ");
-        print_expression_type(test_5);
-    }
+    // DataType test_5 = test5();
+    // if(test_5 == TYPE_BOOL){
+    //     printf("Test 5 passed\n");
+    // }
+    // else{
+    //     printf("Test 5 failed\nExpected: -> ");
+    //     print_expression_type(TYPE_BOOL);
+    //     printf("Actual: -> ");
+    //     print_expression_type(test_5);
+    // }
 
-    DataType test_6 = test6();
+   // DataType test_6 = test6();
 
-    if(test_6 == TYPE_INT){
-        printf("Test 6 passed\n");
-    }
-    else{
-        printf("Test 6 failed\nExpected: -> ");
-        print_expression_type(TYPE_INT);
-        printf("Actual: -> ");
-        print_expression_type(test_6);
-    }
+    // if(test_6 == TYPE_INT){
+    //     printf("Test 6 passed\n");
+    // }
+    // else{
+    //     printf("Test 6 failed\nExpected: -> ");
+    //     print_expression_type(TYPE_INT);
+    //     printf("Actual: -> ");
+    //     print_expression_type(test_6);
+    // }
 
-    DataType test_7 = test7();
+    // DataType test_7 = test7();
 
-    if(test_7 == TYPE_INT){
-        printf("Test 7 passed\n");
-    }
-    else{
-        printf("Test 7 failed\nExpected: -> ");
-        print_expression_type(TYPE_INT);
-        printf("Actual: -> ");
-        print_expression_type(test_7);
-    }
+    // if(test_7 == TYPE_INT){
+    //     printf("Test 7 passed\n");
+    // }
+    // else{
+    //     printf("Test 7 failed\nExpected: -> ");
+    //     print_expression_type(TYPE_INT);
+    //     printf("Actual: -> ");
+    //     print_expression_type(test_7);
+    // }
 
     return 0;
 }

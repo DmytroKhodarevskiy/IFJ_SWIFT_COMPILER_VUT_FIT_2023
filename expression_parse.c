@@ -5,7 +5,7 @@
 
 int precedence_table[size][size] = {
 
-//         +-      */      rel     !       ??      (       )       i       $
+// +-  */ rel  !   ??  (   )   i   $
   {R,  S,  R,  S,  R,  S,  R,  S,  R},  // +-
   {R,  R,  R,  S,  R,  S,  R,  S,  R},  // */
   {S,  S,  E,  S,  S,  S,  R,  S,  R},  // rel
@@ -18,16 +18,39 @@ int precedence_table[size][size] = {
 
 };
 
+bool findNewLineInFile(FILE *file) {
+    if (file == NULL) {
+        // File is not open
+        return false;
+    }
+
+    char ch;
+    while ((ch = fgetc(file)) != EOF) {
+        if (ch == '\n') {
+            // Newline character found
+            return true;
+        }
+        if (!isspace(ch)) {
+            // Non-space character found, put it back and return
+            ungetc(ch, file);
+            return false;
+        }
+    }
+
+    // Reached end of file without finding a newline or non-space character
+    return false;
+}
+
 
 bool is_nullable(DataType type){
-  if(type == TYPE_INT_NULLABLE || type == TYPE_DOUBLE_NULLABLE || type == TYPE_STRING_NULLABLE) return true;
+  if(type == TYPE_INT_NULLABLE || type == TYPE_DOUBLE_NULLABLE || type == TYPE_STRING_NULLABLE || type == TYPE_NIL) return true;
   else return false;
 }
 
 bool restricted_operations_with_operation(DataType expression_type, char *operation){
   if((strcmp(operation, "+") == 0) || (strcmp(operation, "-") == 0) || (strcmp(operation, "*") == 0) || (strcmp(operation, "/") == 0)){
       if(is_nullable(expression_type)){
-          printf("Error: Cannot use %s operator on nullable type\n", operation);
+          fprintf(stderr,"Error: Cannot use %s operator on nullable type or nil\n", operation);
           return false;
       }
   }
@@ -92,6 +115,16 @@ void print_expression_type(DataType expression_type){
         break;
     case TYPE_BOOL:
         printf("bool\n");
+        break;
+    case TYPE_INT_NULLABLE:
+        printf("int?\n");
+        break;
+    case TYPE_DOUBLE_NULLABLE:
+        printf("double?\n");
+        break;
+    case TYPE_STRING_NULLABLE:
+        printf("string?\n");
+    break;
     default:
       printf("error\n");
       break;
@@ -210,7 +243,6 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
   TokenStack stack;
   initializeStack(&stack);
   DataType expression_type = TYPE_UNKNOWN;
-  int eol;
   bool EOL = false;
   int row;
   int column;
@@ -227,11 +259,8 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
       if (action_letter == S) {
         insert_edge(&stack);
         push(&stack, *token);
-        eol = fgetc(*file);
-        ungetc(eol, *file);
-        if(eol == '\n' || eol == '\r') EOL = true;
-        else *token = get_token(*file);
-
+        EOL = findNewLineInFile(*file);
+        *token = get_token(*file);
       }
 
       else if (action_letter == R) {
@@ -244,12 +273,11 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
       }
       else if (action_letter == EQ) {
           push(&stack, *token);
-          eol = fgetc(*file);
-          ungetc(eol, *file);
-          if(eol == '\n' || eol == '\r') EOL = true;
-          else *token = get_token(*file);
+          EOL = findNewLineInFile(*file);
+          *token = get_token(*file);
       }
       else if (action_letter == E) {
+            expression_type = TYPE_UNKNOWN;
             freeStack(&stack);
             printf("Error: Invalid token\n");
             *error = 1;
@@ -258,7 +286,9 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
       else if (action_letter == END) {
             //printf("Expression type: %d\n", expression_type);
             //print_expression_type(expression_type);
-           // printf("Expression OK\n");
+           // printf("Expression OK\n");f
+        fseek(*file, -strlen(token->string_value->str), SEEK_CUR);
+        printf("token: %s\n", token->string_value->str);
         freeStack(&stack);
         return expression_type;
       }
@@ -277,9 +307,14 @@ int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expressi
 //      }
         //printf("Token: %s\n", tokens[0].string_value->str);
         if(tokens[0].token_type == T_TYPE_ID){
-          *expression_type = search_SymTable(table, tokens[0].string_value->str)->data.dtype;
+          AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
+          if(node == NULL) {
+            fprintf(stderr, "Error: Variable %s is not defined\n", tokens[0].string_value->str);
+            return -1;
+          }
+          *expression_type = node->data.dtype;
           if(is_nullable(*expression_type)){
-              if(search_SymTable(table,tokens[0].string_value->str)->data.isNil) *expression_type = TYPE_NIL;
+              if(node->data.isNil) *expression_type = TYPE_NIL;
           }
           return 1;
         }

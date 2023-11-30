@@ -31,7 +31,7 @@ int main(int argc, char* argv[]){
         file = stdin;
     }
 
-    printf("file: %s\n", argv[1]);
+    // printf("file: %s\n", argv[1]);
     Parse(file);
 
 

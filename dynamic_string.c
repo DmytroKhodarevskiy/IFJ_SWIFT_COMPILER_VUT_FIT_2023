@@ -11,7 +11,8 @@ Dynamic_string* createDynamicString() {
     // printf("DYNAMIC STRING POINTER: %p\n", dynamicString);
 
     if (dynamicString == NULL) {
-        printf("Memory allocation failed.\n");
+        exitWithError("Memory allocation failed.\n", ERR_INTERNAL);
+        // printf("Memory allocation failed.\n");
         return NULL;
     }
 
@@ -22,7 +23,8 @@ Dynamic_string* createDynamicString() {
 
     if (dynamicString->str == NULL) {
         free(dynamicString);
-        fprintf(stderr, "Memory allocation for string failed.\n");
+        exitWithError("Memory allocation for string failed.\n", ERR_INTERNAL);
+        // fprintf(stderr, "Memory allocation for string failed.\n");
         return NULL;
     }
 
@@ -36,13 +38,15 @@ Dynamic_string* createDynamicString() {
 
 void appendToDynamicString(Dynamic_string* dynamicString, char content) {
     if (dynamicString == NULL) {
-        printf("Invalid Dynamic_string pointer.\n");
+        // printf("Invalid Dynamic_string pointer.\n");
+        exitWithError("Invalid Dynamic_string pointer.\n", ERR_INTERNAL);
         return;
     }
 
     if (dynamicString->length + 1 >= dynamicString->allocSize) {
     
         unsigned int newAllocSize = (dynamicString->allocSize * 2); 
+        char* newStr = (char*)realloc(dynamicString->str, newAllocSize);
 
         // char* newStr = resizeMemoryBlock(dynamicString->str, newAllocSize);
         // printf("POINTER: %p\n", dynamicString->str);
@@ -51,10 +55,10 @@ void appendToDynamicString(Dynamic_string* dynamicString, char content) {
         // char *newStr = (char*)resizeMemoryBlock(dynamicString->str, newAllocSize);
         // printf("RESIZED POINTER: %p\n", newStr);
         // dynamicString->str = newStr;
-        char* newStr = (char*)realloc(dynamicString->str, newAllocSize);
 
         if (newStr == NULL) {
-            printf("Memory reallocation failed.\n");
+            exitWithError("Memory reallocation failed.\n", ERR_INTERNAL);
+            // printf("Memory reallocation failed.\n");
             return;
         }
 

@@ -24,7 +24,6 @@ $(OUTPUT): $(PROG)
 	$(CC) -o $(OUTPUT) $(PROG)
 # $(CC) $(CFLAGS) -o $(OUTPUT) $(PROG)
 	./$(OUTPUT) test.txt
-	rm -f $(OUTPUT)
 
 # Clean up generated files
 clean:

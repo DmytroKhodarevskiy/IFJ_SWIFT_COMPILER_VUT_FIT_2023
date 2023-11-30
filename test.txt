@@ -1,11 +1,11 @@
-let d = 5
-if (5)
-
+let d = 4
+if let d  // d is not nil, reading was successful, d inside is not Double? but Double 
 {
-  
+  let double : Double = 3
 }
-else
+else      // d is nil
 {
+  let dbl : Double = 0 ?? 1
 }
 
 

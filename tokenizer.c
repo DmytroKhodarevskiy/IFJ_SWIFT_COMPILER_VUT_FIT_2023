@@ -140,9 +140,8 @@ Token get_token(FILE *file){
             case START:
 
                 if (symbol == '\n') {
-                    state = START;
-
-
+                   state = START;
+              
                 } else if (symbol == '\t') {
                     state = START;
 

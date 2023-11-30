@@ -1,6 +1,9 @@
 #ifndef parser_h
 #define parser_h
 
+#include "expression_parse.c"
+#include <stdio.h>
+#include <string.h>
 
 
 
@@ -10,6 +13,8 @@
 
 void parsing();
 void parseStatement(Token token, FILE* file);
+void parseStatementList(FILE* file);
+void parseAssignmentStatement(FILE* file, Token variableToken);
 void parseLetOrVarStatement(FILE* file, Token keywordToken);
 void parseWhileStatement(FILE* file);
 void parseIfStatement(FILE* file);

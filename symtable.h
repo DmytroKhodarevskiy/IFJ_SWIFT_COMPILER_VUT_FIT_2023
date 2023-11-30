@@ -9,12 +9,14 @@ typedef enum {
     TYPE_INT, 
     TYPE_DOUBLE, 
     TYPE_STRING,
+    TYPE_NIL,
     TYPE_INT_NULLABLE, 
     TYPE_DOUBLE_NULLABLE, 
     TYPE_STRING_NULLABLE, 
     TYPE_VOID, 
     FUNC,
     TYPE_UNKNOWN,
+    TYPE_BOOL,
 } DataType;
 
 

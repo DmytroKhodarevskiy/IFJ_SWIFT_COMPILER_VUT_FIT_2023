@@ -429,12 +429,42 @@ SymData getSymDataByKey(SymTable* table, char* key) {
 
 
 
+/**
+ * @brief Updates the data of a symbol in the symbol table.
+ * 
+ * @param table The symbol table.
+ * @param key The key of the symbol to update.
+ * @param newData The new data to update the symbol with.
+ * @return true if the update was successful, false otherwise.
+ */
+bool updateSymData(SymTable* table, char* key, SymData newData) {
+    if (table == NULL || key == NULL) {
+        fprintf(stderr, "Invalid table or key\n");
+        return false;
+    }
+
+    // Search for the node with the given key
+    AVLNode* node = search_SymTable(table, key);
+    if (node == NULL) {
+        fprintf(stderr, "Symbol with key '%s' not found\n", key);
+        return false;
+    }
+
+    // Update the data of the symbol
+    node->data = newData;
+
+    return true;
+}
+
+
+
+
 // FUNCTIONS FOR PRINTING THE SYMBOL TABLE AND TREE
 void print_SymData(SymData* data) {
     if (!data) return;
 
-    printf("Name: %s, DataType: %d, isDefined: %d, canbeChanged: %d, isGlobal: %d, isFunction: %d",
-           data->name, data->dtype, data->isDefined, data->canbeChanged, data->isGlobal, data->isFunction);
+    printf("Name: %s, DataType: %d, isDefined: %d, canbeChanged: %d, isGlobal: %d, isFunction: %d IsNil: %d\n",
+           data->name, data->dtype, data->isDefined, data->canbeChanged, data->isGlobal, data->isFunction, data->isNil);
 
     if (data->isFunction) {
         printf(", ReturnType: %d, ParamCount: %d\n", data->returnType, data->paramCount);

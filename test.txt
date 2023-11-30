@@ -1,2 +1,9 @@
-let c : Int = 10
-let b : Int
+func fun(with a : Int?) {
+    let a : Int = 5
+    a = 10
+    if (a < 5) {
+        var x : Int = 10
+    } else {
+        var y : Int = 20
+    }
+}

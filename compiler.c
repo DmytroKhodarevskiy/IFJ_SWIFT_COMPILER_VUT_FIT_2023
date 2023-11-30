@@ -7,7 +7,7 @@
 
 
 // #include "expression_parse.c"
-#include "memory.c"
+// #include "memory.c"
 #include "parse.c"
 #include "codegenerator.c"
 
@@ -32,7 +32,16 @@ int main(int argc, char* argv[]){
     }
 
     // printf("file: %s\n", argv[1]);
-    Parse(file);
+    // Parse(file);
+
+    // FIRST PHASE
+
+    
+
+
+
+
+
 
 
     // Token token;

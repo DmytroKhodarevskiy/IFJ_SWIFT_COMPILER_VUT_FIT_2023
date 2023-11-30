@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 // void GLOBAL_STATEMENT_LIST();
 void GLOBAL_STATEMENT(FILE *file); //for every function
@@ -23,3 +24,8 @@ void ARG_LIST(FILE *file);
 void FUNC_CALLS(FILE *file);
 void ARG(FILE *file);
 void PREFIX(FILE *file);
+
+void PHASE_FIRST(FILE *file);
+bool is_compatible(DataType assignType, DataType variableType);
+DataType get_type(char *str);
+

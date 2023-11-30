@@ -60,6 +60,7 @@ typedef struct AVLNode {
 } AVLNode;
 
 typedef struct {
+    char * name;             // Name of the symbol table
     AVLNode* root;           // Root of the AVL tree representing the symbol table
 } SymTable;
 

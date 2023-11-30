@@ -15,7 +15,6 @@ int height(AVLNode* node) {
 }
 
 
-
 int getBalance(AVLNode* node) {
     if (node == NULL)
         return 0;

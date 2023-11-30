@@ -47,7 +47,7 @@
 
 #define CheckifArrowState 133
 
-int linenum = 1;
+int linenum = 0;
 
 Token lookaheadToken;
 bool hasPeeked = false;
@@ -547,7 +547,9 @@ Token get_token(FILE *file){
       if (symbol == '\n' || symbol == EOF) {
         token.token_type = T_SING_COMMENT;
         copyString(token.string_value->str, token_string->str);
-        return token;
+        // return token;
+        state = START;
+        continue;
       } else {
         appendToDynamicString(token_string, symbol);
         state = Single_Line_Comment_STATE;

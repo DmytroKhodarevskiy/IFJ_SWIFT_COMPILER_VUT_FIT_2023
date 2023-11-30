@@ -323,7 +323,7 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
     functionData.canbeChanged = false;
     functionData.isFunction = true;
     functionData.isGlobal = true; 
-    functionData.local_SymTable =  create_SymTable();
+    functionData.local_SymTable = (struct SymTable*)create_SymTable();
 
     insert_SymTable(table, functionData.name, functionData);
 }

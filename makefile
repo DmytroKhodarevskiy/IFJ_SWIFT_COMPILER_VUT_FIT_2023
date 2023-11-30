@@ -14,15 +14,17 @@ TEST = tests/test_expression_parse.c
 # Test output
 TEST_OUTPUT = test_expression_parse.exe
 
-.PHONY: all clean
+# .PHONY: all clean
 
 # Default target (build)
 # all: $(OUTPUT)
 
 # Compile the program
 $(OUTPUT): $(PROG)
-	$(CC) $(CFLAGS) -o $(OUTPUT) $(PROG)
-	./$(OUTPUT)
+	$(CC) -o $(OUTPUT) $(PROG)
+# $(CC) $(CFLAGS) -o $(OUTPUT) $(PROG)
+	./$(OUTPUT) test.txt
+	rm -f $(OUTPUT)
 
 # Clean up generated files
 clean:
@@ -30,7 +32,10 @@ clean:
 
 # Run the program with an output file
 run: $(OUTPUT)
-	./$(OUTPUT) output.txt
+	./$(OUTPUT) test.txt
+
+valgrind: $(OUTPUT)
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(OUTPUT) test.txt
 
 test:
 	$(CC) -o $(TEST_OUTPUT) $(TEST)

@@ -1,9 +1,11 @@
-var a: Int? = 5
-var b: Int? = 6
-if(a){
-}else{
- var a = 1
-}
+let d = 5
+if (5)
 
+{
+  
+}
+else
+{
+}
 
 

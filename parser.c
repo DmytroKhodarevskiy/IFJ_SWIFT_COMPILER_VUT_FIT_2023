@@ -1,3 +1,6 @@
+
+// #include "tokenizer.c"
+#include "symtable.c"
 #include "expression_parse.c"
 #include <stdio.h>
 #include <string.h>
@@ -497,8 +500,12 @@ DataType parseType(FILE* file) {
             fprintf(stderr,"Error: Unknown type\n");
             exit(1);
         }
+    } else if (token.token_type == T_EMPTY) {
+        printf("Handle something\n");
+        return 1;
     } else {
-        fprintf(stderr,"Error: Expected a type\n");
-        exit(1);
+        printf("Error: Expected a type\n");
+        //ADD ERROR
+        return 1;
         }
     }

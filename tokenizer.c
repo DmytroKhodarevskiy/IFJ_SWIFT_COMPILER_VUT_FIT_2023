@@ -1,5 +1,6 @@
 #include "tokenizer.h"
 #include "dynamic_string.c"
+#include "memory.h"
 
 #define START 100
 
@@ -46,6 +47,7 @@
 
 #define CheckifArrowState 133
 
+int linenum = 0;
 
 Token lookaheadToken;
 bool hasPeeked = false;
@@ -105,6 +107,7 @@ Token peekNextToken(FILE *file) {
 
 Token init_token(){
   Token token;
+
   token.grammar_token_type = T_T;
   token.token_type = T_EMPTY; 
   token.int_value = 0;
@@ -135,11 +138,10 @@ Token get_token(FILE *file){
     case START:
 
       if (symbol == '\n') {
-//          token.token_type = T_EOL;
-//          appendToDynamicString(token_string, symbol);
-//          copyString(token.string_value->str, token_string->str);
-//          return token;
-          state = START;
+        linenum++;
+        state = START;
+
+
       } else if (symbol == '\t') {
         state = START;
 
@@ -545,7 +547,9 @@ Token get_token(FILE *file){
       if (symbol == '\n' || symbol == EOF) {
         token.token_type = T_SING_COMMENT;
         copyString(token.string_value->str, token_string->str);
-        return token;
+        // return token;
+        state = START;
+        continue;
       } else {
         appendToDynamicString(token_string, symbol);
         state = Single_Line_Comment_STATE;

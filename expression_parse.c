@@ -2,6 +2,7 @@
 
 #define size 9
 
+int linenum;
 
 int precedence_table[size][size] = {
 
@@ -27,6 +28,7 @@ bool findNewLineInFile(FILE *file) {
     char ch;
     while ((ch = fgetc(file)) != EOF) {
         if (ch == '\n') {
+            linenum++;
             // Newline character found
             return true;
         }
@@ -288,7 +290,7 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
             //print_expression_type(expression_type);
            // printf("Expression OK\n");f
         fseek(*file, -strlen(token->string_value->str), SEEK_CUR);
-        printf("token: %s\n", token->string_value->str);
+        // printf("token: %s\n", token->string_value->str);
         freeStack(&stack);
         return expression_type;
       }

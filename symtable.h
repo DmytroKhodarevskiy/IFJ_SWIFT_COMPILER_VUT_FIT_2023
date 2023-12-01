@@ -47,7 +47,7 @@ typedef struct {
     DataType returnType;     // Return type of the function
     ListFuncParam paramTypes;    // Array of parameter types
     int paramCount;          // Number of parameters
-    struct SymTable* local_SymTable; // Local symbol table of the function
+    // struct SymTable* local_SymTable; // Local symbol table of the function
     bool isNil;               // Whether the symbol is nil
 } SymData;
 
@@ -60,10 +60,12 @@ typedef struct AVLNode {
 } AVLNode;
 
 typedef struct {
+    char * name;             // Name of the symbol table
     AVLNode* root;           // Root of the AVL tree representing the symbol table
 } SymTable;
 
 
+SymData initSymData();
 
 
 // Function prototypes for AVL tree and symbol table management
@@ -75,6 +77,7 @@ AVLNode* search_SymTable(SymTable* table, char* key);
 
 // Function prototype for printing the symbol table
 void print_SymTable(SymTable* table);
+void printTree(SymTable* table);
 
 
 // AVL tree balancing functions

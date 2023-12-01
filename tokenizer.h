@@ -1,5 +1,11 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <ctype.h>
+
+// #include "symtable_stack.h"
+#include "dynamic_string.h"
+#include "memory.h"
+
 
 // Tokenizer type.  You need to fill in the type as part of your implementation.
 #ifndef _TOKENIZER_H
@@ -95,12 +101,12 @@ typedef enum{
 
 
 
-typedef struct
-{
-	char *str; /// string ened by '\0' byte
-	unsigned int length; /// lenght of string
-  unsigned int allocSize; /// size of allocated memory  
-} Dynamic_string;
+// typedef struct
+// {
+// 	char *str; /// string ened by '\0' byte
+// 	unsigned int length; /// lenght of string
+//   unsigned int allocSize; /// size of allocated memory  
+// } Dynamic_string;
 
 
 
@@ -118,50 +124,50 @@ typedef struct {
 
 } Token;
 
-const char *tokenTypeNames[] = {
-    "Left Parenthesis",         // T_LPAR
-    "Right Parenthesis",        // T_RPAR
-    "Left Brace",               // T_LBRACE
-    "Right Brace",              // T_RBRACE
-    "Plus",                     // T_PLUS
-    "Minus",                    // T_MINUS
-    "Multiply",                 // T_MULTIPLY
-    "Divide",                   // T_DIVIDE
-    "Multi-line Comment",       // T_MUL_COMMENT
-    "Single-line Comment",      // T_SING_COMMENT
-    "Multi-line String",        // T_MUL_STRING
-    "Single-line String",       // T_SING_STRING
-    "Identifier",               // T_TYPE_ID
-    "Error",                    // T_ERR
-    "Integer",                  // T_INT
-    "Double",                   // T_DOUBLE
-    "Float",                    // T_FLOAT
-    "String",                   // T_STRING
-    "Exponent Integer",         // T_EXPONENT_INT
-    "Exponent Float",           // T_EXPONENT_FLOAT
-    "Semicolon",                // T_SEMICOLON
-    "Comma",                    // T_COMMA
-    "Colon",                    // T_COLON
-    "Less Than",                // T_LESS
-    "Greater Than",             // T_GREATER
-    "Less Than or Equal",       // T_LESS_EQUAL
-    "Greater Than or Equal",    // T_GREATER_EQUAL
-    "Not Equal",                // T_NOT_EQUAL
-    "Assignment",               // T_ASSIGN
-    "Equal",                    // T_EQUAL
-    "Not Nil",                  // T_NOTNIL
-    "Nullish Coalescing",       // T_BINARY_OP
-    "End of File",              // T_EOF
-    "End of Line",              // T_EOL
-    "Keyword",                   // T_KEYWORD
-    "Empty",                     // T_EMPTY
-    "Underscore Identifier"     // T_UNDERSCORE_ID
-};
+// const char *tokenTypeNames[] = {
+//     "Left Parenthesis",         // T_LPAR
+//     "Right Parenthesis",        // T_RPAR
+//     "Left Brace",               // T_LBRACE
+//     "Right Brace",              // T_RBRACE
+//     "Plus",                     // T_PLUS
+//     "Minus",                    // T_MINUS
+//     "Multiply",                 // T_MULTIPLY
+//     "Divide",                   // T_DIVIDE
+//     "Multi-line Comment",       // T_MUL_COMMENT
+//     "Single-line Comment",      // T_SING_COMMENT
+//     "Multi-line String",        // T_MUL_STRING
+//     "Single-line String",       // T_SING_STRING
+//     "Identifier",               // T_TYPE_ID
+//     "Error",                    // T_ERR
+//     "Integer",                  // T_INT
+//     "Double",                   // T_DOUBLE
+//     "Float",                    // T_FLOAT
+//     "String",                   // T_STRING
+//     "Exponent Integer",         // T_EXPONENT_INT
+//     "Exponent Float",           // T_EXPONENT_FLOAT
+//     "Semicolon",                // T_SEMICOLON
+//     "Comma",                    // T_COMMA
+//     "Colon",                    // T_COLON
+//     "Less Than",                // T_LESS
+//     "Greater Than",             // T_GREATER
+//     "Less Than or Equal",       // T_LESS_EQUAL
+//     "Greater Than or Equal",    // T_GREATER_EQUAL
+//     "Not Equal",                // T_NOT_EQUAL
+//     "Assignment",               // T_ASSIGN
+//     "Equal",                    // T_EQUAL
+//     "Not Nil",                  // T_NOTNIL
+//     "Nullish Coalescing",       // T_BINARY_OP
+//     "End of File",              // T_EOF
+//     "End of Line",              // T_EOL
+//     "Keyword",                   // T_KEYWORD
+//     "Empty",                     // T_EMPTY
+//     "Underscore Identifier"     // T_UNDERSCORE_ID
+// };
 
 
 
 
-
+Token init_token();
 Token get_token(FILE *file);
 Token peekNextToken(FILE *file);
 

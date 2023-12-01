@@ -1,7 +1,7 @@
 #include "tokenizer.h"
-#include "dynamic_string.c"
+// #include "dynamic_string.c"
 // #include "dynamic_string.h"
-#include "memory.h"
+// #include "memory.h"
 
 #define START 100
 
@@ -48,7 +48,8 @@
 
 #define CheckifArrowState 133
 
-int linenum = 0;
+// int linenum = 0;
+// linenum = 0;
 
 Token lookaheadToken;
 bool hasPeeked = false;
@@ -552,9 +553,9 @@ Token get_token(FILE *file){
     case Single_Line_Comment_STATE:
       if (symbol == '\n' || symbol == EOF ) {
         token.token_type = T_SING_COMMENT;
-        printf("TOKEN STRING STRING before: %s\n", token.string_value->str);
+        // printf("TOKEN STRING STRING before: %s\n", token.string_value->str);
         // copyString(token.string_value->str, token_string->str);
-        printf("TOKEN STRING STRING after: %s\n", token.string_value->str);
+        // printf("TOKEN STRING STRING after: %s\n", token.string_value->str);
         // return token;
         // dynamic_string_free(token_string->str);
         // token_string->str = NULL;

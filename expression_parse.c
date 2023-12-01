@@ -2,7 +2,7 @@
 
 #define size_table 9
 
-int linenum;
+// int linenum;
 
 int precedence_table[size_table][size_table] = {
 

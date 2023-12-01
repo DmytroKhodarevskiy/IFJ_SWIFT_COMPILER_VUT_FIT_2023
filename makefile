@@ -5,6 +5,9 @@ CFLAGS = -std=c99 -Wall -Wextra -pedantic -lm -fcommon
 # Source file
 PROG = compiler.c
 
+#Source files
+SOURCES = parse.c symtable_stack.c expression_parse.c symtable.c stack.c tokenizer.c dynamic_string.c memory.c
+
 # Output binary
 OUTPUT = compiler.exe
 
@@ -21,7 +24,7 @@ TEST_OUTPUT = test_expression_parse.exe
 
 # Compile the program
 $(OUTPUT): $(PROG)
-	$(CC) -o $(OUTPUT) $(PROG)
+	$(CC) -o $(OUTPUT) $(PROG) $(SOURCES)
 # $(CC) $(CFLAGS) -o $(OUTPUT) $(PROG)
 	./$(OUTPUT) test.txt
 

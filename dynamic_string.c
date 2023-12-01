@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "memory.h"
+
+// #include "memory.h"
+#include "dynamic_string.h"
 
 #define INITIAL_SIZE 10
 

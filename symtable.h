@@ -65,6 +65,7 @@ typedef struct {
 } SymTable;
 
 
+SymData initSymData();
 
 
 // Function prototypes for AVL tree and symbol table management

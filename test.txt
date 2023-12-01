@@ -1,30 +1,24 @@
-import Foundation
-
-addNumbers(num1: 1, num2: 2)
-
-// Define a function to calculate the sum of two integers
-func addNumbers(num1: Int, num2: Int) -> Int {
-    // Declare a local variable inside the function scope
-    let result = num1 + num2
-    return result
-
-
-// Declare global variables
 var greeting : String = "Hello, Swift!"
 let currentYear : Int = 2023
 
 // Print the greeting
-print(greeting)
+// print(greeting)
+var a = 5
+var b = 6
+
+if (5) {
+    var isLeapYear: Int = 5
+}
 
 // Check if the year is a leap year using a local scope inside the if statement
-if currentYear % 4 == 0 {
-    var isLeapYear: Bool = false
-    if currentYear % 100 != 0 || currentYear % 400 == 0 {
-        isLeapYear = true
-    }
+// if currentYear % 4 == 0 {
+    // var isLeapYear: Bool = false
+    // if currentYear % 100 != 0 || currentYear % 400 == 0 {
+        // isLeapYear = true
+    // }
     // Print from within the if scope
-    print("\(currentYear) is \(isLeapYear ? "a leap year" : "not a leap year")")
-}
+    // print("\(currentYear) is \(isLeapYear ? "a leap year" : "not a leap year")")
+// }
 
 // The variable 'isLeapYear' is not accessible here, outside its scope
 
@@ -33,10 +27,10 @@ var sum = 0
 if sum == 0 {
     // Declare a variable within the loop's scope
     let addedValue = sum
-    sum = addNumbers(num1: sum, num2: addedValue)
+    // sum = addNumbers(num1: sum, num2: addedValue)
 }
 
 // Print the result
-print("The sum of numbers from 1 to 5 is \(sum)")
+// print("The sum of numbers from 1 to 5 is \(sum)")
 
 // Trying to print 'addedValue' here would cause an error, as it's out of scope

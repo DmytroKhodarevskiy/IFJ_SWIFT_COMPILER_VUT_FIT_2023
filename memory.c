@@ -7,6 +7,13 @@
 
 #include "memory.h"
 
+MemoryBlockNode *memoryListHead;
+
+
+void init_memory_list() {
+    memoryListHead = NULL;
+}
+
 void *safeRealloc(void *ptr, size_t newSize) {
     void *newBlock = realloc(ptr, newSize);
     if (newBlock == NULL && newSize != 0) {

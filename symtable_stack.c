@@ -50,7 +50,7 @@ void s_push(SymStack *stack, SymTable item) {
 
 SymTable s_pop(SymStack *stack) {
   SymTable item;
-  if (isEmpty(stack)) {
+  if (s_isEmpty(stack)) {
     fprintf(stderr, "Error: Stack underflow\n");
     exit(EXIT_FAILURE);
   }

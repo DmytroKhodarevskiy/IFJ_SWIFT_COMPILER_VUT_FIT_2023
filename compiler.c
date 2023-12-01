@@ -4,11 +4,13 @@
 
 
 // #include "expression_parse.c"
-// #include "memory.c"
+// #include "memory.h"
 // #include "parse.h"
+// #include "parse.c"
 #include "compiler.h"
 // #include "codegenerator.c"
 
+int linenum = 0;
 
 // int main(){
 int main(int argc, char* argv[]){

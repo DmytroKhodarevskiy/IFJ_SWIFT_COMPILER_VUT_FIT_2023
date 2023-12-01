@@ -21,7 +21,7 @@ void Match(FILE *file, Token token){
 }
 
 void Parse(FILE *file){
-    // printf("Parsing...\n");
+    printf("Parsing...\n");
     PROGRAM(file);
 }
 
@@ -178,7 +178,8 @@ void STMT(FILE *file){
       }  
 
   else if (current_token.token_type == T_KEYWORD &&
-            (strcmp(str, "func") == 0)) { // func
+            (strcmp(str, "func")
+             == 0)) { // func
 
               current_token = get_token(file); // get id
               if (current_token.token_type != T_TYPE_ID){

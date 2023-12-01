@@ -1,14 +1,14 @@
 #include "expression_parse.c"
 
-void add_symbol(SymTable* table, char* str, DataType type, bool isNullable) {
+void add_symbol(SymTable* table, char* str, DataType type, bool isNullable, bool isFunction, bool isGlobal, bool isDefined, bool canbeChanged) {
     SymData newData;
     //newData.name = strdup(str);  // strdup allocates memory and copies the string "a"
     newData.name = str;  // strdup allocates memory and copies the string "a"
     newData.dtype = type;    // Set data type to TYPE_INT
-    newData.isDefined = true;    // Set as defined
-    newData.canbeChanged = true; // Can be changed
-    newData.isGlobal = true;     // Is a global symbol
-    newData.isFunction = false;  // Not a function
+    newData.isDefined = isDefined;    // Set as defined
+    newData.canbeChanged = canbeChanged; // Can be changed
+    newData.isGlobal = isGlobal;     // Is a global symbol
+    newData.isFunction = isFunction;  // Not a function
     newData.isNil = isNullable;       // Not nil
 
     // Insert the new symbol into the symbol table
@@ -24,8 +24,8 @@ DataType test1() {
         return 1;
     }
     // Create a new symbol
-    add_symbol(table, "a", TYPE_INT, false);
-    add_symbol(table, "b", TYPE_INT, false);
+    add_symbol(table, "a", TYPE_INT, false, false, false, true, false);
+    add_symbol(table, "b", TYPE_INT, false, false, false, true, false);
     Token token = get_token(file);
     DataType type = parse_expression(table, &token, &error, &file);
     free(table);
@@ -41,8 +41,8 @@ DataType test2() {
         return 1;
     }
     // Create a new symbol
-    add_symbol(table, "a", TYPE_INT,false);
-    add_symbol(table, "b", TYPE_INT, false);
+    add_symbol(table, "a", TYPE_INT,false, false, false, true, false);
+    add_symbol(table, "b", TYPE_INT, false, false, false, true, false);
     Token token = get_token(file);
     DataType type = parse_expression(table, &token, &error, &file);
     free(table);
@@ -58,8 +58,8 @@ DataType test3() {
         return 1;
     }
     // Create a new symbol
-    add_symbol(table, "a", TYPE_STRING, false);
-    add_symbol(table, "b", TYPE_STRING, false);
+    add_symbol(table, "a", TYPE_STRING, false, false, false, true, false);
+    add_symbol(table, "b", TYPE_STRING, false, false, false, true, false);
     Token token = get_token(file);
     DataType type = parse_expression(table, &token, &error, &file);
     free(table);
@@ -75,8 +75,8 @@ DataType test4() {
         return 1;
     }
     // Create a new symbol
-    add_symbol(table, "a", TYPE_INT_NULLABLE, false);
-    add_symbol(table, "b", TYPE_INT_NULLABLE, false);
+    add_symbol(table, "a", TYPE_INT_NULLABLE, false, false, false, true, false);
+    add_symbol(table, "b", TYPE_INT_NULLABLE, false, false, false, true, false);
     Token token = get_token(file);
     DataType type = parse_expression(table, &token, &error, &file);
     free(table);
@@ -92,8 +92,8 @@ DataType test5() {
         return 1;
     }
     // Create a new symbol
-    add_symbol(table, "a", TYPE_INT_NULLABLE, true);
-    add_symbol(table, "b", TYPE_INT_NULLABLE, true);
+    add_symbol(table, "a", TYPE_INT_NULLABLE, true, false, false, true, false);
+    add_symbol(table, "b", TYPE_INT_NULLABLE, true, false, false, true, false);
     Token token = get_token(file);
     DataType type = parse_expression(table, &token, &error, &file);
     free(table);
@@ -109,8 +109,8 @@ DataType test6() {
         return 1;
     }
     // Create a new symbol
-    add_symbol(table, "a", TYPE_INT_NULLABLE, true);
-    add_symbol(table, "b", TYPE_INT, false);
+    add_symbol(table, "a", TYPE_INT_NULLABLE, true, false, false, true, false);
+    add_symbol(table, "b", TYPE_INT, false, false, false, true, false);
     Token token = get_token(file);
     DataType type = parse_expression(table, &token, &error, &file);
     free(table);
@@ -126,8 +126,24 @@ DataType test7() {
         return 1;
     }
     // Create a new symbol
-    add_symbol(table, "a", TYPE_INT, false);
-    add_symbol(table, "b", TYPE_INT, false);
+    add_symbol(table, "a", TYPE_INT, false, false, false, true, false);
+    add_symbol(table, "b", TYPE_INT, false, false, false, true, false);
+    Token token = get_token(file);
+    DataType type = parse_expression(table, &token, &error, &file);
+    free(table);
+    return type;
+}
+
+DataType test8() {
+    FILE *file = fopen("tests_for_exp/8", "r");
+    int error = 0;
+    SymTable* table = create_SymTable();
+    if (table == NULL) {
+        fprintf(stderr, "Failed to create symbol table.\n");
+        return 1;
+    }
+    // Create a new symbol
+    add_symbol(table, "foo", TYPE_INT, false, true, false, true, false);
     Token token = get_token(file);
     DataType type = parse_expression(table, &token, &error, &file);
     free(table);
@@ -135,16 +151,16 @@ DataType test7() {
 }
 
 int main() {
-    DataType test_1 = test1();
-    if(test_1 == TYPE_INT){
-        printf("Test 1 passed\n");
-    }
-    else{
-        printf("Test 1 failed\nExpected: ->");
-        print_expression_type(TYPE_INT);
-        printf("Actual: -> ");
-        print_expression_type(test_1);
-    }
+//    DataType test_1 = test1();
+//    if(test_1 == TYPE_INT){
+//        printf("Test 1 passed\n");
+//    }
+//    else{
+//        printf("Test 1 failed\nExpected: ->");
+//        print_expression_type(TYPE_INT);
+//        printf("Actual: -> ");
+//        print_expression_type(test_1);
+//    }
 
     // DataType test_2 = test2();
     // if(test_2 == TYPE_DOUBLE){
@@ -213,6 +229,18 @@ int main() {
     //     printf("Actual: -> ");
     //     print_expression_type(test_7);
     // }
+
+     DataType test_8 = test8();
+
+        if(test_8 == TYPE_INT){
+            printf("Test 8 passed\n");
+        }
+        else{
+            printf("Test 8 failed\nExpected: -> ");
+            print_expression_type(TYPE_INT);
+            printf("Actual: -> ");
+            print_expression_type(test_8);
+        }
 
     return 0;
 }

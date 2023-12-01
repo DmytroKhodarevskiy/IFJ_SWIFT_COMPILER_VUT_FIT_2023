@@ -9,6 +9,7 @@
 #include "symtable.c"
 #include "stack.c"
 #include "tokenizer.c"
+#include "memory.c"
 
 typedef struct {
   token_type left_side;
@@ -131,7 +132,78 @@ void perform_rule(int rule_index, TokenStack *stack, DataType *expression_type);
  */
 int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type);
 
+//Functions for parsing expressions with functions as operands
 
+/**
+ * @brief Parses a function call expression.
+ *
+ * @param file A pointer to the input file.
+ * @param current_token A pointer to the current token.
+ */
+void FUNC_CALLS_EXP(FILE **file, Token *current_token);
+
+/**
+ * @brief Parses an argument list expression.
+ *
+ * @param file A pointer to the input file.
+ * @param current_token A pointer to the current token.
+ */
+void ARG_LIST_EXP(FILE **file, Token *current_token);
+
+/**
+ * @brief Parses an argument expression.
+ *
+ * @param file A pointer to the input file.
+ * @param current_token A pointer to the current token.
+ */
+void ARG_EXP(FILE **file, Token *current_token);
+
+/**
+ * @brief Parses a prefix expression.
+ *
+ * @param file A pointer to the input file.
+ * @param current_token A pointer to the current token.
+ */
+void PREFIX_EXP(FILE **file, Token *current_token);
+
+
+//helper functions for parsing expressions with functions as operands
+
+/**
+ * @brief Searches for a newline character ('\n') in an open file.
+ *
+ * This function reads characters from the given file until it encounters
+ * a newline character or a non-space character. It increments the global
+ * line number variable (linenum) for each newline character found.
+ *
+ * @param file A pointer to the open file to search.
+ * @return true if a newline character ('\n') is found, false otherwise.
+ */
+bool findNewLineInFile(FILE *file);
+
+/**
+ * @brief Checks if a given data type is nullable.
+ *
+ * This function determines whether a data type is nullable by comparing
+ * it to predefined nullable types (e.g., TYPE_INT_NULLABLE).
+ *
+ * @param type The data type to check for nullability.
+ * @return true if the data type is nullable, false otherwise.
+ */
+bool is_nullable(DataType type);
+
+/**
+ * @brief Checks if a specific operation is allowed for a given data type.
+ *
+ * This function verifies whether a specified operation is allowed for a
+ * given data type, taking into account nullability constraints. It provides
+ * an error message if the operation is not allowed on nullable types or nil.
+ *
+ * @param expression_type The data type of the expression.
+ * @param operation The operation to check (e.g., "+", "-", "*", "/").
+ * @return true if the operation is allowed, false if it violates nullability rules.
+ */
+bool restricted_operations_with_operation(DataType expression_type, char *operation);
 
 
 #endif // _EXPR_PARSER_H

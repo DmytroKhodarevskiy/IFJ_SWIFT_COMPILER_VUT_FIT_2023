@@ -26,7 +26,7 @@ TEST_OUTPUT = test_expression_parse.exe
 $(OUTPUT): $(PROG)
 	$(CC) -o $(OUTPUT) $(PROG) $(SOURCES)
 # $(CC) $(CFLAGS) -o $(OUTPUT) $(PROG)
-	./$(OUTPUT) test.txt
+# ./$(OUTPUT) test.txt
 
 # Clean up generated files
 clean:

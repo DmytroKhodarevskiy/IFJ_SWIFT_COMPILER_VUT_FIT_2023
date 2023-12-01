@@ -172,6 +172,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
                 node_data.isNil = false;
 
               }
+              
             }
 
             else if (current_token.token_type == T_ASSIGN){
@@ -197,12 +198,15 @@ void FILL_TREES(FILE *file, SymStack *stack){
             }
 
             insert_SymTable(global_symtable, id_name, node_data);
-
+            current_token = get_token(file); // get next token
       }
 
       if (current_token.token_type == T_KEYWORD &&
           !strcmp(current_token.string_value->str, "func")) {
             // SymData node_data;
+            // current_token = get_token(file); // get func
+
+            printf("token: %s\n", current_token.string_value->str);
 
             current_token = get_token(file); // get id
             if (current_token.token_type != T_TYPE_ID){
@@ -225,15 +229,11 @@ void FILL_TREES(FILE *file, SymStack *stack){
 
             current_token = get_token(file); // get (
 
-            ListFuncParam *params = malloc(sizeof(ListFuncParam));
+            ListFuncParam *params = NULL;
             int param_cnt = 0;
             DataType return_type = TYPE_UNKNOWN;
-            // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // add parameters to function symbol table and save it somewhere
-            PARAM_LIST(file);
-            // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            PARAM_LIST_FIRST(file, &params, &param_cnt);
 
             current_token = get_token(file); // get )
 
@@ -294,7 +294,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
             //   s_push(stack, *local_symtable);
 
             //   current_symtable = s_peek(stack);
-
+            // print_SymTable(global_symtable);
           }
 
       //skip all non global scopes
@@ -319,21 +319,21 @@ void FILL_TREES(FILE *file, SymStack *stack){
           if (current_token.token_type == T_EOF) {
             exitWithError("Syntax error: expected }\n", ERR_SYNTAX);
           }
+
         }
+
+        current_token = get_token(file); // get next token
+
       }
     
+      if (current_token.token_type == T_RBRACE)  // current token is }
+        current_token = get_token(file); // get next token
 
-      current_token = get_token(file); // get next token
     }
 
     print_SymTable(global_symtable);
+    printTree(global_symtable);
 } 
-
-
-
-
-
-
 
 
 
@@ -644,6 +644,78 @@ void RETURN_TYPE(FILE *file) { // current token is )
   else {
     return;
   }
+}
+
+void PARAM_LIST_FIRST(FILE *file, ListFuncParam **params, int *param_cnt){ //current token is (
+
+  current_token = peekNextToken(file);
+
+  if (!(current_token.token_type == T_TYPE_ID ||
+      current_token.token_type == T_UNDERSCORE_ID)) return;
+
+  PARAM_FIRST(file, params);
+  param_cnt++;
+
+  current_token = peekNextToken(file);
+  if (current_token.token_type == T_COMMA){
+    current_token = get_token(file); // get ,
+    PARAM_LIST_FIRST(file, params, param_cnt);
+  }
+
+  else {
+    // current_token = get_token(file); // get )
+    return;
+  }
+}
+
+void PARAM_FIRST(FILE *file, ListFuncParam **params){ //current token is (
+
+  char* param_name;
+  DataType param_type;
+  ParamPrefix param_prefix;
+
+  // PARAM_PREFIX(file);
+  current_token = get_token(file); // get id or _
+
+  if (!(current_token.token_type == T_TYPE_ID ||
+      current_token.token_type == T_UNDERSCORE_ID)){
+    exitWithError("Syntax error: expected id or _\n", ERR_SYNTAX);
+  }
+
+  if (current_token.token_type == T_TYPE_ID) {
+    // (*params)->prefix = PREFIX_DEFAULT;
+    param_prefix = PREFIX_DEFAULT;
+  }  
+  else {
+    // (*params)->prefix = PREFIX_UNDERSCORE;
+    param_prefix = PREFIX_UNDERSCORE;
+  }
+
+  // PARAM_NAME(file);
+  current_token = get_token(file); // get id
+  if (current_token.token_type != T_TYPE_ID){
+    exitWithError("Syntax error: expected id\n", ERR_SYNTAX);
+  }
+
+  // (*params)->name = current_token.string_value->str;
+  param_name = current_token.string_value->str;
+
+  current_token = get_token(file); // get :
+  if (current_token.token_type != T_COLON){
+    exitWithError("Syntax error: expected :\n", ERR_SYNTAX);
+  }
+
+  // TYPE(file);
+  current_token = get_token(file); // get type
+  // (*params)->dataType = parseType(current_token);
+  // param_type = parseType(current_token);
+  param_type = get_type(current_token.string_value->str);
+  if (param_type == TYPE_UNKNOWN){
+    exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
+  }
+
+  *params = addParamToList(*params, param_name, param_type, param_prefix);
+
 }
 
 void PARAM_LIST(FILE *file){ //current token is (

@@ -1,36 +1,44 @@
-var greeting : String = "Hello, Swift!"
-let currentYear : Int = 2023
+var a = 1
+var b1 = 2
+var b2 = 2
+var b3 = 2
+var b4 = 2
+var b5 = 2
+var b6 = 2
+var b7 = 2
+var b8 = 2
+var b9 = 2
+var b10 = 2
+var b11 = 2
+var b12 = 2
+var b13 = 2
+var b14 = 2
+var b15 = 2
+var b16 = 2
+var b17 = 2
+var b18 = 2
+var b19 = 2
+var b20 = 2
+var b21 = 2
+var b22 = 2
+var b23 = 2
+var b24 = 2
+var b25 = 2
+var b26 = 2
+var b27 = 2
+var b28 = 2
+var b29 = 2
+var b30 = 2
 
-// Print the greeting
-// print(greeting)
-var a = 5
-var b = 6
 
-if (5) {
-    var isLeapYear: Int = 5
+func ya_elban (_ a: Int, _ b: Int, suka blyat: Int, ebal rot: Int, drochu vsalfetku: Int) -> Int {
+// func ya_elban (_ a: Int) -> Int {
+    return a + b
 }
 
-// Check if the year is a leap year using a local scope inside the if statement
-// if currentYear % 4 == 0 {
-    // var isLeapYear: Bool = false
-    // if currentYear % 100 != 0 || currentYear % 400 == 0 {
-        // isLeapYear = true
-    // }
-    // Print from within the if scope
-    // print("\(currentYear) is \(isLeapYear ? "a leap year" : "not a leap year")")
-// }
+var b291 = 2
+var b301 = 2
 
-// The variable 'isLeapYear' is not accessible here, outside its scope
-
-// Use a for loop to sum numbers
-var sum = 0
-if sum == 0 {
-    // Declare a variable within the loop's scope
-    let addedValue = sum
-    // sum = addNumbers(num1: sum, num2: addedValue)
+func ti_dolboyob (biba a: Int, boba b: Int) {
+    var c = a + b
 }
-
-// Print the result
-// print("The sum of numbers from 1 to 5 is \(sum)")
-
-// Trying to print 'addedValue' here would cause an error, as it's out of scope

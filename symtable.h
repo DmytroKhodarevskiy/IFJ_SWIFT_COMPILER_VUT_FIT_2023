@@ -77,6 +77,7 @@ AVLNode* search_SymTable(SymTable* table, char* key);
 
 // Function prototype for printing the symbol table
 void print_SymTable(SymTable* table);
+void printTree(SymTable* table);
 
 
 // AVL tree balancing functions

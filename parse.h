@@ -37,4 +37,9 @@ bool is_compatible(DataType assignType, DataType variableType);
 DataType get_type(char *str);
 void FILL_TREES(FILE *file, SymStack *stack); 
 
+//apwdawpdawdmpaw
+void PARAM_LIST_FIRST(FILE *file, ListFuncParam **params, int *param_cnt);
+//wadawdawdawdawd
+void PARAM_FIRST(FILE *file, ListFuncParam **params);
+
 #endif // PARSE_H

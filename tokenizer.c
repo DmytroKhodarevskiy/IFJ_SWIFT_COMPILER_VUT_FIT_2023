@@ -572,10 +572,10 @@ Token get_token(FILE *file){
 
     case Multi_Line_Comment_STATE:
       if (symbol == '*') {
-        appendToDynamicString(token_string, symbol);
+        // appendToDynamicString(token_string, symbol);
         state = Checking_end_of_Multi_Line_Comment_STATE;
       } else {
-        appendToDynamicString(token_string, symbol);
+        // appendToDynamicString(token_string, symbol);
         state = Multi_Line_Comment_STATE;
       }
       break;
@@ -583,12 +583,14 @@ Token get_token(FILE *file){
 
     case Checking_end_of_Multi_Line_Comment_STATE:
       if (symbol == '/') {
-        appendToDynamicString(token_string, symbol);
-        token.token_type = T_MUL_COMMENT;
-        copyString(token.string_value->str, token_string->str);
-        return token;
+        deleteLastCharacter(token_string);
+        state = START;
+        // appendToDynamicString(token_string, symbol);
+        // token.token_type = T_MUL_COMMENT;
+        // copyString(token.string_value->str, token_string->str);
+        // return token;
       } else {
-        appendToDynamicString(token_string, symbol);
+        // appendToDynamicString(token_string, symbol);
         state = Multi_Line_Comment_STATE;
       }
       break;

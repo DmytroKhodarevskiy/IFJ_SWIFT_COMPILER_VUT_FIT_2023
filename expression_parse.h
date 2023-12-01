@@ -3,13 +3,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include <stdbool.h>
-#include "symtable.c"
-#include "stack.c"
-#include "tokenizer.c"
-#include "memory.c"
+#include <string.h>
+#include "ctype.h"
+#include "symtable.h"
+#include "stack.h"
 
 typedef struct {
   token_type left_side;

@@ -41,5 +41,6 @@ void FILL_TREES(FILE *file, SymStack *stack);
 void PARAM_LIST_FIRST(FILE *file, ListFuncParam **params, int *param_cnt);
 //wadawdawdawdawd
 void PARAM_FIRST(FILE *file, ListFuncParam **params);
+void PHASE_SECOND(FILE *file);
 
 #endif // PARSE_H

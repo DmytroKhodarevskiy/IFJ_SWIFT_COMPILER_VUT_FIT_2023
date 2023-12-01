@@ -47,7 +47,7 @@ typedef struct {
     DataType returnType;     // Return type of the function
     ListFuncParam paramTypes;    // Array of parameter types
     int paramCount;          // Number of parameters
-    struct SymTable* local_SymTable; // Local symbol table of the function
+    // struct SymTable* local_SymTable; // Local symbol table of the function
     bool isNil;               // Whether the symbol is nil
 } SymData;
 

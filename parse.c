@@ -17,6 +17,14 @@ void Parse(FILE *file){
     // printf("Parsing...\n");
     // PROGRAM(file);
     PHASE_FIRST(file);
+    PHASE = 2;
+
+    PHASE_SECOND(file);
+  print_SymTable(global_symtable);
+}
+
+void PHASE_SECOND(FILE *file) {
+  PROGRAM(file);
 }
 
 // Read Global Symbol Table and Functions Symbol Tables
@@ -124,7 +132,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
             node_data.name = id_name;
             node_data.isGlobal = true;
             node_data.isFunction = false;
-            node_data.local_SymTable = NULL;
+            // node_data.local_SymTable = NULL;
             node_data.isDefined = true;
 
             current_token = peekNextToken(file); // peek : or =
@@ -206,7 +214,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
             // SymData node_data;
             // current_token = get_token(file); // get func
 
-            printf("token: %s\n", current_token.string_value->str);
+            // printf("token: %s\n", current_token.string_value->str);
 
             current_token = get_token(file); // get id
             if (current_token.token_type != T_TYPE_ID){
@@ -259,33 +267,42 @@ void FILL_TREES(FILE *file, SymStack *stack){
             }
 
             current_token = get_token(file); // get {
-
-            //skip function definition for now
-            if (current_token.token_type == T_LBRACE) {
-              int count = 1;
-              while (count != 0) {
-                // current_token = get_token(file); // get {
-                if (current_token.token_type == T_LBRACE) {
-                  count++;
-                }
-                else if (current_token.token_type == T_RBRACE) {
-                  count--;
-                }
-
-                if (current_token.token_type == T_EOF) {
-                  exitWithError("Syntax error: expected }\n", ERR_SYNTAX);
-                }
-              }
-
-            }
-
-            else {
+            if (current_token.token_type != T_LBRACE){
               exitWithError("Syntax error: expected {\n", ERR_SYNTAX);
             }
 
+            // printf("WHILE START\n");
+
+            //skip function definition for now
+            // if (current_token.token_type == T_LBRACE) {
+            //   int count = 1;
+            //   while (count != 0) {
+            //     // current_token = get_token(file); // get {
+            //     if (current_token.token_type == T_LBRACE) {
+            //       count++;
+            //     }
+            //     else if (current_token.token_type == T_RBRACE) {
+            //       count--;
+            //     }
+
+            //     if (current_token.token_type == T_EOF) {
+            //       exitWithError("Syntax error: expected }\n", ERR_SYNTAX);
+            //     }
+
+            //     current_token = get_token(file); // get next
+            //   }
+            // }
+
+            // else {
+            //   exitWithError("Syntax error: expected {\n", ERR_SYNTAX);
+            // }
+            // printf("WHILE END\n");
+
+            // printf("token: %s\n", current_token.string_value->str);
+
             // insert_SymTable(global_symtable, id_name, node_data);
-              insert_FunctionSymTable(global_symtable, id_name, return_type,
-               params, param_cnt);
+            insert_FunctionSymTable(global_symtable, id_name, return_type,
+                                  params, param_cnt);
 
             // else if (current_token.token_type == T_LBRACE) {
             //   current_token = get_token(file); // get {
@@ -331,22 +348,16 @@ void FILL_TREES(FILE *file, SymStack *stack){
 
     }
 
-    print_SymTable(global_symtable);
-    printTree(global_symtable);
+    // print_SymTable(global_symtable);
+    // printTree(global_symtable);
 } 
-
-
-
-
-
-
 
 void PROGRAM(FILE *file){
     DECLARE_GLOBAL_FUNC(file);
 }
 
 void DECLARE_GLOBAL_FUNC(FILE *file){
-  symbol_table = create_SymTable();
+  // symbol_table = create_SymTable();
   //init the tree, set main return type
   STMT_LIST(file);
 }
@@ -713,6 +724,8 @@ void PARAM_FIRST(FILE *file, ListFuncParam **params){ //current token is (
   if (param_type == TYPE_UNKNOWN){
     exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
   }
+  
+  // printf("hello :3\n");
 
   *params = addParamToList(*params, param_name, param_type, param_prefix);
 
@@ -883,7 +896,8 @@ void EXP(FILE *file){
 
   // printf("EXP: %s\n", current_token.string_value->str);
   int error = 0;
-  DataType type = parse_expression(symbol_table, &current_token, &error, &file);
+  // DataType type = parse_expression(symbol_table, &current_token, &error, &file);
+  DataType type = parse_expression(global_symtable, &current_token, &error, &file);
   // printf("TYpe after exp: %d\n", current_token.token_type);
   if (type == TYPE_UNKNOWN){
     exitWithError("Syntax error: expression error\n", ERR_SYNTAX);

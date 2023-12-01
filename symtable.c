@@ -165,7 +165,7 @@ SymData initSymData() {
     node.returnType = TYPE_UNKNOWN; // Set to an appropriate initial value
     node.paramTypes.next = NULL; // Set to an appropriate initial value
     node.paramCount = 0;
-    node.local_SymTable = NULL;
+    // node.local_SymTable = NULL;
     node.isNil = false;
 
     return node;
@@ -349,7 +349,7 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
     functionData.canbeChanged = false;
     functionData.isFunction = true;
     functionData.isGlobal = true; 
-    functionData.local_SymTable = (struct SymTable*)create_SymTable();
+    // functionData.local_SymTable = (struct SymTable*)create_SymTable();
 
     insert_SymTable(table, functionData.name, functionData);
 }

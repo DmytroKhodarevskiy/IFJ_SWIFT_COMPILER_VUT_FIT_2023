@@ -118,8 +118,7 @@ bool is_nullable(DataType type){
 bool restricted_operations_with_operation(DataType expression_type, char *operation){
     if((strcmp(operation, "+") == 0) || (strcmp(operation, "-") == 0) || (strcmp(operation, "*") == 0) || (strcmp(operation, "/") == 0)){
         if(is_nullable(expression_type)){
-            fprintf(stderr,"Error: Cannot use %s operator on nullable type or nil\n", operation);
-            return false;
+            exitWithError("Semantic error: Cannot use arithmetic operations on nullable types\n", ERR_SEMANT_TYPE);
         }
     }
     return true;
@@ -208,12 +207,14 @@ DataType get_token_type(Token op1, Token op3, int rule_type){
             }
 
             if(op1.token_type != op3.token_type) {
-                return TYPE_UNKNOWN;
+                exitWithError("Semantic error: Cannot use arithmetic operations on different types\n", ERR_SEMANT_TYPE);
+                //return TYPE_UNKNOWN;
             }
             else return convert_tokenType_to_symType(op1.token_type);
         case 2:
             if(op1.token_type != op3.token_type) {
-                return TYPE_UNKNOWN;
+                exitWithError("Semantic error: Cannot use relational operations on different types\n", ERR_SEMANT_TYPE);
+               // return TYPE_UNKNOWN;
             }
             return TYPE_BOOL;
         case 3:
@@ -223,7 +224,8 @@ DataType get_token_type(Token op1, Token op3, int rule_type){
             else if (op3.token_type == T_KEYWORD) return convert_tokenType_to_symType(op1.token_type);
             else if(op1.token_type != T_KEYWORD && op3.token_type != T_KEYWORD) {
                 if(op1.token_type != op3.token_type) {
-                    return TYPE_UNKNOWN;
+                    exitWithError("Semantic error: Cannot use ?? operations on different types\n", ERR_SEMANT_TYPE);
+                    //return TYPE_UNKNOWN;
                 }
                 else return convert_tokenType_to_symType(op1.token_type);
             }
@@ -345,8 +347,9 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
             if(perform_reduce(table, &stack, count_of_token_before_edge(stack), &expression_type) == -1){
                 freeStack(&stack);
                 *error = 1;
-                printf("Error: Invalid token\n");
-                return expression_type;
+//                printf("Error: Invalid token\n");
+//                return expression_type;
+                exitWithError("Syntax error: Invalid token\n", ERR_SYNTAX);
             }
         }
         else if (action_letter == EQ) {
@@ -357,9 +360,10 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
         else if (action_letter == E) {
             expression_type = TYPE_UNKNOWN;
             freeStack(&stack);
-            printf("Error: Invalid token\n");
-            *error = 1;
-            return expression_type;
+            exitWithError("Syntax error: Invalid symbols sequence on expression\n", ERR_SYNTAX);
+//            printf("Error: Invalid token\n");
+//            *error = 1;
+//            return expression_type;
         }
         else if (action_letter == END) {
             //printf("Expression type: %d\n", expression_type);
@@ -387,8 +391,7 @@ int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expressi
             if(tokens[0].token_type == T_TYPE_ID){
                 AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
                 if(node == NULL) {
-                    fprintf(stderr, "Error: Variable %s is not defined\n", tokens[0].string_value->str);
-                    return -1;
+                    exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
                 }
                 *expression_type = node->data.dtype;
                 if(is_nullable(*expression_type)){
@@ -406,14 +409,16 @@ int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expressi
             // E -> E!
             //print_expression_type(*expression_type);
             if(*expression_type == TYPE_NIL){
-                *expression_type = TYPE_UNKNOWN;
-                fprintf(stderr, "Error: Cannot use ! operator on nil\n");
-                return -1;
+//                *expression_type = TYPE_UNKNOWN;
+//                fprintf(stderr, "Error: Cannot use ! operator on nil\n");
+//                return -1;
+                exitWithError("Semantic error: Cannot use ! operator on nil\n", ERR_SEMANT_TYPE);
             }
             if(tokens[0].grammar_token_type == T_NT && tokens[1].token_type == T_NOTNIL) {
                 if (!is_nullable(*expression_type)) {
-                    fprintf(stderr, "Error: Cannot use ! operator on non-nullable type\n");
-                    return -1;
+                    exitWithError("Semantic error: Cannot use ! operator on non-nullable type\n", ERR_SEMANT_TYPE);
+//                    fprintf(stderr, "Error: Cannot use ! operator on non-nullable type\n");
+//                    return -1;
                 }
                 *expression_type -= 4;
                 return 6;

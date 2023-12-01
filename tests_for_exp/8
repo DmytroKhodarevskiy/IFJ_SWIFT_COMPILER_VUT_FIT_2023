@@ -1,0 +1,1 @@
+foo(by : a) + foo(by : a, by : b) + foo(by : a, by : b, by : c)

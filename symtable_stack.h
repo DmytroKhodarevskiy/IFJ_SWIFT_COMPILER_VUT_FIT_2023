@@ -29,5 +29,5 @@ void s_resizeStack(SymStack *stack);
 void s_push(SymStack *stack, SymTable item);
 SymTable s_pop(SymStack *stack);
 void s_freeStack(SymStack *stack);
-
+SymTable s_peek(SymStack *stack);
 #endif // STACK_H

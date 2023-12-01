@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "symtable_stack.h"
+#include "memory.h"
+
+#ifndef PARSE_H
+#define PARSE_H
+
+void Parse(FILE *file);
 // void GLOBAL_STATEMENT_LIST();
 void GLOBAL_STATEMENT(FILE *file); //for every function
 void DECLARE_GLOBAL_FUNC(FILE *file);
@@ -28,4 +35,6 @@ void PREFIX(FILE *file);
 void PHASE_FIRST(FILE *file);
 bool is_compatible(DataType assignType, DataType variableType);
 DataType get_type(char *str);
+void FILL_TREES(FILE *file, SymStack *stack); 
 
+#endif // PARSE_H

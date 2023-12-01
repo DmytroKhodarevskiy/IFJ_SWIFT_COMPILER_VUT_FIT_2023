@@ -1,5 +1,6 @@
 #include "tokenizer.h"
 #include "dynamic_string.c"
+// #include "dynamic_string.h"
 #include "memory.h"
 
 #define START 100

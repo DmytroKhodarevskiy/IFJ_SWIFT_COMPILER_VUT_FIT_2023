@@ -6,9 +6,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "symtable.c"
-#include "stack.c"
-#include "tokenizer.c"
+// #include "symtable.c"
+#include "symtable.h"
+// #include "stack.c"
+#include "stack.h"
+// #include "tokenizer.c"
+// #include "tokenizer.h"
 
 typedef struct {
   token_type left_side;

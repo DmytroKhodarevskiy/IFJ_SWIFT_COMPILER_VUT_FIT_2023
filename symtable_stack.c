@@ -28,6 +28,17 @@ void s_resizeStack(SymStack *stack) {
   }
 }
 
+SymTable s_peek(SymStack *stack) {
+    if (s_isEmpty(stack)) {
+        // fprintf(stderr, "Error: Stack is empty\n");
+        // exit(EXIT_FAILURE);
+        exitWithError("Error: Stack is empty\n", ERR_INTERNAL);
+    }
+
+    return stack->items[stack->top];
+}
+
+
 void s_push(SymStack *stack, SymTable item) {
   if (stack->top == stack->size - 1) {
     // Stack is full, resize it

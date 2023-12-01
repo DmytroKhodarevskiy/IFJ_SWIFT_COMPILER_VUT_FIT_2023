@@ -1,21 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+
 //#include "expression_parse.c"
 
 
 
 // #include "expression_parse.c"
 // #include "memory.c"
-#include "parse.c"
-#include "codegenerator.c"
+// #include "parse.h"
+#include "compiler.h"
+// #include "codegenerator.c"
 
 
 // int main(){
 int main(int argc, char* argv[]){
-
-    // parsing();
 
     FILE *file;
 
@@ -32,9 +28,9 @@ int main(int argc, char* argv[]){
     }
 
     // printf("file: %s\n", argv[1]);
-    // Parse(file);
 
     // FIRST PHASE
+    Parse(file);
 
     
 

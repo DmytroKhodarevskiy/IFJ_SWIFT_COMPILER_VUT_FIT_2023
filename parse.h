@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "symtable_stack.h"
+// #include "symtable_stack.h"
+#include "expression_parse.h"
 #include "memory.h"
 
 #ifndef PARSE_H
@@ -18,8 +19,10 @@ void IF_EXP(FILE *file);
 void EXP(FILE *file);
 void PROGRAM(FILE *file);
 void MB_STMT_LET_VAR(FILE *file);
-void TYPE(FILE *file);
-void MB_ASSIGN_EXPR(FILE *file);
+// void TYPE(FILE *file);
+void TYPE(FILE *file, DataType *type);
+// void MB_ASSIGN_EXPR(FILE *file);
+void MB_ASSIGN_EXPR(FILE *file, DataType type);
 void WHILE_EXP(FILE *file);
 void PARAM_LIST(FILE *file);
 void PARAM(FILE *file);

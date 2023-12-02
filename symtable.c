@@ -156,12 +156,12 @@ SymData initSymData() {
     // }
     // strcpy(node->name, initialName);
 
-    node.name = "???";
-    node.dtype = TYPE_UNKNOWN;
+    node.name = "???"; //
+    node.dtype = TYPE_UNKNOWN;//
     node.isDefined = false;
-    node.canbeChanged = false;
-    node.isGlobal = false;
-    node.isFunction = false;
+    node.canbeChanged = false; //
+    node.isGlobal = false;//
+    node.isFunction = false;//
     node.returnType = TYPE_UNKNOWN; // Set to an appropriate initial value
     node.paramTypes.next = NULL; // Set to an appropriate initial value
     node.paramCount = 0;

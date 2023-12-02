@@ -1,7 +1,8 @@
+#include <stdio.h>
+
 #ifndef _MEMORY_H
 #define _MEMORY_H
 
-#include <stdio.h>
 
 #define ERR_OK                 0
 #define ERR_LEX                1 
@@ -21,7 +22,10 @@ typedef struct MemoryBlockNode {
     struct MemoryBlockNode *next;  // Pointer to the next node in the list
 } MemoryBlockNode;
 
-MemoryBlockNode *memoryListHead = NULL;
+// MemoryBlockNode *memoryListHead = NULL;
+// #define MemoryBlockNode *memoryListHead = NULL;
+
+
 
 extern int linenum;
 

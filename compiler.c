@@ -1,21 +1,19 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+
 //#include "expression_parse.c"
 
 
 
 // #include "expression_parse.c"
-#include "memory.c"
-#include "parse.c"
-#include "codegenerator.c"
+// #include "memory.h"
+// #include "parse.h"
+// #include "parse.c"
+#include "compiler.h"
+// #include "codegenerator.c"
 
+int linenum = 0;
 
 // int main(){
 int main(int argc, char* argv[]){
-
-    // parsing();
 
     FILE *file;
 
@@ -31,8 +29,17 @@ int main(int argc, char* argv[]){
         file = stdin;
     }
 
-    printf("file: %s\n", argv[1]);
+    // printf("file: %s\n", argv[1]);
+
+    // FIRST PHASE
     Parse(file);
+
+    
+
+
+
+
+
 
 
     // Token token;

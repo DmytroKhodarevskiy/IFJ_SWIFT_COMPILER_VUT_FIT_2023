@@ -1,6 +1,7 @@
 #include "tokenizer.h"
-#include "dynamic_string.c"
-#include "memory.h"
+// #include "dynamic_string.c"
+// #include "dynamic_string.h"
+// #include "memory.h"
 
 #define START 100
 
@@ -47,7 +48,8 @@
 
 #define CheckifArrowState 133
 
-int linenum = 0;
+// int linenum = 0;
+// linenum = 0;
 
 Token lookaheadToken;
 bool hasPeeked = false;
@@ -91,7 +93,7 @@ int isKeyword(const char* word) {
 
 void copyString(char *destination, char *source) {
   strcpy(destination, source);
-  //   if (source != NULL)
+    // if (source != NULL)
   // free(source);
 }
 
@@ -529,10 +531,15 @@ Token get_token(FILE *file){
 
     case Checking_Comment_STATE:
       if (symbol == '/') {
-        appendToDynamicString(token_string, symbol);
+        // ungetc(symbol, file);
+        deleteLastCharacter(token_string);
+        // deleteLastCharacter(token_string);
+        // token.string_value->str = NULL;
+        // token_string->str = NULL;
+        // appendToDynamicString(token_string, symbol);
         state = Single_Line_Comment_STATE;
       } else if (symbol == '*') {
-        appendToDynamicString(token_string, symbol);
+        // appendToDynamicString(token_string, symbol);
         state = Multi_Line_Comment_STATE;
       } else {
         ungetc(symbol, file);
@@ -544,14 +551,20 @@ Token get_token(FILE *file){
 
 
     case Single_Line_Comment_STATE:
-      if (symbol == '\n' || symbol == EOF) {
+      if (symbol == '\n' || symbol == EOF ) {
         token.token_type = T_SING_COMMENT;
-        copyString(token.string_value->str, token_string->str);
+        // printf("TOKEN STRING STRING before: %s\n", token.string_value->str);
+        // copyString(token.string_value->str, token_string->str);
+        // printf("TOKEN STRING STRING after: %s\n", token.string_value->str);
         // return token;
+        // dynamic_string_free(token_string->str);
+        // token_string->str = NULL;
+        // token.string_value->str = NULL;
         state = START;
-        continue;
+        // continue;
       } else {
-        appendToDynamicString(token_string, symbol);
+        // ungetc(symbol, file);
+        // appendToDynamicString(token_string, symbol);
         state = Single_Line_Comment_STATE;
       }
       break;
@@ -559,10 +572,10 @@ Token get_token(FILE *file){
 
     case Multi_Line_Comment_STATE:
       if (symbol == '*') {
-        appendToDynamicString(token_string, symbol);
+        // appendToDynamicString(token_string, symbol);
         state = Checking_end_of_Multi_Line_Comment_STATE;
       } else {
-        appendToDynamicString(token_string, symbol);
+        // appendToDynamicString(token_string, symbol);
         state = Multi_Line_Comment_STATE;
       }
       break;
@@ -570,12 +583,14 @@ Token get_token(FILE *file){
 
     case Checking_end_of_Multi_Line_Comment_STATE:
       if (symbol == '/') {
-        appendToDynamicString(token_string, symbol);
-        token.token_type = T_MUL_COMMENT;
-        copyString(token.string_value->str, token_string->str);
-        return token;
+        deleteLastCharacter(token_string);
+        state = START;
+        // appendToDynamicString(token_string, symbol);
+        // token.token_type = T_MUL_COMMENT;
+        // copyString(token.string_value->str, token_string->str);
+        // return token;
       } else {
-        appendToDynamicString(token_string, symbol);
+        // appendToDynamicString(token_string, symbol);
         state = Multi_Line_Comment_STATE;
       }
       break;

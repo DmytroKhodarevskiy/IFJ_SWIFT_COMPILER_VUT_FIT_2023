@@ -15,7 +15,6 @@ int height(AVLNode* node) {
 }
 
 
-
 int getBalance(AVLNode* node) {
     if (node == NULL)
         return 0;
@@ -143,7 +142,34 @@ AVLNode* create_AVLNode(char* key, SymData data) {
 
 
 
+SymData initSymData() {
+    SymData node;
+    // if (node == NULL) {
+        // return NULL; // Memory allocation failed
+    // }
 
+    // Allocate memory for the name and copy the initialName into it
+    // node->name = malloc(strlen(initialName) + 1); // +1 for null terminator
+    // if (node->name == NULL) {
+        // free(node); // Don't forget to free the node if name allocation fails
+        // return NULL;
+    // }
+    // strcpy(node->name, initialName);
+
+    node.name = "???";
+    node.dtype = TYPE_UNKNOWN;
+    node.isDefined = false;
+    node.canbeChanged = false;
+    node.isGlobal = false;
+    node.isFunction = false;
+    node.returnType = TYPE_UNKNOWN; // Set to an appropriate initial value
+    node.paramTypes.next = NULL; // Set to an appropriate initial value
+    node.paramCount = 0;
+    node.local_SymTable = NULL;
+    node.isNil = false;
+
+    return node;
+}
 
 
 
@@ -309,7 +335,7 @@ void delete_SymTable(SymTable* table, char* key) {
  * @param paramTypes The parameter types of the function
  * @param paramCount The number of parameters of the function
  */
-void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, ListFuncParam* paramTypes, int paramCount) {
+void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, ListFuncParam* params, int paramCount) {
     if (table == NULL)
         return;
 
@@ -317,7 +343,7 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
     functionData.name = key; 
     functionData.dtype = FUNC; 
     functionData.returnType = returnType;
-    functionData.paramTypes = *paramTypes; 
+    functionData.paramTypes = *params; 
     functionData.paramCount = paramCount;
     functionData.isDefined = false;
     functionData.canbeChanged = false;

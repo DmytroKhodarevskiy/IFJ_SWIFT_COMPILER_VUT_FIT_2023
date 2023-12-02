@@ -1,11 +1,44 @@
-let d = 5
-if (5)
+var a = 1
+var b1 = 2
+var b2 = 2
+var b3 = 2
+var b4 = 2
+var b5 = 2
+var b6 = 2
+var b7 = 2
+var b8 = 2
+var b9 = 2
+var b10 = 2
+var b11 = 2
+var b12 = 2
+var b13 = 2
+var b14 = 2
+var b15 = 2
+var b16 = 2
+var b17 = 2
+var b18 = 2
+var b19 = 2
+var b20 = 2
+var b21 = 2
+var b22 = 2
+var b23 = 2
+var b24 = 2
+var b25 = 2
+var b26 = 2
+var b27 = 2
+var b28 = 2
+var b29 = 2
+var b30 = 2
 
-{
-  
+
+func ya_elban (_ a: Int, _ b: Int, suka blyat: Int, ebal rot: Int, drochu vsalfetku: Int) -> Int {
+// func ya_elban (_ a: Int) -> Int {
+    return a + b
 }
-else
-{
+
+var b291 = 2
+var b301 = 2
+
+func ti_dolboyob (biba a: Int, boba b: Int) {
+    var c = a + b
 }
-
-

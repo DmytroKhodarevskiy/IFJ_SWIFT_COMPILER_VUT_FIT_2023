@@ -1,10 +1,10 @@
 #include "expression_parse.h"
 
-#define size 9
+#define size_table 9
 
-int linenum;
+// int linenum;
 
-int precedence_table[size][size] = {
+int precedence_table[size_table][size_table] = {
 
 // +-  */ rel  !   ??  (   )   i   $
   {R,  S,  R,  S,  R,  S,  R,  S,  R},  // +-

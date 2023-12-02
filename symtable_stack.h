@@ -34,12 +34,14 @@ void s_resizeStack(SymStack *stack);
 void s_push(SymStack *stack, SymTable item);
 SymTable s_pop(SymStack *stack);
 void s_freeStack(SymStack *stack);
-SymTable s_peek(SymStack *stack);
+// SymTable s_peek(SymStack *stack);
+SymTable *s_peek(SymStack *stack);
 // SymData s_search_symtack(SymStack *stack, char *key);
 AVLNode *s_search_symtack(SymStack *stack, char *key);
 AVLNode *s_search_param_list(ListFuncParam *param_list, char *key);
 // void Print_Sym_stack(SymStack stack);
 void Print_Sym_stack(SymStack *stack);
+
 
 
 

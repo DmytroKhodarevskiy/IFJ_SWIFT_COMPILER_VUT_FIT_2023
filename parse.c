@@ -862,13 +862,14 @@ void MB_STMT_LET_VAR(FILE *file){ //current token is id
   node_data.name = current_token.string_value->str;
 
   SymTable *check_symtable = create_SymTable();
-  printf("HELLLLLPPPPPP\n");
+  // printf("HELLLLLPPPPPP\n");
   Print_Sym_stack(&stack);
-  *check_symtable = s_peek(&stack);
-  printf("HELLLLLPPPPPP\n");
+  check_symtable = s_peek(&stack);
+  // printf("HELLLLLPPPPPP\n");
   printf("check_symtable: %s\n", check_symtable->name);
   print_SymTable(check_symtable);
-
+  printf("GLOBALLLLLLLLLLLLLLLLLLLL\n");
+  print_SymTable(global_symtable);
   if (!(!strcmp(check_symtable->name, "global"))) {
     if (search_SymTable(check_symtable, current_token.string_value->str) != NULL) {
 
@@ -929,6 +930,7 @@ void MB_STMT_LET_VAR(FILE *file){ //current token is id
   node_data.isFunction = false;
   printf("token, var exp ended on is: %s\n", current_token.string_value->str);
   insert_SymTable(check_symtable, node_data.name, node_data);
+  printf("INSERTED\n");
   // insert_SymTable(check_symtable, current_token.string_value->str, initSymData());
   // printf("token, var exp ended on is: %s\n", current_token.string_value->str);
   print_SymTable(check_symtable);

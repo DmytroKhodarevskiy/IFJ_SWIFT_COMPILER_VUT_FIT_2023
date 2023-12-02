@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include "memory.h"
 
 // Enum for the data types in IFJ23
 typedef enum {

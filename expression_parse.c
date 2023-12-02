@@ -396,7 +396,9 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
             if(tokens[0].token_type == T_TYPE_ID){
                 // AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
                 AVLNode *node = s_search_symtack(table, tokens[0].string_value->str);
+                print_SymTable(&(table->items[0]));
                 if(node == NULL) {
+                    printf("Token THAT IS NOT HERE: %s\n", tokens[0].string_value->str);
                     exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
                 }
                 *expression_type = node->data.dtype;

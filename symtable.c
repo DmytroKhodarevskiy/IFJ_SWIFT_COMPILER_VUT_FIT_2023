@@ -234,6 +234,10 @@ AVLNode* insert_AVLNode(AVLNode* node, char* key, SymData data) {
  * @param data The data of the new symbol
  */
 void insert_SymTable(SymTable* table, char* key, SymData data) {
+    if (search_SymTable(table, key) != NULL) {
+        exitWithError("Error: Symbol already defined\n", ERR_SEMANT_UNDF_VALUE);
+    }
+
     table->root = insert_AVLNode(table->root, key, data);
 }
 

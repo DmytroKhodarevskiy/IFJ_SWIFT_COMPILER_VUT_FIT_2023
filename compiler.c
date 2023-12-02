@@ -8,7 +8,7 @@
 // #include "parse.h"
 // #include "parse.c"
 #include "compiler.h"
-// #include "codegenerator.c"
+#include "codegenerator.h"
 
 int linenum = 0;
 
@@ -97,9 +97,9 @@ int main(int argc, char* argv[]){
 
     // op1.int_val = 55;
     // op2.int_val = 66;
-    // // data.op2.id_name = token_b.string_value;
-    // // *data.func_param = op1;
-    // // *(data.func_param+1) = op2;
+    // data.op2.id_name = token_b.string_value;
+    // *data.func_param = op1;
+    // *(data.func_param+1) = op2;
     // data.func_param = malloc(2 * sizeof(Operand));
     // if (data.func_param == NULL) {
     //     // Handle allocation error

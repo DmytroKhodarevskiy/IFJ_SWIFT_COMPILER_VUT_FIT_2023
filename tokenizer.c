@@ -51,6 +51,8 @@
 // int linenum = 0;
 // linenum = 0;
 
+int multicom_cnt = 0;
+
 Token lookaheadToken;
 bool hasPeeked = false;
 
@@ -172,20 +174,26 @@ Token get_token(FILE *file){
         return token;
 
 
-                } else if (symbol == '-') {
-                    appendToDynamicString(token_string, symbol);
-                    state = CheckifArrowState;
+      } else if (symbol == '-') {
+          appendToDynamicString(token_string, symbol);
+          state = CheckifArrowState;
 
 
       } else if (symbol == '*') {
         token.token_type = T_MULTIPLY;
         appendToDynamicString(token_string, symbol);
         copyString(token.string_value->str, token_string->str);
+
+        Token check_slash = peekNextToken(file);
+        if (check_slash.token_type == T_DIVIDE) {
+          exitWithError("ERROR: Invalid token after '*/'", ERR_LEX);
+        }
+
         return token;
 
-                } else if (symbol == '=') {
-                    appendToDynamicString(token_string, symbol);
-                    state = EQUAL_STATE_or_ASSIGN_STATE;
+      } else if (symbol == '=') {
+          appendToDynamicString(token_string, symbol);
+          state = EQUAL_STATE_or_ASSIGN_STATE;
 
 
       } else if (symbol == '>') {
@@ -278,6 +286,7 @@ Token get_token(FILE *file){
                 
                 
                 } else {
+                  exitWithError("ERROR: Invalid token", ERR_LEX);
                     token.token_type = T_ERR;
                     return token;
                 }
@@ -302,6 +311,7 @@ Token get_token(FILE *file){
         copyString(token.string_value->str, token_string->str);
         return token;
       } else {
+        exitWithError("ERROR: Invalid token after '_'", ERR_LEX);
         token.token_type = T_ERR;
         return token;
       }
@@ -315,6 +325,7 @@ Token get_token(FILE *file){
         appendToDynamicString(token_string, symbol);
         state = Escape_sequence_STATE;
       } else if (symbol == '\n' || symbol == EOF) {
+        exitWithError("ERROR: Invalid token after '\"'", ERR_LEX);
         token.token_type = T_ERR;
         return token;
       } else {
@@ -343,6 +354,7 @@ Token get_token(FILE *file){
         appendToDynamicString(token_string, symbol);
         state = Escape_char_err_check_STATE;
       } else {
+        exitWithError("ERROR: Invalid token after '\\'", ERR_LEX);
         token.token_type = T_ERR;
         return token;
       }
@@ -355,6 +367,8 @@ Token get_token(FILE *file){
         copyString(token.string_value->str, token_string->str);
         return token;
       } else if (symbol == '\n' || symbol == EOF) {
+
+        exitWithError("ERROR: Invalid token after '\"'", ERR_LEX);
         token.token_type = T_ERR;
         return token;
       } else {
@@ -368,6 +382,8 @@ Token get_token(FILE *file){
         appendToDynamicString(token_string, symbol);
         state = Single_line_hex_num_STATE;
       } else {
+
+        exitWithError("ERROR: Invalid token after '\\u'", ERR_LEX);
         token.token_type = T_ERR;
         return token;
       }
@@ -381,6 +397,8 @@ Token get_token(FILE *file){
         appendToDynamicString(token_string, symbol);
         state = Reading_String_STATE;
       } else {
+
+        exitWithError("ERROR: Invalid token after '\\u'", ERR_LEX);
         token.token_type = T_ERR;
         return token;
       }
@@ -400,6 +418,13 @@ Token get_token(FILE *file){
 
          
     case Multi_line_string_check2_STATE:
+      if (symbol == EOF) {
+        exitWithError("ERROR: Invalid token after '\"\"'", ERR_LEX);
+
+        token.token_type = T_ERR;
+        return token;
+      }
+
       if (symbol == '\n') {
         appendToDynamicString(token_string, symbol);
         state = Multi_line_FINALLY_STATE;
@@ -420,6 +445,8 @@ Token get_token(FILE *file){
         appendToDynamicString(token_string, symbol);
         state = Multi_line_string_check4_STATE;
       } else if (symbol == EOF) {
+        exitWithError("ERROR: Invalid token after '\"\"'", ERR_LEX);
+
         token.token_type = T_ERR;
         return token;
       } else {
@@ -481,6 +508,11 @@ Token get_token(FILE *file){
       if (symbol == '\"') {
         appendToDynamicString(token_string, symbol);
         state = Multi_line_string_check5_STATE;
+      } else if (symbol == EOF) {
+        exitWithError("ERROR: Invalid token after '\"\"'", ERR_LEX);
+
+        token.token_type = T_ERR;
+        return token;
       } else {
         appendToDynamicString(token_string, symbol);
         state = Multi_line_FINALLY_STATE;
@@ -494,7 +526,14 @@ Token get_token(FILE *file){
         token.token_type = T_MUL_STRING;
         copyString(token.string_value->str, token_string->str);
         return token;
+      } else if (symbol == EOF) {
+        exitWithError("ERROR: Invalid token after '\"\"'", ERR_LEX);
+
+        token.token_type = T_ERR;
+        return token;
       } else {
+        exitWithError("ERROR: Invalid token after '\"\"'", ERR_LEX);
+
         token.token_type = T_ERR;
         return token;
       }
@@ -508,6 +547,8 @@ Token get_token(FILE *file){
         return token;
       } else {
         ungetc(symbol, file);
+
+        exitWithError("ERROR: Invalid token after '?'", ERR_LEX);
         token.token_type = T_ERR;
         return token;
       }
@@ -539,6 +580,8 @@ Token get_token(FILE *file){
         // appendToDynamicString(token_string, symbol);
         state = Single_Line_Comment_STATE;
       } else if (symbol == '*') {
+
+        multicom_cnt++;
         // appendToDynamicString(token_string, symbol);
         state = Multi_Line_Comment_STATE;
       } else {
@@ -571,10 +614,29 @@ Token get_token(FILE *file){
 
 
     case Multi_Line_Comment_STATE:
+      // if (symbol == '/') {
+      //   Token check_mul = peekNextToken(file);
+      //   if (check_mul.token_type == T_MULTIPLY) {
+            
+      //   }
+      //   // state = Checking_end_of_Multi_Line_Comment_STATE;
+      // } else
+
+
       if (symbol == '*') {
+        //TODO
+        // multicom_cnt++;
         // appendToDynamicString(token_string, symbol);
         state = Checking_end_of_Multi_Line_Comment_STATE;
-      } else {
+        }
+
+      else if (symbol == EOF) {
+        exitWithError("ERROR: Invalid token after '/*'", ERR_LEX);
+        // token.token_type = T_ERR;
+        // return token;
+      }
+
+       else {
         // appendToDynamicString(token_string, symbol);
         state = Multi_Line_Comment_STATE;
       }
@@ -583,13 +645,23 @@ Token get_token(FILE *file){
 
     case Checking_end_of_Multi_Line_Comment_STATE:
       if (symbol == '/') {
+
+
+
         deleteLastCharacter(token_string);
         state = START;
         // appendToDynamicString(token_string, symbol);
         // token.token_type = T_MUL_COMMENT;
         // copyString(token.string_value->str, token_string->str);
         // return token;
-      } else {
+        
+      } else if (symbol == EOF) {
+        exitWithError("ERROR: Invalid token after '/*'", ERR_LEX);
+        // token.token_type = T_ERR;
+        // return token;
+      }
+
+      else {
         // appendToDynamicString(token_string, symbol);
         state = Multi_Line_Comment_STATE;
       }
@@ -797,6 +869,7 @@ Token get_token(FILE *file){
         token.token_type = T_EOF;
         return token;
       } else {
+        exitWithError("ERROR: Invalid token after EOF", ERR_LEX);
         token.token_type = T_ERR;
         return token;
       }

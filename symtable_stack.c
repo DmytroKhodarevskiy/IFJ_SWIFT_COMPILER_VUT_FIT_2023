@@ -64,3 +64,22 @@ void s_freeStack(SymStack *stack) {
   stack->top = -1;
   stack->size = 0;
 }
+
+SymData s_search_symtack(SymStack *stack, char *key) {
+  SymData data;
+  AVLNode *node;
+  SymTable *table;
+  int i;
+
+  for (i = stack->top; i >= 0; i--) {
+    *table = stack->items[i];
+    node = search_SymTable(table, key);
+    if (node != NULL) {
+      data = node->data;
+      return data;
+    }
+
+  }
+
+  exitWithError("Error: Undefined variable or function\n", ERR_SEMANT_UNDF_VALUE);
+}

@@ -30,4 +30,6 @@ void s_push(SymStack *stack, SymTable item);
 SymTable s_pop(SymStack *stack);
 void s_freeStack(SymStack *stack);
 SymTable s_peek(SymStack *stack);
+SymData s_search_symtack(SymStack *stack, char *key);
+
 #endif // STACK_H

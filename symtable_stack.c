@@ -46,6 +46,9 @@ void s_push(SymStack *stack, SymTable item) {
   }
 
   stack->items[++stack->top] = item;
+
+  Print_Sym_stack(stack);
+  print_SymTable(&(stack->items[stack->top]));
 }
 
 SymTable s_pop(SymStack *stack) {

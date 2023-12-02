@@ -23,9 +23,9 @@ RETURN
 
 LABEL $$main
 DEFVAR GF@%%retval_main
-CALL $foo
-CALL $foo
-CALL $foo
-CALL $foo
-CALL $foo
+CREATEFRAME
+DEFVAR TF@param1
+MOVE TF@param1 int@55
+DEFVAR TF@param2
+MOVE TF@param2 int@66
 CALL $foo

@@ -1,0 +1,6 @@
+func calculateSum(_ a: Int,_ b: Int) -> Int
+    return a + b
+}
+
+calculateSum(1, 2)
+

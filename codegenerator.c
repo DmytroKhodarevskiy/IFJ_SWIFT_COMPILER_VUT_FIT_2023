@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "codegenerator.h"
 
@@ -34,36 +35,23 @@ void generate_header(FILE *file) {
 }
 
 void add_instr(instr_node **head, char *instr) {
-
-    // printf("instruction to add to list: %s\n", instr);
-
     instr_node *new_node = malloc(sizeof(instr_node));
     if (new_node == NULL) {
-        // Handle memory allocation error
         fprintf(stderr, "Error allocating memory in newnode\n");
         return;
     }
 
-    new_node->instr = instr;
-    // printf("new_node->instr: %s\n", new_node->instr);
+    new_node->instr = strdup(instr);  // Copy the instruction
     new_node->next = NULL;
 
-    // If the list is empty, make the new node the head
     if (*head == NULL) {
-
-        printf("head is null\n");
-        *head = new_node;
+        *head = new_node;  // Set head for an empty list
     } else {
-        // Traverse the list to find the last node
         instr_node *current = *head;
         while (current->next != NULL) {
             current = current->next;
         }
-
-        printf("current->instr: %s\n", current->instr);
-        // Insert the new node at the end of the list
-        current->next = new_node;
-        printf("new_node->instr: %s\n", new_node->instr);
+        current->next = new_node;  // Append new node at the end
     }
 }
 
@@ -182,11 +170,11 @@ void FUNC_END(instr_node **head, char* retval, char *string) {
   add_instr(head, string);
 }
 
-int generate_code(instr_node **head, Data data, gencode gencode) {
+int generate_code(instr_node **head, Data data, gencode gencode, const char *frame_type){
   
   // GENERATE ALL SHIT HERE :)
 
-  char *string = malloc(256 * sizeof(char)); 
+  char *string = malloc(256 * sizeof(char));
   if (string == NULL) {
       // Handle memory allocation error
       return EXIT_FAILURE;

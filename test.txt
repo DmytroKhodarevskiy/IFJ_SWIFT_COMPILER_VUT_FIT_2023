@@ -1,28 +1,10 @@
-var a = 1
-
-
-
-func ya_elban (_ a: Int, _ b: Int, suka blyat: Int, ebal rot: Int, drochu vsalfetku: Int) -> Int {
-    return a + b
-}
-
-
-// var b28 = 2
-// var b29 = "2"
-// var b30 = 2
-
-// var urarwra = b1 + b2 + b3 + b4 + b5 + b6 + b7 + b8 + b9 + b10 + b11 + b12 + b13 + b14 + b15 + b16 + b17 + b18 + b19 + b20 + b21 + b22 + b23 + b24 + b25 + b26 + b27 + b28 + b30
-
-
-// 1
-// func ya_elban (_ a: Int, _ b: Int, suka blyat: Int, ebal rot: Int, drochu vsalfetku: Int) -> Int {
-// func ya_elban (_ a: Int) -> Int {
-    // return a + b
-// }
-
-// var b291 = 2
-// var b301 = 2
-
-// func ti_dolboyob (biba a: Int, boba b: Int) {
-    // var c = a + b
-// }
+/*
+This
+multiline
+/* /* NESTED */ */
+comment
+is
+/* UNTERMINATED */
+and
+shoul
+fail

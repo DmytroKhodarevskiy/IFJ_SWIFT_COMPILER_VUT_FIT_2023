@@ -169,7 +169,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
                   }
 
                   if (!is_compatible(node_data.dtype, type)) {
-                    exitWithError("Syntax error: type mismatch\n", ERR_SEMANT_TYPE);
+                    exitWithError("Semantic error: type mismatch\n", ERR_SEMANT_TYPE);
                   }
                   // if (type != node_data.dtype){
                   // }
@@ -200,7 +200,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
                 }
 
                 if (type == TYPE_NIL) {
-                  node_data.isNil = true;
+                    exitWithError( "error: nil requires a contextual type", ERR_SEMANT_TYPE);
                 }
 
                 node_data.dtype = type;

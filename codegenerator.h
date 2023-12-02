@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdarg.h>
 #define MAX_LINES 1000
 #define MAX_LINE_LENGTH 256 // Adjust as needed
 

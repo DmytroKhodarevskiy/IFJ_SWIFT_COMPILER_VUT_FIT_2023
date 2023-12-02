@@ -309,7 +309,8 @@ int get_index_from_token(Token token) {
 }
 
 
-DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file) {
+// DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file) {
+DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file) {
     TokenStack stack;
     Token FuncId;
     initializeStack(&stack);
@@ -330,7 +331,10 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
         if (action_letter == S) {
             insert_edge(&stack);
             push(&stack, *token);
-            AVLNode *node = search_SymTable(table, token->string_value->str);
+            // AVLNode *node = search_SymTable(table, token->string_value->str);
+            // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
+            AVLNode *node = s_search_symtack(table, token->string_value->str);
+            // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
             if(node != NULL) {
                 if(node->data.isFunction){
                     FuncId = *token;
@@ -377,7 +381,8 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
     }
 }
 
-int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expression_type) {
+// int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expression_type) {
+int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expression_type) {
     switch (count) {
         case 1:
             // E -> i
@@ -389,7 +394,8 @@ int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expressi
 //      }
             //printf("Token: %s\n", tokens[0].string_value->str);
             if(tokens[0].token_type == T_TYPE_ID){
-                AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
+                // AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
+                AVLNode *node = s_search_symtack(table, tokens[0].string_value->str);
                 if(node == NULL) {
                     exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
                 }
@@ -517,7 +523,8 @@ void perform_rule(int rule_index, TokenStack *stack, DataType *expression_type) 
 
 }
 
-int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type) {
+// int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type) {
+int perform_reduce(SymStack *table, TokenStack *stack, int count, DataType *expression_type) {
     Token tops[3];
     tops[0] = init_token();
     tops[1] = init_token();
@@ -537,7 +544,7 @@ int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expre
         tops[2] = stack->items[stack->top];
     }
 
-    int rule_index = get_rule_index(table,tops, count, expression_type);
+    int rule_index = get_rule_index(table, tops, count, expression_type);
     if(rule_index == -1) {
         return -1;
     }

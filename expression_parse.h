@@ -5,10 +5,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include "memory.h"
-#include "ctype.h"
-#include "symtable.h"
-#include "stack.h"
+// #include "memory.h"
+// #include "ctype.h"
+// #include "symtable.h"
+// #include "stack.h"
+#include "symtable_stack.h"
 
 typedef struct {
   token_type left_side;
@@ -103,7 +104,8 @@ int get_index_from_token(Token token);
  * @param file A pointer to the file stream from which tokens are read.
  * @return DataType of the expression
  */
-DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file);
+// DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file);
+DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file);
 
 /**
  * Determines the index of the grammar rule to be applied based on the given tokens.
@@ -112,7 +114,8 @@ DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file
  * @param count The number of tokens in the array.
  * @return The index of the grammar rule; -1 if no rule matches.
  */
-int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expression_type);
+// int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expression_type);
+int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expression_type);
 
 /**
  * Applies a grammar rule to the token stack based on the rule index.
@@ -129,7 +132,8 @@ void perform_rule(int rule_index, TokenStack *stack, DataType *expression_type);
  * @param count The number of tokens to be considered for the reduction.
  * @return 0 if the reduction is successful; -1 if an error occurs or no rule applies.
  */
-int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type);
+// int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type);
+int perform_reduce(SymStack *table, TokenStack *stack, int count, DataType *expression_type);
 
 //Functions for parsing expressions with functions as operands
 

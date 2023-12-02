@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// #include "memory.h"
+#include "ctype.h"
+#include "symtable.h"
+#include "stack.h"
+
 
 #define INITIAL_STACK_SIZE 10
 #define STACK_GROWTH_FACTOR 2
@@ -12,7 +17,7 @@
 //#define STACK_GROWTH_FACTOR 2
 
 // #include "tokenizer.h"
-#include "expression_parse.h"
+// #include "expression_parse.h"
 
 #include "memory.h"
 
@@ -30,6 +35,12 @@ void s_push(SymStack *stack, SymTable item);
 SymTable s_pop(SymStack *stack);
 void s_freeStack(SymStack *stack);
 SymTable s_peek(SymStack *stack);
-SymData s_search_symtack(SymStack *stack, char *key);
+// SymData s_search_symtack(SymStack *stack, char *key);
+AVLNode *s_search_symtack(SymStack *stack, char *key);
+AVLNode *s_search_param_list(ListFuncParam *param_list, char *key);
+// void Print_Sym_stack(SymStack stack);
+void Print_Sym_stack(SymStack *stack);
+
+
 
 #endif // STACK_H

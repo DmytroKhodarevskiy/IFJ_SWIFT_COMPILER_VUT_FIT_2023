@@ -1,10 +1,11 @@
-var a = 1
+// var a = 1
 var b = 2
-var ac = 3
+// var ac = 3
 
-func sum (a: Int, b: Int) -> Int {
+func sum (with a: Int, on b: Int) -> Int {
     var a = 4
-    if a > b {
+    let a = 3
+    if (a > b) {
         var a = 5
         return a - b // 5 - 2 = 3
     }

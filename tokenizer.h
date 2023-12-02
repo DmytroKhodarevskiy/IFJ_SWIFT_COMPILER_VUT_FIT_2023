@@ -166,10 +166,63 @@ typedef struct {
 
 
 
-
+/**
+ * @brief Initializes a new token with default values.
+ *
+ * This function creates a new token and initializes its fields to default
+ * values. It sets appropriate types and initializes numerical values to zero
+ * and strings to empty.
+ *
+ * @return Token The initialized token with default values.
+ */
 Token init_token();
+/**
+ * @brief Tokenizes the input from a file based on a state machine.
+ *
+ * This is the main function for tokenizing the input from a file. It reads
+ * characters from the file and uses a state machine to identify and return
+ * tokens based on the language's syntax rules. The function handles different
+ * token types like keywords, identifiers, literals, and operators.
+ *
+ * @param file The file pointer from which to read and tokenize the input.
+ * @return Token The next token identified from the input stream.
+ */
 Token get_token(FILE *file);
+
+/**
+ * @brief Peeks at the next token in the input file without consuming it.
+ *
+ * This function looks ahead to the next token in the input file without
+ * advancing the file pointer. It is used to facilitate decision-making
+ * in the tokenizer based on upcoming tokens.
+ *
+ * @param file The file pointer from which to read the token.
+ * @return Token The next token in the input stream.
+ */
 Token peekNextToken(FILE *file);
+
+/**
+ * @brief Checks if a given string is a keyword in the programming language.
+ *
+ * This function compares a given string with a predefined list of keywords
+ * in the programming language. It returns an integer indicating whether the
+ * string is a keyword.
+ *
+ * @param word The string to check against the list of keywords.
+ * @return int Returns 1 if the string is a keyword, otherwise 0.
+ */
+int isKeyword(const char* word);
+
+/**
+ * @brief Copies a string from the source to the destination.
+ *
+ * This function copies a string from a source location to a destination
+ * location. It uses the standard string copy function from the C library.
+ *
+ * @param destination The destination string where the content will be copied.
+ * @param source The source string to be copied.
+ */
+void copyString(char *destination, char *source);
 
 
 #endif // _TOKENIZER_H

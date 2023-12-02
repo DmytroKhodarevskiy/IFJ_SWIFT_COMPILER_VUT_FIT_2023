@@ -385,14 +385,6 @@ DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file
 int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expression_type) {
     switch (count) {
         case 1:
-            // E -> i
-            //if(tokens[0].token_type == T_KEYWORD && strcmp(tokens[0].string_value->str, "nil") == 0);
-//      if(tokens[0].token_type == T_TYPE_ID) tokens[0].token_type = convert_symType_to_tokenType(search_SymTable(table, tokens[0].string_value->str)->data.dtype);
-//      if(tokens[0].token_type == T_TYPE_ID || tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || tokens[0].token_type == T_KEYWORD || tokens[0].token_type == T_SING_STRING) {
-//        *expression_type = convert_tokenType_to_symType(tokens[0].token_type);
-//        return 1;
-//      }
-            //printf("Token: %s\n", tokens[0].string_value->str);
             if(tokens[0].token_type == T_TYPE_ID){
                 // AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
                 AVLNode *node = s_search_symtack(table, tokens[0].string_value->str);

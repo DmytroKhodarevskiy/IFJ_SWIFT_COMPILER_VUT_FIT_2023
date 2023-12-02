@@ -24,116 +24,124 @@ typedef enum{
   END, // END
 } Action_Letter;
 
-//DEBUG_PRINTS
+// Debugging Utilities
 /**
- * Prints the current state of the token stack.
+ * @brief Prints the current state of the token stack for debugging purposes.
  *
  * @param stack The token stack to be printed.
  */
 void print_stack(TokenStack stack);
 
 /**
- * Prints the token type of a given token.
+ * @brief Prints the token type of a given token for debugging purposes.
  *
  * @param expression_type The token type to be printed.
  */
 void print_expression_type(DataType expression_type);
-//-----------------------------------------------------------
-//CONVERTERS
+
+// Converters
 /**
- * Converts a token type to a symbol type.
+ * @brief Converts a token type to its corresponding symbol type.
+ *
  * @param type The token type to be converted.
  * @return The corresponding symbol type.
  */
 DataType convert_tokenType_to_symType(token_type type);
 
 /**
- * Converts a symbol type to a token type.
+ * @brief Converts a symbol type to its corresponding token type.
+ *
  * @param type The symbol type to be converted.
  * @return The corresponding token type.
  */
 token_type convert_symType_to_tokenType(DataType type);
-//-----------------------------------------------------------
+
+// Token Type Operations
 /**
- * Determines the token type of the result of a given operation.
+ * @brief Determines the token type of the result for a specific operation.
  *
- * @param op1 The first operand.
- * @param op3 The third operand.
- * @param rule_type The type of the rule to be applied.
- * @return The token type of the result of the operation.
+ * @param op1 The first operand token.
+ * @param op3 The third operand token.
+ * @param rule_type The type of the rule being applied.
+ * @return The token type resulting from the operation.
  */
 DataType get_token_type(Token op1, Token op3, int rule_type);
 
+// Token Stack Operations
 /**
- * Finds the last terminal token in the stack.
+ * @brief Retrieves the last terminal token from the stack.
  *
- * @param stack The stack from which to find the last terminal token.
- * @return The last terminal token if found; otherwise, a token indicating an empty or error state.
+ * @param stack The stack from which the last terminal token is to be found.
+ * @return The last terminal token, or a token indicating an empty/error state.
  */
 Token last_terminal(TokenStack stack);
 
 /**
- * Inserts a reduction edge token in the stack. If the top token is non-terminal,
- * the edge token is inserted before it; otherwise, it's placed on top of the stack.
+ * @brief Inserts a reduction edge token into the stack.
  *
  * @param stack A pointer to the stack where the edge token will be inserted.
  */
 void insert_edge(TokenStack *stack);
 
 /**
- * Counts the number of tokens before encountering a reduction edge token in the stack.
+ * @brief Counts the number of tokens in the stack before encountering a reduction edge token.
  *
- * @param stack The stack to be scanned for the count.
- * @return The number of tokens before the reduction edge token; -1 if edge not found.
+ * @param stack The stack to be scanned.
+ * @return The number of tokens before the reduction edge token, or -1 if the edge is not found.
  */
 int count_of_token_before_edge(TokenStack stack);
 
+// Precedence Table Operations
 /**
- * Maps a given token to its corresponding index in the precedence table.
+ * @brief Maps a given token to its corresponding index in the precedence table.
  *
  * @param token The token to be mapped.
  * @return The index of the token in the precedence table.
  */
 int get_index_from_token(Token token);
 
+// Expression Parsing
 /**
- * Parses an expression using an operator precedence parsing method.
+ * @brief Parses an expression using operator precedence parsing.
  *
+ * @param table The symbol stack used for parsing.
  * @param token The current token to be parsed.
- * @param error A pointer to an integer where the error state will be stored (0 for no error, 1 for error).
- * @param file A pointer to the file stream from which tokens are read.
- * @return DataType of the expression
+ * @param error A pointer to an integer for storing the error state (0 for no error, 1 for error).
+ * @param file A pointer to the file stream for reading tokens.
+ * @return The data type of the parsed expression.
  */
-// DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file);
 DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file);
 
+// Grammar Rule Application
 /**
- * Determines the index of the grammar rule to be applied based on the given tokens.
+ * @brief Determines the appropriate grammar rule index based on a set of tokens.
  *
- * @param tokens An array of tokens to be analyzed.
+ * @param table The symbol stack.
+ * @param tokens An array of tokens for rule determination.
  * @param count The number of tokens in the array.
- * @return The index of the grammar rule; -1 if no rule matches.
+ * @param expression_type A pointer to the resulting expression type.
+ * @return The index of the applicable grammar rule, or -1 if no rule matches.
  */
-// int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expression_type);
 int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expression_type);
 
 /**
- * Applies a grammar rule to the token stack based on the rule index.
+ * @brief Applies a specified grammar rule to the token stack.
  *
- * @param rule_index The index of the grammar rule to be applied.
- * @param stack A pointer to the token stack to which the rule will be applied.
+ * @param rule_index The index of the grammar rule to apply.
+ * @param stack A pointer to the token stack where the rule will be applied.
+ * @param expression_type A pointer to the resulting expression type.
  */
 void perform_rule(int rule_index, TokenStack *stack, DataType *expression_type);
 
 /**
- * Performs a reduce operation on the stack based on the given count of tokens.
+ * @brief Executes a reduction operation on the stack using a specified number of tokens.
  *
- * @param stack A pointer to the stack on which the reduce operation will be performed.
- * @param count The number of tokens to be considered for the reduction.
- * @return 0 if the reduction is successful; -1 if an error occurs or no rule applies.
+ * @param stack A pointer to the stack for reduction.
+ * @param count The number of tokens to be included in the reduction.
+ * @return 0 if reduction is successful; -1 in case of an error or if no rule applies.
  */
-// int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type);
 int perform_reduce(SymStack *table, TokenStack *stack, int count, DataType *expression_type);
+
 
 //Functions for parsing expressions with functions as operands
 

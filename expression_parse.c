@@ -66,10 +66,17 @@ void ARG_EXP(FILE **file,Token *current_token){ //current token is (
 
     // printf("token befroe: %s\n", *current_token.string_value->str);
     *current_token = get_token(*file); // get id
+    printf("token: %s\n", current_token->string_value->str);
     // printf("token after: %s\n", *current_token.string_value->str);
-    if (current_token->token_type != T_TYPE_ID){
-        exitWithError("Syntax error: expected id\n", ERR_SYNTAX);
+    // if (current_token->token_type != T_TYPE_ID){
+        if (!(current_token->token_type == T_TYPE_ID || current_token->token_type == T_INT ||
+                current_token->token_type == T_EXPONENT_FLOAT || current_token->token_type == T_EXPONENT_INT ||
+              current_token->token_type == T_DOUBLE || current_token->token_type == T_SING_STRING
+              || (current_token->token_type == T_KEYWORD && strcmp(current_token->string_value->str, "nil") == 0))){
+        exitWithError("Syntax error: expected term\n", ERR_SYNTAX);
     }
+
+    
 }
 
 void PREFIX_EXP(FILE **file, Token *current_token){ //current token is (
@@ -334,14 +341,17 @@ DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file
             // AVLNode *node = search_SymTable(table, token->string_value->str);
             // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
             // printf("token in exotret: %s\n", token->string_value->str);
-            AVLNode *node = s_search_symtack(table, token->string_value->str);
-            // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
-            if(node != NULL) {
-                if(node->data.isFunction){
-                    FuncId = *token;
-                    EOL = findNewLineInFile(*file);
-                    *token = get_token(*file);
-                    FUNC_CALLS_EXP(file, token);
+            if(token->token_type == T_TYPE_ID) {
+
+                AVLNode *node = s_search_symtack(table, token->string_value->str);
+                if (node != NULL) {
+                    if (node->data.isFunction) {
+                        FuncId = *token;
+                        EOL = findNewLineInFile(*file);
+                        *token = get_token(*file);
+                        //printf("token: %s\n", token->string_value->str);
+                        FUNC_CALLS_EXP(file, token);
+                    }
                 }
             }
             EOL = findNewLineInFile(*file);
@@ -396,14 +406,18 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
             //printf("Token: %s\n", tokens[0].string_value->str);
             if(tokens[0].token_type == T_TYPE_ID){
                 // AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
+                // printf("Token: %s\n", tokens[0].string_value->str);
+                // Print_Sym_stack(table);
                 AVLNode *node = s_search_symtack(table, tokens[0].string_value->str);
+                // printf("node: %s\n", node->key);
                 // print_SymTable(&(table->items[0]));
                 // print_SymTable(table->items[0]);
                 if(node == NULL) {
-                    printf("Token THAT IS NOT HERE: %s\n", tokens[0].string_value->str);
+                    // printf("Token THAT IS NOT HERE: %s\n", tokens[0].string_value->str);
                     exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
                 }
-                *expression_type = node->data.dtype;
+                if(node->data.isFunction) *expression_type = node->data.returnType;
+                else *expression_type = node->data.dtype;
                 if(is_nullable(*expression_type)){
                     if(node->data.isNil) *expression_type = TYPE_NIL;
                 }

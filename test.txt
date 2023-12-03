@@ -4,8 +4,8 @@
 // var csd = 2
 // var cdsd = 2
 // if (2 == 2) {
-    var c : Int?
-    c = 2
+    // var c : Int?
+    // c = 2
 // }
 // else
 // {
@@ -33,30 +33,36 @@
 //     // return  a
 // }
 
-// func sum2 (with a: Int, on b: Int) -> Int {
+var c = 2
+var d = 2
 
-//     // var a = 2
-//     // a = 3
-//     var b = 5
-//     var a = 3
-//     if (a == a) {
-//         var a = 5
-//         var c : Int? = nil
-//         // return a // 5 - 2 = 3
-//     }
-//     else {
-//         return b - a // 2 - 4 = -2
-//     }
-//     // return
+func sum2 (with a: Int, on b: Int) -> Int {
+
+    var a = 2
+    // a = 3
+    // var b = 5
+    // var a = 3
+    // if (a == a) {
+    //     // return b
+    //     var a = 5
+    //     var c : Int? = nil
+    //     // return a // 5 - 2 = 3
+    // }
+    // else {
+    //     return b - a // 2 - 4 = -2
+    // }
+    // // return
     
-//     while (a == a) {
-//         var a = 5
-//         var c : Int = a
-//         // return a // 5 - 2 = 3
-//     }
-//     // var a = 2
-//     // return a
-//     return b
-//     // return  a
-// }
+    // while (a == a) {
+    //     var a = 5
+    //     var c : Int = a
+    //     // return a // 5 - 2 = 3
+    // }
+    // // var a = 2
+    // // return a
+    // return a
+    return  a
+}
 // // return
+
+var t = sum2(with: awdwa, on: 4)

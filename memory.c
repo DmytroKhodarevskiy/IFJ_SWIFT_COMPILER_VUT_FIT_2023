@@ -24,12 +24,12 @@ void *safeRealloc(void *ptr, size_t newSize) {
 }
 
 void printMemoryList() {
-    printf("Memory listadwd:\n");
+    // printf("Memory listadwd:\n");
     MemoryBlockNode *current = memoryListHead;
-    printf("Memory list:\n");
+    // printf("Memory list:\n");
     while (current != NULL) {
-        printf("Node: %p\n", current);
-        printf("Memory block: %p\n", current->block);
+        // printf("Node: %p\n", current);
+        // printf("Memory block: %p\n", current->block);
         current = current->next;
     }
 }
@@ -64,6 +64,7 @@ void* resizeMemoryBlock(void *block, size_t newSize) {
 
     // If the block was not found in the linked list
     exitWithError("Block not found in memory list", ERR_INTERNAL);
+    return NULL;
 }
 
 
@@ -97,10 +98,10 @@ void free_all() {
         // free(current);         
         // current = next;
 
-        printf("Freeing memory block: %p\n", current->block);
+        // printf("Freeing memory block: %p\n", current->block);
         MemoryBlockNode *next = current->next;
         free(current->block);
-        printf("Freeing node: %p\n", current);
+        // printf("Freeing node: %p\n", current);
         free(current);
         current = next;
     }

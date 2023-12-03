@@ -52,6 +52,10 @@ void s_push(SymStack *stack, SymTable *item) {
 
   stack->items[++stack->top] = item;
 
+  // (*stack->items)->name = item->name;
+  // (*stack->items)->root = item->root;
+  // (*stack->items)->next = item->next;
+
   // Print_Sym_stack(stack);
   // print_SymTable(&(stack->items[stack->top]));
   // print_SymTable(stack->items[stack->top]);
@@ -76,7 +80,7 @@ void s_freeStack(SymStack *stack) {
 
 // SymData s_search_symtack(SymStack *stack, char *key) {
 AVLNode *s_search_symtack(SymStack *stack, char *key) {
-  SymData data;
+  // SymData data;
   AVLNode *node;
   AVLNode *funcnode;
   SymTable *table;
@@ -93,7 +97,9 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
     table = stack->items[i];
     // printf("function_naadadme:\n");
     
-    char *function_name = table->name;
+    char function_name[256];
+    // char *function_name = table->name;
+    strncpy(function_name, table->name, strlen(table->name) + 1);
     
     // printf("function_name: %s\n", function_name);
     node = search_SymTable(table, key);
@@ -105,14 +111,21 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
       return node;
     }
 
-    SymTable *global = create_SymTable();
+    // SymTable *global = create_SymTable();
+    SymTable *global;
     global = stack->items[0];
     funcnode = search_SymTable(global, function_name);
 
       if (funcnode != NULL) {     
           if (funcnode->data.isFunction) {
+
+            // printf("function_name: %s\n", function_name);
+            // printf("key: %s\n", key);
+
             node = s_search_param_list(funcnode->data.paramTypes.next, key);
-            // printf("node: %s\n", node->data.name);
+
+            // if (node != NULL)
+              // printf("node: %s\n", node->data.name);
             if (node != NULL)
               return node;
           }
@@ -126,8 +139,8 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
 
 AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
   AVLNode *node;
-  ListFuncParam *param;
-  int i;
+  // ListFuncParam *param;
+  // int i;
 
   ListFuncParam* current = param_list;
   char *parameter = NULL;
@@ -150,11 +163,16 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
   if (parameter == NULL) 
       return NULL; // Name not found
 
+  // printf("parameter: %s\n", parameter);
+
     (*node).data = initSymData();
 
+  // printf("parameter: %s\n", parameter);
     (*node).data.dtype = current->dataType;
-    // (*node).data.name = parameter;
-    strncpy((*node).data.name, parameter, strlen(parameter) + 1);
+    (*node).data.name = parameter;
+  // printf("parameter: %s\n", parameter);
+    // strncpy((*node).data.name, parameter, strlen(parameter) + 1);
+  // printf("parameter: %s\n", parameter);
 
     (*node).key = parameter;
     (*node).left = NULL;
@@ -169,7 +187,17 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
     (*node).data.paramTypes.next = NULL;
     (*node).data.returnType = TYPE_UNKNOWN;
 
-    printf("node->data.name: %s\n", node->data.name);
+    // printf("node->data.name: %s\n", node->data.name);
+    // printf("node->data.dtype: %d\n", node->data.dtype);
+    // printf("node->data.isDefined: %d\n", node->data.isDefined);
+    // printf("node->data.isFunction: %d\n", node->data.isFunction);
+    // printf("node->data.isGlobal: %d\n", node->data.isGlobal);
+    // printf("node->data.canbeChanged: %d\n", node->data.canbeChanged);
+    // printf("node->data.paramCount: %d\n", node->data.paramCount);
+    // printf("node->data.paramTypes.next: %p\n", node->data.paramTypes.next);
+    // printf("node->data.returnType: %d\n", node->data.returnType);
+
+    // printf("node->data.name: %s\n", node->data.name);
     return node;
 }
 
@@ -178,8 +206,8 @@ void Print_Sym_stack(SymStack *stack) {
   
   int i;
   SymTable *table;
-  AVLNode *node;
-  ListFuncParam *param;
+  // AVLNode *node;
+  // ListFuncParam *param;
 
   printf("[$] ");
 
@@ -194,7 +222,7 @@ void Print_Sym_stack(SymStack *stack) {
     // printf("Name\t\tType\t\tDefined\t\tGlobal\t\tCan be changed\t\tFunction\t\tReturn type\t\tParameter count\t\tParameter types\n");
     // printf("--------------------------------------------------\n");
 
-    node = table->root;
+    // node = table->root;
     // Print_Sym_table(node);
   }
     printf("\n");

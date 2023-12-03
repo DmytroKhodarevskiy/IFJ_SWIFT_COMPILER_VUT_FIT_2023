@@ -112,6 +112,7 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
       if (funcnode != NULL) {     
           if (funcnode->data.isFunction) {
             node = s_search_param_list(funcnode->data.paramTypes.next, key);
+            // printf("node: %s\n", node->data.name);
             if (node != NULL)
               return node;
           }
@@ -133,12 +134,18 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
 
     while (current != NULL) {
         if (strcmp(current->name, key) == 0) {
+            // printf("current->name: %s\n", current->name);
+            // printf("key: %s\n", key);
             parameter = current->name;
             break;
             // return current; // Name found, return the node
         }
+            // printf("key: %s\n", key);
+            // printf("current->name: %s\n", current->name);
         current = current->next;
     }
+
+  // printf("parameter: %s\n", parameter);
 
   if (parameter == NULL) 
       return NULL; // Name not found
@@ -146,7 +153,9 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
     (*node).data = initSymData();
 
     (*node).data.dtype = current->dataType;
-    (*node).data.name = parameter;
+    // (*node).data.name = parameter;
+    strncpy((*node).data.name, parameter, strlen(parameter) + 1);
+
     (*node).key = parameter;
     (*node).left = NULL;
     (*node).right = NULL;
@@ -160,6 +169,7 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
     (*node).data.paramTypes.next = NULL;
     (*node).data.returnType = TYPE_UNKNOWN;
 
+    printf("node->data.name: %s\n", node->data.name);
     return node;
 }
 

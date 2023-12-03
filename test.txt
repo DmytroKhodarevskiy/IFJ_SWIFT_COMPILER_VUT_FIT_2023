@@ -1,10 +1,13 @@
 // var a = 1
-var b = 2
+// var b = 2
 var ca = 2
 var csd = 2
 var cdsd = 2
-var cds = 2
+// b =
 // var cds = 2
+// let a = 2
+
+// c = 3
 // var ac = 3
 
 // if (b==b) {
@@ -28,19 +31,48 @@ var cds = 2
 
 //     return a + b
 // }
+
 func sum (with a: Int, on b: Int) -> Int {
 
-    // var a = 
+    // var a = 2
+    // a = 3
+    var a = 5
     // var a = 3
     // if (a == a) {
     //     var a = 5
-    //     // return c // 5 - 2 = 3
+    //     // var с : Int = a
+    //     return a // 5 - 2 = 3
     // }
     // else {
     //     // return b - a // 2 - 4 = -2
     // }
+    // return
     
-    return b + c
+    // var a = 2
+    // return a
+    return  a
+    // return  a
 }
 
+func sum2 (with a: Int, on b: Int) -> Int {
+
+    // var a = 2
+    // a = 3
+    var b = 5
+    // var a = 3
+    // if (a == a) {
+    //     var a = 5
+    //     // var с : Int = a
+    //     return a // 5 - 2 = 3
+    // }
+    // else {
+    //     // return b - a // 2 - 4 = -2
+    // }
+    // return
+    
+    // var a = 2
+    // return a
+    return  b
+    // return  a
+}
 // return

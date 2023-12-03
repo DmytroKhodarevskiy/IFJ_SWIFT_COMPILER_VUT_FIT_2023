@@ -333,6 +333,7 @@ DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file
             push(&stack, *token);
             // AVLNode *node = search_SymTable(table, token->string_value->str);
             // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
+            // printf("token in exotret: %s\n", token->string_value->str);
             AVLNode *node = s_search_symtack(table, token->string_value->str);
             // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
             if(node != NULL) {

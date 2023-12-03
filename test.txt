@@ -32,6 +32,13 @@ var cdsd = 2
 //     return a + b
 // }
 
+// write("Hello, World!", ca, ca, ca)
+// write(
+    // """
+    // pizdec
+    // """
+)
+
 func sum (with a: Int, on b: Int) -> Int {
 
     // var a = 2
@@ -54,25 +61,25 @@ func sum (with a: Int, on b: Int) -> Int {
     // return  a
 }
 
-func sum2 (with a: Int, on b: Int) -> Int {
+// func sum2 (with a: Int, on b: Int) -> Int {
 
-    // var a = 2
-    // a = 3
-    var b = 5
-    // var a = 3
-    // if (a == a) {
-    //     var a = 5
-    //     // var с : Int = a
-    //     return a // 5 - 2 = 3
-    // }
-    // else {
-    //     // return b - a // 2 - 4 = -2
-    // }
-    // return
+//     // var a = 2
+//     // a = 3
+//     var b = 5
+//     // var a = 3
+//     // if (a == a) {
+//     //     var a = 5
+//     //     // var с : Int = a
+//     //     return a // 5 - 2 = 3
+//     // }
+//     // else {
+//     //     // return b - a // 2 - 4 = -2
+//     // }
+//     // return
     
-    // var a = 2
-    // return a
-    return  b
-    // return  a
-}
+//     // var a = 2
+//     // return a
+//     return  b
+//     // return  a
+// }
 // return

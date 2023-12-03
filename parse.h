@@ -47,4 +47,10 @@ void PARAM_LIST_FIRST(FILE *file, ListFuncParam **params, int *param_cnt);
 void PARAM_FIRST(FILE *file, ListFuncParam **params);
 void PHASE_SECOND(FILE *file);
 
+void ARG_WRITE_LIST(FILE *file);
+void ARG_WRITE(FILE *file);
+void WRITE_CALLS(FILE *file);
+
+
+
 #endif // PARSE_H

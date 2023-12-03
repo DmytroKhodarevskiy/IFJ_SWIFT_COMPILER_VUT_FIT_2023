@@ -372,6 +372,8 @@ void STMT(FILE *file){
   current_token = get_token(file); //if, while, return, let, var, id, func
   char *str = current_token.string_value->str;
 
+  printf("current_token: %s\n", current_token.string_value->str);
+
   if (current_token.token_type == T_KEYWORD &&
       strcmp(str, "if") == 0){
 
@@ -652,6 +654,12 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
 
   // TODO: check if function is declared
   else if (current_token.token_type == T_LPAR) {
+    if (!strcmp(id_name, "write")) {
+      current_token = get_token(file); // get (
+      WRITE_CALLS(file);
+      return;
+    }
+
     current_token = get_token(file); // get (
     FUNC_CALLS(file);
     return;
@@ -660,6 +668,21 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
   else {
                 //check
     exitWithError("Syntax error: expected = or (\n", ERR_SYNTAX);
+  }
+}
+
+void WRITE_CALLS(FILE *file){ //current token is (
+  if (current_token.token_type != T_LPAR){
+                //check
+    exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
+  }
+
+  ARG_WRITE_LIST(file);
+
+  current_token = get_token(file); // get )
+  if (current_token.token_type != T_RPAR){
+                //check
+    exitWithError("Syntax error: expected ) or ,\n", ERR_SYNTAX);
   }
 }
 
@@ -675,6 +698,30 @@ void FUNC_CALLS(FILE *file){ //current token is (
   if (current_token.token_type != T_RPAR){
                 //check
     exitWithError("Syntax error: expected ) or ,\n", ERR_SYNTAX);
+  }
+}
+
+void ARG_WRITE_LIST(FILE *file){ //current token is (
+   current_token = peekNextToken(file);
+
+  if (!(current_token.token_type == T_INT ||
+      current_token.token_type == T_DOUBLE ||
+      current_token.token_type == T_SING_STRING ||
+      current_token.token_type == T_MUL_STRING ||
+      current_token.token_type == T_EXPONENT_INT ||
+      current_token.token_type == T_EXPONENT_FLOAT ||
+      current_token.token_type == T_TYPE_ID)) return;
+
+  ARG_WRITE(file);
+
+  current_token = peekNextToken(file);
+  if (current_token.token_type == T_COMMA){
+    current_token = get_token(file); // get ,
+    ARG_WRITE_LIST(file);
+  }
+
+  else {
+    return;
   }
 }
 
@@ -695,6 +742,40 @@ void ARG_LIST(FILE *file){ //current token is (
   else {
     return;
   }
+}
+
+void ARG_WRITE(FILE *file){ //current token is (
+
+  // PREFIX(file);
+
+  // current_token = get_token(file); // get :
+  // if (current_token.token_type != T_COLON){
+                //check
+    // exitWithError("Syntax error: expected :\n", ERR_SYNTAX);
+  // }
+
+  current_token = get_token(file); // get param
+
+  // printf("token: %s\n", current_token.string_value->str);
+
+  if (s_search_symtack(&stack, current_token.string_value->str) == NULL &&
+       current_token.token_type == T_TYPE_ID) {
+    //check
+    exitWithError("Semantic error: variable not declared\n", ERR_SEMANT_FUNC_ARG); 
+  }
+
+  if (current_token.token_type != T_INT &&
+      current_token.token_type != T_DOUBLE &&
+      current_token.token_type != T_SING_STRING &&
+      current_token.token_type != T_MUL_STRING &&
+      current_token.token_type != T_EXPONENT_INT &&
+      current_token.token_type != T_EXPONENT_FLOAT &&
+      current_token.token_type != T_TYPE_ID){
+                //check
+    exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
+  }
+
+
 }
 
 void ARG(FILE *file){ //current token is (

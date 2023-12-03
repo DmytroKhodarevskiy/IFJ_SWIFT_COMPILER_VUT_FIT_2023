@@ -42,17 +42,17 @@ SymTable *s_peek(SymStack *stack) {
 
 void s_push(SymStack *stack, SymTable *item) {
 
-  printf("pushing: %s\n", item->name);
+  // printf("pushing: %s\n", item->name);
 
   if (stack->top == stack->size - 1) {
     // Stack is full, resize it
-    printf("YA SIUDA NE ZAHODIL\n");
+    // printf("YA SIUDA NE ZAHODIL\n");
     s_resizeStack(stack);
   }
 
   stack->items[++stack->top] = item;
 
-  Print_Sym_stack(stack);
+  // Print_Sym_stack(stack);
   // print_SymTable(&(stack->items[stack->top]));
   // print_SymTable(stack->items[stack->top]);
 }

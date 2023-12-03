@@ -1,17 +1,40 @@
 // var a = 1
 var b = 2
+var c = 2
 // var ac = 3
 
+// if (b==b) {
+//     if (b==a) {
+//     var a = 1
+//         while (b==b) {
+//             let a = 1
+//         }
+//     }
+//     else
+//     {
+
+//     }
+// }
+// else
+// {
+
+// }
+
+// func sum (with a: Int, on b: Int) {
+
+//     return a + b
+// }
 func sum (with a: Int, on b: Int) -> Int {
+
     var a = 4
     // var a = 3
-    if (a > b) {
+    if (a == a) {
         var a = 5
-        return a - b // 5 - 2 = 3
+        // return c // 5 - 2 = 3
     }
     else {
-        return b - a // 2 - 4 = -2
+        // return b - a // 2 - 4 = -2
     }
     
-    return a + b // 4 + 2 = 6
+    // return a + b // 4 + 2 = 6
 }

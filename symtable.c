@@ -85,6 +85,13 @@ SymTable* create_SymTable() {
         return NULL;
     }
 
+    // newTable->name = malloc(sizeof(char)*256); // +1 for null terminator
+    // memset(newTable->name, 0, 256 * sizeof(char));
+    newTable->name = malloc(sizeof(char) * 256);
+    memset(newTable->name, 0, 256 * sizeof(char));
+
+
+
     newTable->root = NULL;
     return newTable;
 }

@@ -325,7 +325,7 @@ DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file
         else column = get_index_from_token(*token);
         row = get_index_from_token(last_terminal(stack));
 
-
+        // printf("row: %d column: %d\n", row, column);
         Action_Letter action_letter = precedence_table[row][column];
         //printf("Action: %d row: %d column: %d\n", action_letter, row, column);
         if (action_letter == S) {
@@ -396,7 +396,8 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
             if(tokens[0].token_type == T_TYPE_ID){
                 // AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
                 AVLNode *node = s_search_symtack(table, tokens[0].string_value->str);
-                print_SymTable(&(table->items[0]));
+                // print_SymTable(&(table->items[0]));
+                // print_SymTable(table->items[0]);
                 if(node == NULL) {
                     printf("Token THAT IS NOT HERE: %s\n", tokens[0].string_value->str);
                     exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);

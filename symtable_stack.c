@@ -5,7 +5,7 @@
 void s_initializeStack(SymStack *stack) {
   stack->top = -1;
   stack->size = INITIAL_STACK_SIZE;
-  stack->items = (SymTable *)malloc(stack->size * sizeof(SymTable));
+  stack->items = (SymTable **)malloc(stack->size * sizeof(SymTable*));
 
   if (stack->items == NULL) {
     fprintf(stderr, "Error: Memory allocation failed\n");
@@ -19,7 +19,7 @@ int s_isEmpty(SymStack *stack) {
 
 void s_resizeStack(SymStack *stack) {
   stack->size *= STACK_GROWTH_FACTOR;
-  stack->items = (SymTable *)realloc(stack->items, stack->size * sizeof(SymTable));
+  stack->items = (SymTable **)realloc(stack->items, stack->size * sizeof(SymTable*));
 
   if (stack->items == NULL) {
     exitWithError("Memory allocation failed.\n", ERR_INTERNAL);
@@ -35,20 +35,26 @@ SymTable *s_peek(SymStack *stack) {
         exitWithError("Error: Stack is empty\n", ERR_INTERNAL);
     }
 
-    return &(stack->items[stack->top]);
+    // return &(stack->items[stack->top]);
+    return stack->items[stack->top];
 }
 
 
-void s_push(SymStack *stack, SymTable item) {
+void s_push(SymStack *stack, SymTable *item) {
+
+  printf("pushing: %s\n", item->name);
+
   if (stack->top == stack->size - 1) {
     // Stack is full, resize it
+    printf("YA SIUDA NE ZAHODIL\n");
     s_resizeStack(stack);
   }
 
   stack->items[++stack->top] = item;
 
   Print_Sym_stack(stack);
-  print_SymTable(&(stack->items[stack->top]));
+  // print_SymTable(&(stack->items[stack->top]));
+  // print_SymTable(stack->items[stack->top]);
 }
 
 SymTable s_pop(SymStack *stack) {
@@ -58,7 +64,7 @@ SymTable s_pop(SymStack *stack) {
     exit(EXIT_FAILURE);
   }
 
-  item = stack->items[stack->top--];
+  item = *(stack->items[stack->top--]);
   return item;
 }
 
@@ -84,7 +90,7 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
     
     // printf("function_naadadme:\n");
 
-    *table = stack->items[i];
+    table = stack->items[i];
     // printf("function_naadadme:\n");
     
     char *function_name = table->name;
@@ -100,7 +106,7 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
     }
 
     SymTable *global = create_SymTable();
-    *global = stack->items[0];
+    global = stack->items[0];
     funcnode = search_SymTable(global, function_name);
 
       if (funcnode != NULL) {     
@@ -168,7 +174,9 @@ void Print_Sym_stack(SymStack *stack) {
   printf("[$] ");
 
   for (i = 0; i <= stack->top; i++) {
-    table = stack->items + i;
+    // table = *(stack->items) + i;
+    table = stack->items[i];
+
 
     printf("%s ", table->name);
     // printf("Symbol table: %s\n", table->name);
@@ -181,3 +189,30 @@ void Print_Sym_stack(SymStack *stack) {
   }
     printf("\n");
 }
+
+SymData* s_getFirstFunctionSymData(SymStack *stack) {
+    if (stack == NULL || s_isEmpty(stack)) {
+        fprintf(stderr, "Error: Stack is empty or NULL in s_getFirstFunctionSymData\n");
+        return NULL;
+    }
+
+    // Iterate through the stack from top to bottom
+    for (int i = stack->top; i >= 0; i--) {
+        SymTable *currentTable = stack->items[i];
+        if (currentTable == NULL) {
+            continue; // Skip if the current symbol table is NULL
+        }
+
+        // Check in the global symbol table if the current symbol table represents a function
+        SymTable *globalTable = stack->items[0];
+        AVLNode *node = search_SymTable(globalTable, currentTable->name);
+        if (node != NULL && node->data.isFunction) {
+            // Return SymData if the symbol table represents a function
+            return &(node->data);
+        }
+    }
+
+    fprintf(stderr, "Error: No function symbol table found in the stack\n");
+    return NULL;
+}
+

@@ -682,7 +682,10 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
 
   else {
                 //check
-    exitWithError("Syntax error: expected = or (\n", ERR_SYNTAX);
+                printf("BIBBABA: %s\n", current_token.string_value->str);
+                int error = 0;
+    parse_expression(&stack, &current_token, &error, &file);
+    // exitWithError("Syntax error: expected = or (\n", ERR_SYNTAX);
   }
 }
 

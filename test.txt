@@ -65,4 +65,6 @@ func sum2 (with a: Int, on b: Int) -> Int {
 }
 // // return
 
-var t = sum2(with: awdwa, on: 4)
+var t = sum2(with: 4, on: 4)
+// sum2(with: 2, on: 4)
+// sum2(with: 2, on: "awdwad")

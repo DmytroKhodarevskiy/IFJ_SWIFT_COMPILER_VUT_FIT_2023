@@ -46,6 +46,9 @@ void PHASE_FIRST(FILE *file){
 
     FILL_TREES(file, &stack);
 
+    print_SymTable(global_symtable);
+    printTree(global_symtable);
+
 }
 
 DataType get_type(char *str) {
@@ -106,6 +109,13 @@ void FILL_TREES(FILE *file, SymStack *stack){
 
       if (current_token.token_type == T_KEYWORD || current_token.token_type == T_LBRACE ||
           current_token.token_type == T_RBRACE) {
+
+        if (current_token.token_type == T_KEYWORD &&
+            !strcmp(current_token.string_value->str, "return")) {
+              //check
+              exitWithError("Syntax error: return outside function\n", ERR_SYNTAX);
+            }
+
         //current token is keyword let or var, in global scope
         if (current_token.token_type == T_KEYWORD &&
             (!strcmp(current_token.string_value->str, "let") ||
@@ -193,6 +203,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
                 // DataType type = parse_expression(stack, &current_token, &error, &file);
 
                 DataType type = parse_expression(stack, &current_token, &error, &file);
+                printf("token: %s\n", current_token.string_value->str);
                 if (type == TYPE_UNKNOWN){
                   exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
                 }
@@ -212,17 +223,21 @@ void FILL_TREES(FILE *file, SymStack *stack){
               current_token = get_token(file); // get next token
         }
 
+        // printf("current_token: %s\n", current_token.string_value->str);
+
         if (current_token.token_type == T_KEYWORD &&
             !strcmp(current_token.string_value->str, "func")) {
 
               current_token = get_token(file); // get id
               if (current_token.token_type != T_TYPE_ID){
+              //check
                 exitWithError("Syntax error: expected function name\n", ERR_SYNTAX);
               }
 
               char *id_name = current_token.string_value->str;
 
               if (search_SymTable(global_symtable, id_name) != NULL) {
+              //check
                 exitWithError("Semantic error: function already declared\n", ERR_SEMANT_FUNC_ARG); 
               }
 
@@ -244,6 +259,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
 
                 return_type = get_type(current_token.string_value->str);
                 if (return_type == TYPE_UNKNOWN){
+              //check
                   exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
                 }
 
@@ -254,11 +270,13 @@ void FILL_TREES(FILE *file, SymStack *stack){
               }
 
               else {
+              //check
                 exitWithError("Syntax error: expected -> or {\n", ERR_SYNTAX);
               }
 
               current_token = get_token(file); // get {
               if (current_token.token_type != T_LBRACE){
+              //check
                 exitWithError("Syntax error: expected {\n", ERR_SYNTAX);
               }
 
@@ -280,6 +298,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
             }
 
             if (current_token.token_type == T_EOF) {
+              //check
               exitWithError("Syntax error: expected }\n", ERR_SYNTAX);
             }
 
@@ -292,7 +311,9 @@ void FILL_TREES(FILE *file, SymStack *stack){
         if (current_token.token_type == T_RBRACE)  // current token is }
           current_token = get_token(file); // get next token
 
-          if (current_token.token_type == T_KEYWORD) {
+          if (current_token.token_type == T_KEYWORD &&
+              strcmp(current_token.string_value->str, "return")) {
+
             current_token = get_token(file); // get next token
           }
         }
@@ -300,6 +321,8 @@ void FILL_TREES(FILE *file, SymStack *stack){
       else {
         current_token = get_token(file); // get next token
       }
+
+        printf("current_token: %s\n", current_token.string_value->str);
 
     }
     // print_SymTable(global_symtable);
@@ -339,6 +362,7 @@ void STMT(FILE *file){
 
           current_token = get_token(file); // get {
           if (current_token.token_type != T_LBRACE){
+              //check
             exitWithError("Syntax error: expected on if {\n", ERR_SYNTAX);
           }
 
@@ -357,6 +381,7 @@ void STMT(FILE *file){
             s_pop(&stack);
             
             if (current_token.token_type != T_RBRACE){
+              //check
               exitWithError("Syntax error: expected on if }\n", ERR_SYNTAX);
             }
           }
@@ -364,6 +389,7 @@ void STMT(FILE *file){
           else {
             current_token = get_token(file); // get }
             if (current_token.token_type != T_RBRACE){
+              //check
               exitWithError("Syntax error: expected on if }\n", ERR_SYNTAX);
             }
           }
@@ -376,6 +402,7 @@ void STMT(FILE *file){
 
                 current_token = get_token(file); // get {
                 if (current_token.token_type != T_LBRACE){
+              //check
                   exitWithError("Syntax error: expected on else {\n", ERR_SYNTAX);
                 }
 
@@ -392,6 +419,7 @@ void STMT(FILE *file){
                   s_pop(&stack);
 
                   if (current_token.token_type != T_RBRACE){
+              //check
                     exitWithError("Syntax error: expected on else }\n", ERR_SYNTAX);
                   }
                   current_token = get_token(file); // get }
@@ -403,6 +431,7 @@ void STMT(FILE *file){
           }
           
           else {
+              //check
             exitWithError("Syntax error: expected else\n", ERR_SYNTAX);
           }
       }
@@ -414,6 +443,7 @@ void STMT(FILE *file){
 
           current_token = get_token(file); // get id
           if (current_token.token_type != T_TYPE_ID){
+              //check
             exitWithError("Syntax error: expected id\n", ERR_SYNTAX);
           }
 
@@ -427,9 +457,11 @@ void STMT(FILE *file){
             SymData *func_name_sym = s_getFirstFunctionSymData(&stack);
             char* func_name = func_name_sym->name;
             AVLNode *node = search_SymTable(global_symtable, func_name);
+            printf("func_name: %s\n", func_name);
 
             if (node->data.returnType == TYPE_VOID){
-              exitWithError("Semantic error: return in void function\n", ERR_SEMANT_TYPE);
+              //check
+              exitWithError("Semantic error: return in void function\n", ERR_SEMANT_RETURN);
             }
 
             current_token = peekNextToken(file); // get EXP or }
@@ -441,12 +473,18 @@ void STMT(FILE *file){
             else {
 
               int error = 0;
+              current_token = get_token(file); // get exp
               DataType type = parse_expression(&stack, &current_token, &error, &file);
               if (type == TYPE_UNKNOWN){
+                //check?
                 exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
               }
 
-              if (node->data.dtype != type)
+              // printf("type: %d\n", type);
+              // printf("node->data.dtype: %d\n", node->data.dtype);
+
+              if (node->data.returnType != type)
+                //check
                 exitWithError("Semantic error: type mismatch\n", ERR_SEMANT_TYPE);
             }
       }
@@ -459,6 +497,7 @@ void STMT(FILE *file){
            current_token = get_token(file); // get {
 
            if (current_token.token_type != T_LBRACE){
+                //check
              exitWithError("Syntax error: expected on while {\n", ERR_SYNTAX);
            }
 
@@ -474,6 +513,7 @@ void STMT(FILE *file){
               s_pop(&stack);
 
               if (current_token.token_type != T_RBRACE){
+                //check
                 exitWithError("Syntax error: expected on while }\n", ERR_SYNTAX);
               }
               current_token = get_token(file); // get }
@@ -488,6 +528,7 @@ void STMT(FILE *file){
 
               current_token = get_token(file); // get id
               if (current_token.token_type != T_TYPE_ID){
+                //check
                 exitWithError("Syntax error: expected function name\n", ERR_SYNTAX);
               }
 
@@ -500,6 +541,7 @@ void STMT(FILE *file){
 
               current_token = get_token(file); // get (
               if (current_token.token_type != T_LPAR){
+                //check
                 exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
               }
 
@@ -507,6 +549,7 @@ void STMT(FILE *file){
 
               // current_token = get_token(file); // get )
               if (current_token.token_type != T_RPAR){
+                //check
                 exitWithError("Syntax error: expected )\n", ERR_SYNTAX);
               }
 
@@ -515,6 +558,7 @@ void STMT(FILE *file){
 
               current_token = get_token(file); // get {
               if (current_token.token_type != T_LBRACE){
+                //check
                 exitWithError("Syntax error: expected {\n", ERR_SYNTAX);
               }
 
@@ -525,6 +569,7 @@ void STMT(FILE *file){
 
               current_token = get_token(file); // get }
               if (current_token.token_type != T_RBRACE){
+                //check
                 exitWithError("Syntax error: expected }\n", ERR_SYNTAX);
               }
 
@@ -536,6 +581,7 @@ void STMT(FILE *file){
           }
 
   else {
+                //check
     exitWithError("Syntax error: expected if, while, return, let, var, id, func\n", ERR_SYNTAX);
   }
 }
@@ -545,13 +591,14 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
 
   if (current_token.token_type == T_ASSIGN){
     current_token = get_token(file); // get =
-    printf("SUKA?");
+    // printf("SUKA?");
 
     int error = 0;
     current_token = get_token(file); // get exp
     DataType type = parse_expression(&stack, &current_token, &error, &file);
   }
 
+  // TODO: check if function is declared
   else if (current_token.token_type == T_LPAR) {
     current_token = get_token(file); // get (
     FUNC_CALLS(file);
@@ -559,12 +606,14 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
   } 
 
   else {
+                //check
     exitWithError("Syntax error: expected = or (\n", ERR_SYNTAX);
   }
 }
 
 void FUNC_CALLS(FILE *file){ //current token is (
   if (current_token.token_type != T_LPAR){
+                //check
     exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
   }
 
@@ -572,6 +621,7 @@ void FUNC_CALLS(FILE *file){ //current token is (
 
   current_token = get_token(file); // get )
   if (current_token.token_type != T_RPAR){
+                //check
     exitWithError("Syntax error: expected ) or ,\n", ERR_SYNTAX);
   }
 }
@@ -601,11 +651,13 @@ void ARG(FILE *file){ //current token is (
 
   current_token = get_token(file); // get :
   if (current_token.token_type != T_COLON){
+                //check
     exitWithError("Syntax error: expected :\n", ERR_SYNTAX);
   }
 
   current_token = get_token(file); // get id
   if (current_token.token_type != T_TYPE_ID){
+                //check
     exitWithError("Syntax error: expected id\n", ERR_SYNTAX);
   }
 }
@@ -669,6 +721,7 @@ void PARAM_FIRST(FILE *file, ListFuncParam **params){ //current token is (
 
   if (!(current_token.token_type == T_TYPE_ID ||
       current_token.token_type == T_UNDERSCORE_ID)){
+                //check
     exitWithError("Syntax error: expected id or _\n", ERR_SYNTAX);
   }
 
@@ -681,6 +734,7 @@ void PARAM_FIRST(FILE *file, ListFuncParam **params){ //current token is (
 
   current_token = get_token(file); // get id
   if (current_token.token_type != T_TYPE_ID){
+                //check
     exitWithError("Syntax error: expected id\n", ERR_SYNTAX);
   }
 
@@ -688,12 +742,14 @@ void PARAM_FIRST(FILE *file, ListFuncParam **params){ //current token is (
 
   current_token = get_token(file); // get :
   if (current_token.token_type != T_COLON){
+                //check
     exitWithError("Syntax error: expected :\n", ERR_SYNTAX);
   }
 
   current_token = get_token(file); // get type
   param_type = get_type(current_token.string_value->str);
   if (param_type == TYPE_UNKNOWN){
+                //check
     exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
   }
   
@@ -730,6 +786,7 @@ void PARAM(FILE *file){ //current token is (
 
   current_token = get_token(file); // get :
   if (current_token.token_type != T_COLON){
+                //check
     exitWithError("Syntax error: expected :\n", ERR_SYNTAX);
   }
 
@@ -742,6 +799,7 @@ void PARAM_NAME(FILE *file) { //current token is id (prefix)
 
   current_token = get_token(file); // get id
   if (current_token.token_type != T_TYPE_ID){
+                //check
     exitWithError("Syntax error: expected id\n", ERR_SYNTAX);
   }
 }
@@ -751,6 +809,7 @@ void PARAM_PREFIX(FILE *file){ //current token is (
   current_token = get_token(file); // get id
   if (!(current_token.token_type == T_TYPE_ID ||
       current_token.token_type == T_UNDERSCORE_ID)){
+                //check
     exitWithError("Syntax error: expected id or _\n", ERR_SYNTAX);
   }
 
@@ -773,6 +832,7 @@ void MB_STMT_LET_VAR(FILE *file){ //current token is id
   if (!(!strcmp(check_symtable->name, "global"))) {
     if (search_SymTable(check_symtable, current_token.string_value->str) != NULL) {
 
+                //check
       exitWithError("Semantic error: variable already declared\n", ERR_SEMANT_FUNC_ARG); 
     }
   }
@@ -784,13 +844,18 @@ void MB_STMT_LET_VAR(FILE *file){ //current token is id
       current_token = get_token(file); // get type
       current_token = get_token(file); // get =
       int error = 0;
-      parse_expression(&stack, &current_token, &error, &file);
+      DataType type = parse_expression(&stack, &current_token, &error, &file);
+      printf("type: %d\n", type);
+      //TODO
+      // if (TYPE_UNKNOWN == parse_expression(&stack, &current_token, &error, &file))
+        // exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
     }
 
     else if (current_token.token_type == T_ASSIGN){
       current_token = get_token(file); // get exp
       int error = 0;
-      parse_expression(&stack, &current_token, &error, &file);
+      if (TYPE_UNKNOWN == parse_expression(&stack, &current_token, &error, &file))
+        exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
     }
 
     return;
@@ -815,6 +880,7 @@ void MB_STMT_LET_VAR(FILE *file){ //current token is id
 
 
   else {
+                //check
     exitWithError("Syntax error: expected : or =\n", ERR_SYNTAX);
   }
 
@@ -831,6 +897,7 @@ void MB_ASSIGN_EXPR(FILE *file, DataType type){ //current token is keyword
     current_token = get_token(file); // get =
     int error = 0;
     if (type != parse_expression(&stack, &current_token, &error, &file)){
+                //check
       exitWithError("Semantic error: type mismatch\n", ERR_SEMANT_TYPE);
     }
   }
@@ -845,6 +912,7 @@ void TYPE(FILE *file, DataType *type){ //current token is :
   char *str = current_token.string_value->str;
   *type = get_type(str);
   if (*type == TYPE_UNKNOWN){
+                //check
     exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
   }
 
@@ -861,6 +929,7 @@ void WHILE_EXP(FILE *file){ //current token is while
   }
 
   else {
+                //check
     exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
   }
 }
@@ -881,12 +950,14 @@ void IF_EXP(FILE *file) { //current token is if
 
       current_token = get_token(file); // get id
       if (current_token.token_type != T_TYPE_ID){
+                //check
         exitWithError("Syntax error: expected id on let\n", ERR_SYNTAX);
       }
 
   }
 
   else {
+                //check
     exitWithError("Syntax error: expected ( or let\n", ERR_SYNTAX);
   }
 }

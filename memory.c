@@ -114,7 +114,7 @@ void exitWithError(char* masssage, int ErrCode) {
         fprintf(stderr,"\033[1m\033[31mError in the program within the lexical analysis (incorrect structure of the current lexeme) line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SYNTAX:
-        fprintf(stderr,"\033[1m\033[31mError in the parsing program line:\033[0m %d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mError in the parsing program line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SEMANT_FUNC_ARG:
         fprintf(stderr,"\033[1m\033[31mSemantic error in the program - undefined function, variable redefinition line:\033[0m %d\n",linenum);

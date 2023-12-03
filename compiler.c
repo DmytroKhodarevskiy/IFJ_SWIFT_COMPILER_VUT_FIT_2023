@@ -10,7 +10,7 @@
 #include "compiler.h"
 #include "codegenerator.h"
 
-int linenum = 0;
+int linenum = 1;
 
 // int main(){
 int main(int argc, char* argv[]){

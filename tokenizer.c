@@ -595,6 +595,7 @@ Token get_token(FILE *file){
 
     case Single_Line_Comment_STATE:
       if (symbol == '\n' || symbol == EOF ) {
+        linenum++;
         token.token_type = T_SING_COMMENT;
         // printf("TOKEN STRING STRING before: %s\n", token.string_value->str);
         // copyString(token.string_value->str, token_string->str);

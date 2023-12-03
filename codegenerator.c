@@ -1,9 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "codegenerator.h"
 
 //TODO: replace string with vsprintf
+
+char *create_instr_string(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    char *instr = malloc(256 * sizeof(char)); // Adjust size as needed
+    if (instr != NULL) {
+        vsnprintf(instr, 256, format, args);
+    }
+    va_end(args);
+    return instr;
+}
 
 void print_list(const instr_node *head) {
     const instr_node *current = head;
@@ -159,18 +171,34 @@ void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, char *st
   //   add_instr(head, string);
   //   func_param++;
   // }
+  // for (int i = 0; i < 2; i++) {
+
+  //   sprintf(string, "DEFVAR TF@%s\n", func_param[i].id_name);
+  //   // printf("string: %s\n", string);
+  //   add_instr(head, string);
+
+  //   sprintf(string, "MOVE TF@%s int@%d\n", func_param[i].id_name, func_param[i].int_val);
+  //   add_instr(head, string);
+  // }
+
   for (int i = 0; i < 2; i++) {
+    char *instr = create_instr_string("DEFVAR TF@%s\n", func_param[i].id_name);
+    if (instr != NULL) {
+        add_instr(head, instr);
+    }
 
-    sprintf(string, "DEFVAR TF@%s\n", func_param[i].id_name);
-    // printf("string: %s\n", string);
-    add_instr(head, string);
+    instr = create_instr_string("MOVE TF@%s int@%d\n", func_param[i].id_name, func_param[i].int_val);
+    if (instr != NULL) {
+        add_instr(head, instr);
+    }
+}
 
-    sprintf(string, "MOVE TF@%s int@%d\n", func_param[i].id_name, func_param[i].int_val);
-    add_instr(head, string);
+  // sprintf(string, "CALL $%s\n", func_name);
+  // add_instr(head, string);
+  char *instr = create_instr_string("CALL $%s\n", func_name);
+  if (instr != NULL) {
+    add_instr(head, instr);
   }
-
-  sprintf(string, "CALL $%s\n", func_name);
-  add_instr(head, string);
 }
 
 void FUNC_END(instr_node **head, char* retval, char *string) {

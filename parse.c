@@ -123,7 +123,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
             !strcmp(current_token.string_value->str, "var")) &&
             !strcmp(current_symtable.name, "global")) {  
 
-              printf("current_token: %s, linenum:\n", current_token.string_value->str, linenum);
+              // printf("current_token: %s, linenum:\n", current_token.string_value->str, linenum);
               SymData node_data;
 
               node_data = initSymData();

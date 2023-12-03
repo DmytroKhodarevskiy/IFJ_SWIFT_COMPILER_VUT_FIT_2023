@@ -6,7 +6,7 @@ CFLAGS = -std=c99 -Wall -Wextra -pedantic -lm -fcommon
 PROG = compiler.c
 
 #Source files
-SOURCES = parse.c symtable_stack.c expression_parse.c symtable.c stack.c tokenizer.c dynamic_string.c memory.c
+SOURCES = parse.c symtable_stack.c expression_parse.c symtable.c stack.c tokenizer.c dynamic_string.c memory.c codegenerator.c
 
 # Output binary
 OUTPUT = compiler.exe

@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
     // printf("file: %s\n", argv[1]);
 
     // FIRST PHASE
-    Parse(file);
+    // Parse(file);
 
     
 
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]){
     //   if (lex_ok) printf("Lexical analysis OK\n");
     // }
 
-    // generate_file();
+    generate_file();
 
     // int a = 5;
     // int b = 6;
@@ -87,65 +87,65 @@ int main(int argc, char* argv[]){
 
 
     // // c = a + b
-    // Data data = init_data();
-    // instr_node *head = NULL;
+    Data data = init_data();
+    instr_node *head = NULL;
 
-    // Operand op1, op2;
+    Operand op1, op2;
 
-    // op1.id_name = "param1";
-    // op2.id_name = "param2";
+    op1.id_name = "param1";
+    op2.id_name = "param2";
 
-    // op1.int_val = 55;
-    // op2.int_val = 66;
+    op1.int_val = 55;
+    op2.int_val = 66;
     // data.op2.id_name = token_b.string_value;
     // *data.func_param = op1;
     // *(data.func_param+1) = op2;
-    // data.func_param = malloc(2 * sizeof(Operand));
+    data.func_param = malloc(2 * sizeof(Operand));
     // if (data.func_param == NULL) {
     //     // Handle allocation error
     // }
 
-    // data.func_param[0] = op1;
+    data.func_param[0] = op1;
     // printf("data.func_param[0].id_naaaaaaame: %s\n", data.func_param[0].id_name);
-    // data.func_param[1] = op2;
+    data.func_param[1] = op2;
 
-    // data.func_name = "foo";
-    // generate_code(&head, data, GEN_FUNC_START);
+    data.func_name = "foo";
+    generate_code(&head, data, GEN_FUNC_START);
 
-    // data.op1.id_name = "a";
-    // data.op1.int_val = 6;
-    // generate_code(&head, data, GEN_CREATE_ID);
-    // generate_code(&head, data, GEN_MOVE);
-    // generate_code(&head, data, GEN_PUSH);
+    data.op1.id_name = "a";
+    data.op1.int_val = 6;
+    generate_code(&head, data, GEN_CREATE_ID);
+    generate_code(&head, data, GEN_MOVE);
+    generate_code(&head, data, GEN_PUSH);
 
-    // data.op1.id_name = "b";
-    // data.op1.int_val = 7;
-    // generate_code(&head, data, GEN_CREATE_ID);
-    // generate_code(&head, data, GEN_MOVE);
-    // generate_code(&head, data, GEN_PUSH);
+    data.op1.id_name = "b";
+    data.op1.int_val = 7;
+    generate_code(&head, data, GEN_CREATE_ID);
+    generate_code(&head, data, GEN_MOVE);
+    generate_code(&head, data, GEN_PUSH);
 
-    // generate_code(&head, data, GEN_ADD);
+    generate_code(&head, data, GEN_ADD);
 
-    // data.op1.id_name = "c";
-    // generate_code(&head, data, GEN_CREATE_ID);
-    // generate_code(&head, data, GEN_ASSIGN);  
-    // generate_code(&head, data, GEN_WRITE);
+    data.op1.id_name = "c";
+    generate_code(&head, data, GEN_CREATE_ID);
+    generate_code(&head, data, GEN_ASSIGN);  
+    generate_code(&head, data, GEN_WRITE);
 
-    // generate_code(&head, data, GEN_FUNC_END);
+    generate_code(&head, data, GEN_FUNC_END);
 
-    // generate_code(&head, data, GEN_MAIN);
+    generate_code(&head, data, GEN_MAIN);
 
     // print_list(head);
 
     // printf("=====================================\n");
 
-    // generate_code(&head, data, GEN_FUNC_CALL);
+    generate_code(&head, data, GEN_FUNC_CALL);
 
     // print_list(head);
 
-    // pop_list_to_file(&head);
+    pop_list_to_file(&head);
 
-    // fclose(file);
+    fclose(file);
     // free_all();
     // printMemoryList();
     // exitWithError("", ERR_OK);

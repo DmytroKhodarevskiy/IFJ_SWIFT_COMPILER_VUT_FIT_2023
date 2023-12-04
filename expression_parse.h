@@ -9,6 +9,7 @@
 // #include "ctype.h"
 // #include "symtable.h"
 // #include "stack.h"
+#include "codegenerator.h"
 #include "symtable_stack.h"
 
 typedef struct {

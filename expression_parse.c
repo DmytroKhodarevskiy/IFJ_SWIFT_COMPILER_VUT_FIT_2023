@@ -132,6 +132,7 @@ bool findNewLineInFile(FILE *file) {
 
     char ch;
     while ((ch = fgetc(file)) != EOF) {
+        
         if (ch == '\n') {
             linenum++;
             // Newline character found
@@ -385,6 +386,7 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
                     }
                 }
             }
+            
             EOL = findNewLineInFile(*file);
             *token = get_token(*file);
         }

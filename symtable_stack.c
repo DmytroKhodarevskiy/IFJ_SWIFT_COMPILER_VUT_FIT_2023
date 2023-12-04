@@ -91,7 +91,7 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
 
   for (i = stack->top; i >= 0; i--) {
     
-    
+    // printf("i: %d\n", i);
     // printf("function_naadadme:\n");
 
     table = stack->items[i];
@@ -100,12 +100,12 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
     char function_name[256];
     // char *function_name = table->name;
     strncpy(function_name, table->name, strlen(table->name) + 1);
-    
+    // printf("table->name: %s\n", table->name);
     // printf("function_name: %s\n", function_name);
     node = search_SymTable(table, key);
+
     // printf("function_name: %s\n", function_name);
 
-    
     if (node != NULL) {
       // data = node->data;
       return node;
@@ -114,16 +114,30 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
     // SymTable *global = create_SymTable();
     SymTable *global;
     global = stack->items[0];
+    // printf("function_name: %s\n", function_name);
     funcnode = search_SymTable(global, function_name);
+    if (funcnode == NULL) {
+      fprintf(stderr, "Error: Undefined function\n");
+    }
+
 
       if (funcnode != NULL) {     
           if (funcnode->data.isFunction) {
 
-            // printf("function_name: %s\n", function_name);
+    // printf("HEEEEEEREEEE?\n");
+            // printf("function_namedawdwa: %s\n", function_name);
+    // printf("HEEEEEEREEEE?\n");
+            // printf("funcnode: %s\n", funcnode->data.paramTypes.name);
             // printf("key: %s\n", key);
+            // if (funcnode->data.paramTypes.next == NULL)
+                // printf("PIZDA\n");
 
-            node = s_search_param_list(funcnode->data.paramTypes.next, key);
+            // if (&funcnode->data.paramTypes == NULL)
+                // printf("PIZDA\n");
+            if (funcnode->data.paramCount != 0)
+              node = s_search_param_list(&funcnode->data.paramTypes, key);
 
+    // printf("HEEEEEEREEEE?\n");
             // if (node != NULL)
               // printf("node: %s\n", node->data.name);
             if (node != NULL)
@@ -141,6 +155,9 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
   AVLNode *node;
   // ListFuncParam *param;
   // int i;
+  if (param_list == NULL) {
+    return NULL;
+  }
 
   ListFuncParam* current = param_list;
   char *parameter = NULL;
@@ -183,6 +200,7 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
     (*node).data.isFunction = false;
     (*node).data.isGlobal = false;
     (*node).data.canbeChanged = false;
+    // (*node).data.canbeChanged = true;
     (*node).data.paramCount = 0;
     (*node).data.paramTypes.next = NULL;
     (*node).data.returnType = TYPE_UNKNOWN;

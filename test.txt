@@ -1,38 +1,67 @@
 
 // c = 2
 
-
 var c : Int
-var d : Int
+// var d : Int? = nil
+// c = 2
+// d = 2
+// var x = c ?? d!
+    // a // 2
+    // a // 2
+    // return d!
 
-func sum2 (with a: Int, on b: Int) -> Int {
-
-    // a = 3
-    // a = 4
-    var a = 2
-    // var b = 5
-    // var a = 3
-    // if (a == a) {
-    //     // return b
-    //     var a = 5
-    //     var c : Int? = nil
-    //     // return a // 5 - 2 = 3
-    // }
-    // else {
-    //     return b - a // 2 - 4 = -2
-    // }
-    // // return
-    
-    // while (a == a) {
-    //     var a = 5
-    //     var c : Int = a
-        return a - b// 5 - 2 = 3
-    // }
-    // // var a = 2
-    // // return a
-    // return a
-    return  a
+func a () -> Int? {
+    var d : Int? = nil
+    c = 2
+    d = 2
+    var x = c ?? d!
+ 
+    return 5
 }
+
+// sum2(d, on : c)
+
+// func sum2 (_ a: Int, on b: Int) -> Int {
+
+//     let a : Int
+
+//     var c : Int
+//     var d : Int? = nil
+//     c = 2
+//     d = 2
+//     // a // 2
+//     // a // 2
+//     return d!
+// //     var c : Int
+// // var d : Int
+// // c = 2
+// // d = 3
+//     // a // 2
+//     // a = 3
+//     // a = 4
+//     // var b = 5
+//     // var a = 3
+//     // if (a == a) {
+//     //     // return b
+//     //     var a = 5
+//     //     var c : Int? = nil
+//     //     // return a // 5 - 2 = 3
+//     // }
+//     // else {
+//     //     return b - a // 2 - 4 = -2
+//     // }
+//     // // return
+    
+//     // while (a == a) {
+//     //     var a = 5
+//     //     var c : Int = a
+//         // return var a = 5
+//     // }
+//     // // var a = 2
+//     // // return a
+//     // return a
+//     return  a
+// }
 // // return
 
 // var t = sum2(with: 4, on: 4)

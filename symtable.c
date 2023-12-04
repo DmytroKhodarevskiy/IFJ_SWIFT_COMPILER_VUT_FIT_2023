@@ -111,9 +111,9 @@ AVLNode* search_SymTable(SymTable* table, char* key) {
         int compareResult = strcmp(current->key, key);
 
         if (compareResult == 0) {
-            if (current->data.isDefined == false) {
-                return NULL;
-            }
+            // if (current->data.isDefined == false) {
+                // return NULL;
+            // }
             return current;
         } else if (compareResult > 0) {
             current = current->left;
@@ -354,12 +354,21 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
         return;
 
     SymData functionData;
+    if (params == NULL) {
+        functionData.paramTypes.next = NULL;
+        functionData.paramCount = 0;
+    }
+    else {
+        functionData.paramTypes = *params;
+        functionData.paramCount = paramCount;
+    }
+    // functionData.paramTypes = *params; 
+    // functionData.paramCount = paramCount;
+    
     functionData.name = key; 
     functionData.dtype = FUNC; 
     functionData.returnType = returnType;
-    functionData.paramTypes = *params; 
-    functionData.paramCount = paramCount;
-    functionData.isDefined = false;
+    functionData.isDefined = true;
     functionData.canbeChanged = false;
     functionData.isFunction = true;
     functionData.isGlobal = true; 

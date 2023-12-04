@@ -18,7 +18,7 @@ void Parse(FILE *file){
     linenum = 0;
     rewind(file);
 
-    printf("FIRST PHASE DONE\n");
+    // printf("FIRST PHASE DONE\n");
 
     // printf("-----------------------------------------------------------------------------------------------\n");
     // print_SymTable(global_symtable);
@@ -273,14 +273,21 @@ void FILL_TREES(FILE *file, SymStack *stack){
               }
 
               current_token = get_token(file); // get (
-
+              Token check_token = peekNextToken(file); // peek type or )
+              DataType return_type = TYPE_VOID;
               ListFuncParam *params = NULL;
-              int param_cnt = 0;
-              DataType return_type = TYPE_UNKNOWN;
-              // add parameters to function symbol table and save it somewhere
-              PARAM_LIST_FIRST(file, &params, &param_cnt);
+
+                int param_cnt = 0;
+              if (check_token.token_type != T_RPAR) {
+                // add parameters to function symbol table and save it somewhere
+                PARAM_LIST_FIRST(file, &params, &param_cnt);
+              }
+
+
+              // printf("current_token: %s\n", current_token.string_value->str);
 
               current_token = get_token(file); // get )
+              // printf("current_token: %s\n", current_token.string_value->str);
 
               current_token = peekNextToken(file); // peek -> or {
 
@@ -305,14 +312,17 @@ void FILL_TREES(FILE *file, SymStack *stack){
                 exitWithError("Syntax error: expected -> or {\n", ERR_SYNTAX);
               }
 
+              // printf("current_tokenAAAAAAAAAAA: %s\n", current_token.string_value->str);
+
               current_token = get_token(file); // get {
               if (current_token.token_type != T_LBRACE){
               //check
                 exitWithError("Syntax error: expected {\n", ERR_SYNTAX);
               }
-
+              // printf("HEEDAEDAFAEF\n");
               insert_FunctionSymTable(global_symtable, id_name, return_type,
                                     params, param_cnt);
+              // printf("HEEDAEDAFAEF\n");
             }
 
         //skip all non global scopes
@@ -387,6 +397,7 @@ void STMT_LIST(FILE *file){
 
 void STMT(FILE *file){
   current_token = get_token(file); //if, while, return, let, var, id, func
+  // printf("STMT, %d, token: %s\n", linenum, current_token.string_value->str);
   char *str = current_token.string_value->str;
 
   if (current_token.token_type == T_KEYWORD &&
@@ -446,9 +457,9 @@ void STMT(FILE *file){
                   local_symtable->name = "else";
                   // s_push(&stack, *local_symtable);     
                   s_push(&stack, local_symtable);     
-                  Print_Sym_stack(&stack);
+                  // Print_Sym_stack(&stack);
                   STMT_LIST(file);
-                  Print_Sym_stack(&stack);
+                  // Print_Sym_stack(&stack);
 
                   s_pop(&stack);
 
@@ -489,11 +500,15 @@ void STMT(FILE *file){
 
   else if (current_token.token_type == T_KEYWORD &&
            (strcmp(str, "return") == 0)) { //// return
-          WasReturn = true;
+            WasReturn = true;
             //Print_Sym_stack(&stack);
             SymData *func_name_sym = s_getFirstFunctionSymData(&stack);
             char* func_name = func_name_sym->name;
             AVLNode *node = search_SymTable(global_symtable, func_name);
+            if (node->data.isDefined == false){
+              //check
+              exitWithError("Semantic error: function is not defined\n", ERR_SEMANT_FUNC_ARG);
+            }
 
             if (node->data.returnType == TYPE_VOID){
               //check
@@ -502,7 +517,10 @@ void STMT(FILE *file){
 
             current_token = peekNextToken(file); // get EXP or }
             // if (current_token.token_type == T_RBRACE){
-            if (current_token.token_type != T_TYPE_ID && current_token.token_type != T_LPAR){
+            if (current_token.token_type != T_TYPE_ID && current_token.token_type != T_LPAR &&
+                current_token.token_type != T_INT && current_token.token_type != T_DOUBLE &&
+                current_token.token_type != T_SING_STRING &&  current_token.token_type != T_MUL_STRING &&
+                current_token.token_type != T_EXPONENT_FLOAT && !(current_token.token_type == T_KEYWORD && !strcmp(current_token.string_value->str, "nil"))){
               exitWithError("Semantic error: return doesn't have an expression\n", ERR_SEMANT_RETURN);
               // return;
             }
@@ -510,6 +528,7 @@ void STMT(FILE *file){
             else {
               int error = 0;
               current_token = get_token(file); // get exp
+              // printf("EXPRESSION STARTS WITH: %s\n", current_token.string_value->str);
               DataType type = parse_expression(&stack, &current_token, &error, &file);
 
               if (type == TYPE_UNKNOWN){
@@ -518,8 +537,12 @@ void STMT(FILE *file){
               }
 
 
-              if (node->data.returnType != type)
+              // if (!is_compatible(node->data.returnType, type)) {
                 //check
+              if (node->data.returnType != type && (type == TYPE_NIL && 
+                                                  node->data.returnType != TYPE_INT_NULLABLE &&
+                                                  node->data.returnType != TYPE_DOUBLE_NULLABLE && 
+                                                  node->data.returnType != TYPE_STRING_NULLABLE)) 
                 exitWithError("Semantic error: type mismatch\n", ERR_SEMANT_TYPE);
             }
       }
@@ -583,7 +606,13 @@ void STMT(FILE *file){
                 exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
               }
 
-              PARAM_LIST(file);
+              Token check_token = peekNextToken(file); // peek type or )
+              
+              if (check_token.token_type != T_RPAR) {
+                PARAM_LIST(file);
+              }
+              else
+                current_token = get_token(file); // get )
 
               // current_token = get_token(file); // get )
               if (current_token.token_type != T_RPAR){
@@ -600,9 +629,10 @@ void STMT(FILE *file){
                 exitWithError("Syntax error: expected {\n", ERR_SYNTAX);
               }
 
-
+              // printf("STMT LIST\n");
+              // printf("current_token: %s\n", current_token.string_value->str);
               STMT_LIST(file);
-
+              // printf("STMT LIST\n");
 
               DataType rettype = search_SymTable(global_symtable, func_name)->data.returnType;
               if (!WasReturn && rettype != TYPE_VOID) {
@@ -637,20 +667,33 @@ void STMT(FILE *file){
 void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
   
   char *id_name = current_token.string_value->str;
-  current_token = peekNextToken(file); // peek = or (
+  Token check_token = peekNextToken(file); // peek = or (
+  // peekNextToken(file); // peek = or (
 
-  if (current_token.token_type == T_ASSIGN){
+    // printf("BRO?\n");
+
+  // if (current_token.token_type == T_ASSIGN){
+  if (check_token.token_type == T_ASSIGN){
 
     // SymTable *check_symtable = create_SymTable();
     // check_symtable = s_peek(&stack);
     // SymData *node_data = search_SymTable(check_symtable, id_name);
     // print_SymTable(stack.items[stack.top]);
-    printf("HEELLO\n");
+    // printf("HEELLO\n");
+    // Print_Sym_stack(&stack);
     // print_SymTable(stack.items[0]);
+    // printf("HERE?\n");
+    // printf("id_name: %s\n", id_name);
+    // printTree(stack.items[0]);
     AVLNode *node_data = s_search_symtack(&stack, id_name);
+    // printf("HERE?\n");
     if (node_data == NULL) {
       //check
       exitWithError("Semantic error: variable not declared\n", ERR_SEMANT_FUNC_ARG); 
+    }
+    if (node_data->data.isDefined == false){
+      //check
+      exitWithError("Semantic error: variable is not defined\n", ERR_SEMANT_FUNC_ARG);
     }
 
 
@@ -659,15 +702,27 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
       exitWithError("Semantic error: variable is not assignable\n", ERR_SEMANT_FUNC_ARG); 
     }
 
+    // printf("HERE?\n");
+
+    DataType type_to_assign = node_data->data.dtype;
+
     current_token = get_token(file); // get =
     //Print_Sym_stack(&stack);
     int error = 0;
+    // printf("HERE?\n");
     current_token = get_token(file); // get exp
+    // printf("EXPRESSION STARTS WITH: %s\n", current_token.string_value->str);
     DataType type = parse_expression(&stack, &current_token, &error, &file);
     if (type != TYPE_NIL) {
       node_data->data.isNil = false;
     }
+    // else
+      // node_data->data.isNil = true;
 
+    if (!is_compatible(type_to_assign, type)) {
+      //check
+      exitWithError("Semantic error: type mismatch\n", ERR_SEMANT_TYPE);
+    }
 
     if (type == TYPE_UNKNOWN){
       //check?
@@ -676,23 +731,29 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
   }
 
   // TODO: check if function is declared
-  else if (current_token.token_type == T_LPAR) {
+  // else if (current_token.token_type == T_LPAR) {
+  else if (check_token.token_type == T_LPAR) {
     if (!strcmp(id_name, "write")) {
       current_token = get_token(file); // get (
       WRITE_CALLS(file);
       return;
     }
 
-    current_token = get_token(file); // get (
-    FUNC_CALLS(file);
+    // current_token = get_token(file); // get (
+    // FUNC_CALLS(file);
+    // printf("BIBBawdawdABA: %s\n", current_token.string_value->str);
+    int error = 0;
+    parse_expression(&stack, &current_token, &error, &file);
     return;
   } 
 
   else {
                 //check
-                printf("BIBBABA: %s\n", current_token.string_value->str);
+    current_token = get_token(file); // get exp
+                // printf("BIBBABA: %s\n", current_token.string_value->str);
                 int error = 0;
     parse_expression(&stack, &current_token, &error, &file);
+                // printf("after: %s\n", current_token.string_value->str);
     // exitWithError("Syntax error: expected = or (\n", ERR_SYNTAX);
   }
 }
@@ -1014,12 +1075,19 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
       exitWithError("Semantic error: variable already declared\n", ERR_SEMANT_FUNC_ARG); 
     }
   }
-
+  // CHECK SYMTABLE IS GLOBAL
   else {
+    // printf("check_symtable->name: %s\n", check_symtable->name);
+    // printf("current_token.string_value->str: %s\n", current_token.string_value->str);
+    // print_SymTable(check_symtable);
     AVLNode *set_defined = search_SymTable(check_symtable, current_token.string_value->str);
     if (set_defined != NULL) {
+      // printf("PIAWPDIAPWDP\n");
       set_defined->data.isDefined = true;
     }
+    // print_SymTable(check_symtable);
+
+    // printf ("-----------------------------------------------------------------------\n");
 
     current_token = get_token(file); // get : or =
     
@@ -1102,6 +1170,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
 
   node_data.isGlobal = false;
   node_data.isFunction = false;
+  node_data.isDefined = true;
   insert_SymTable(check_symtable, node_data.name, node_data);
 
 }
@@ -1114,6 +1183,9 @@ void MB_ASSIGN_EXPR(FILE *file, DataType type, bool *isNIL){ //current token is 
   if (current_token.token_type == T_ASSIGN){
     current_token = get_token(file); // get =
     current_token = get_token(file); // get exp
+
+    // printf("EHEHEHEHEHEEHEHEHEH\n");
+
     int error = 0;
     DataType exp_type = parse_expression(&stack, &current_token, &error, &file);
     if (type == TYPE_UNKNOWN){

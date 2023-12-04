@@ -118,28 +118,28 @@ void exitWithError(char* masssage, int ErrCode) {
         fprintf(stderr,"\033[1m\033[31mError in the parsing program line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SEMANT_FUNC_ARG:
-        fprintf(stderr,"\033[1m\033[31mSemantic error in the program - undefined function, variable redefinition line:\033[0m \033[33m%d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mSemantic error in the program - undefined function, variable redefinition line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SEMANT_PARAM:
-        fprintf(stderr,"\033[1m\033[31mWrong number/type of parameters when calling the function or wrong type of return value from function line:\033[0m \033[33m%d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mWrong number/type of parameters when calling the function or wrong type of return value from function line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SEMANT_UNDF_VALUE:
-        fprintf(stderr,"\033[1m\033[31mSemantic error in program - use of undefined or uninitialized for variable line:\033[0m \033[33m%d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mSemantic error in program - use of undefined or uninitialized for variable line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SEMANT_RETURN:
-        fprintf(stderr,"\033[1m\033[31mMissing/overrun expression in the return statement from the function line:\033[0m \033[33m%d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mMissing/overrun expression in the return statement from the function line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SEMANT_TYPE:
-        fprintf(stderr,"\033[1m\033[31mType compatibility semantic error in arithmetic, string, and relational expressions line:\033[0m \033[33m%d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mType compatibility semantic error in arithmetic, string, and relational expressions line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SEMANT_UNDF_TYPE:
-        fprintf(stderr,"\033[1m\033[31mThe variable or parameter type is not specified and cannot be inferred from the expression used line:\033[0m \033[33m%d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mThe variable or parameter type is not specified and cannot be inferred from the expression used line:\033[0m \033[1m\033[33m%d\n",linenum);
         break;
     case ERR_SEMANT_OTHER:
         fprintf(stderr,"\033[1m\033[31mOther semantic errors:\033[0m \033[33m%d\n",linenum);
         break;
     case ERR_INTERNAL:
-        fprintf(stderr,"\033[1m\033[31mInternal compiler error, i.e. not affected by the input program line:\033[0m \033[33m%d\n",linenum);
+        fprintf(stderr,"\033[1m\033[31mInternal compiler error, i.e. not affected by the input program line:\033[0m \033\033[1m%d\n",linenum);
         break;
     }
     fprintf(stderr, "\033[35m\033[1m%s\n\033[0m", masssage);

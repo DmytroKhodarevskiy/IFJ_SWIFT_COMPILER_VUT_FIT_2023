@@ -8,7 +8,7 @@
 // #include "parse.h"
 // #include "parse.c"
 #include "compiler.h"
-#include "codegenerator.h"
+// #include "codegenerator.h"
 
 int linenum = 1;
 

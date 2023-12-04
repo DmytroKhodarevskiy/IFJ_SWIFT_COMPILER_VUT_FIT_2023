@@ -381,7 +381,7 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
  * @param dataType The data type of the parameter.
  * @return The head of the updated parameter list.
  */
-ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType, ParamPrefix prefix) {
+ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType, ParamPrefix prefix, char* prefixName) {
   ListFuncParam* newParam = (ListFuncParam*)malloc(sizeof(ListFuncParam));
   if (newParam == NULL) {
     // Handle memory allocation failure
@@ -396,7 +396,8 @@ ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dat
     return NULL;
   }
   strcpy(newParam->name, paramName);
-  
+
+  newParam->prefixName = prefixName;
   newParam->prefix = prefix;
   newParam->dataType = dataType;
   newParam->next = NULL;
@@ -433,7 +434,7 @@ int countParams(ListFuncParam* params) {
 void printFuncParamList(ListFuncParam* list) {
     const ListFuncParam* current = list;
     while (current != NULL) {
-        printf("Parameter Name: %s, Data Type: %d, Prefix: %d\n", current->name, current->dataType, current->prefix);
+        printf("Parameter Name: %s, Data Type: %d, Prefix: %d, prefix string: %s\n", current->name, current->dataType, current->prefix, current->prefixName);
         current = current->next;
     }
 }

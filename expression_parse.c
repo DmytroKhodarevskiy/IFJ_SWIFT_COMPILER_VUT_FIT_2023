@@ -3,11 +3,13 @@
 #define size_table 9
 
 // int linenum;
+SymStack *table;
+AVLNode *func_node;
 
 
 int precedence_table[size_table][size_table] = {
 
-// +-  */ rel  !   ??  (   )   i   $
+        // +-  */ rel  !   ??  (   )   i   $
         {R,  S,  R,  S,  R,  S,  R,  S,  R},  // +-
         {R,  R,  R,  S,  R,  S,  R,  S,  R},  // */
         {S,  S,  E,  S,  S,  S,  R,  S,  R},  // rel
@@ -21,68 +23,106 @@ int precedence_table[size_table][size_table] = {
 };
 
 
-void FUNC_CALLS_EXP(FILE **file,Token *current_token){ //current token is (
-    // *current_token = get_token(file); // get (
+void FUNC_CALLS_EXP(FILE **file,Token *current_token){ //current token is (// *current_token = get_token(file); // get (
     if (current_token->token_type != T_LPAR){
         exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
     }
-
-    ARG_LIST_EXP(file, current_token);
+    ListFuncParam* param = &func_node->data.paramTypes;
+    ARG_LIST_EXP(file, current_token, param);
 
     *current_token = get_token(*file); // get )
     if (current_token->token_type != T_RPAR){
-        exitWithError("Syntax error: expected ) or ,\n", ERR_SYNTAX);
+        exitWithError("Syntax error: expected )\n", ERR_SYNTAX);
     }
 }
 
-void ARG_LIST_EXP(FILE **file,Token *current_token){ //current token is (
-    *current_token = peekNextToken(*file);
+void ARG_LIST_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current token is (
 
+    *current_token = peekNextToken(*file);
     if (!(current_token->token_type == T_COLON ||
-          current_token->token_type == T_TYPE_ID)) return;
+          (current_token->token_type == T_TYPE_ID || current_token->token_type == T_DOUBLE ||
+           current_token->token_type == T_SING_STRING || current_token->token_type == T_INT ||
+           (current_token->token_type == T_KEYWORD && strcmp(current_token->string_value->str, "nil") == 0)
+           || current_token->token_type == T_EXPONENT_FLOAT || current_token->token_type == T_EXPONENT_INT))) {
+        if (param != NULL) {
+            exitWithError("Semantic error: Too few arguments\n", ERR_SEMANT_TYPE);
+        }
+        return;
+    }
 
-    ARG_EXP(file, current_token);
+    ARG_EXP(file, current_token, param);
+    param = param->next;
 
     *current_token = peekNextToken(*file);
+
     if (current_token->token_type == T_COMMA){
         *current_token = get_token(*file); // get ,
-        ARG_LIST_EXP(file, current_token);
+        if(peekNextToken(*file).token_type == T_RPAR) {
+            exitWithError("Syntax error: expected argument\n", ERR_SYNTAX);
+        }
+        ARG_LIST_EXP(file, current_token, param);
     }
 
     else {
         // *current_token = get_token(file); // get )
+        if(param != NULL) {
+            exitWithError("Semantic error: Too few arguments\n", ERR_SEMANT_TYPE);
+        }
         return;
     }
 }
 
-void ARG_EXP(FILE **file,Token *current_token){ //current token is (
-
-    PREFIX_EXP(file, current_token);
-
-    *current_token = get_token(*file); // get :
-    if (current_token->token_type != T_COLON){
-        exitWithError("Syntax error: expected :\n", ERR_SYNTAX);
+void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current token is (
+    if (param == NULL) {
+        exitWithError("Semantic error: Too many arguments\n", ERR_SEMANT_TYPE);
     }
+    DataType actual_argument_type = TYPE_UNKNOWN;
+    if(param->prefix == PREFIX_DEFAULT) {
+        PREFIX_EXP(file, current_token, param);
 
-    // printf("token befroe: %s\n", *current_token.string_value->str);
+        *current_token = get_token(*file);// get :
+        if (current_token->token_type != T_COLON) {
+            exitWithError("Syntax error: expected :\n", ERR_SYNTAX);
+        }
+    }
+    //printf("token befroe: %s\n", current_token->string_value->str);
     *current_token = get_token(*file); // get id
-    // printf("token after: %s\n", *current_token.string_value->str);
-    if (current_token->token_type != T_TYPE_ID){
-        exitWithError("Syntax error: expected id\n", ERR_SYNTAX);
+    //printf("token after: %s\n", current_token->string_value->str);
+
+    if(current_token->token_type == T_TYPE_ID){
+        AVLNode *node = s_search_symtack(table, current_token->string_value->str);
+        if(peekNextToken(*file).token_type == T_COLON){
+            exitWithError("Semantic error: Variable has no prefix\n", ERR_SEMANT_TYPE);
+        }
+        if(node == NULL) {
+            exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
+        }
+        if(node->data.isFunction) {
+            exitWithError("Semantic error: Cannot use function as argument\n", ERR_SEMANT_TYPE);
+        }
+        actual_argument_type = node->data.dtype;
+
+        if(param->dataType != actual_argument_type) {
+            exitWithError("Semantic error: Wrong type of argument\n", ERR_SEMANT_TYPE);
+        }
+    }
+    else
+    {
+        actual_argument_type = convert_tokenType_to_symType(current_token->token_type);
+        if (param->dataType != actual_argument_type) {
+            exitWithError("Semantic error: Wrong type of argument\n", ERR_SEMANT_TYPE);
+        }
     }
 }
 
-void PREFIX_EXP(FILE **file, Token *current_token){ //current token is (
+void PREFIX_EXP(FILE **file, Token *current_token, ListFuncParam *param){ //current token is (
     *current_token = peekNextToken(*file); // get id
-
-    if (current_token->token_type == T_TYPE_ID) {
+    if (current_token->token_type == T_TYPE_ID && strcmp(current_token->string_value->str, param->prefixName) == 0) {
         *current_token = get_token(*file);
         return;
     }
-
     else
-        return;
-
+        exitWithError("Semantic error: Wrong prefix\n", ERR_SEMANT_TYPE);
 }
 
 bool findNewLineInFile(FILE *file) {
@@ -214,7 +254,7 @@ DataType get_token_type(Token op1, Token op3, int rule_type){
         case 2:
             if(op1.token_type != op3.token_type) {
                 exitWithError("Semantic error: Cannot use relational operations on different types\n", ERR_SEMANT_TYPE);
-               // return TYPE_UNKNOWN;
+                // return TYPE_UNKNOWN;
             }
             return TYPE_BOOL;
         case 3:
@@ -310,8 +350,9 @@ int get_index_from_token(Token token) {
 
 
 // DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file) {
-DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file) {
+DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** file) {
     TokenStack stack;
+    table = symStack;
     Token FuncId;
     initializeStack(&stack);
     DataType expression_type = TYPE_UNKNOWN;
@@ -334,14 +375,15 @@ DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file
             // AVLNode *node = search_SymTable(table, token->string_value->str);
             // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
             // printf("token in exotret: %s\n", token->string_value->str);
-            AVLNode *node = s_search_symtack(table, token->string_value->str);
-            // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
-            if(node != NULL) {
-                if(node->data.isFunction){
-                    FuncId = *token;
-                    EOL = findNewLineInFile(*file);
-                    *token = get_token(*file);
-                    FUNC_CALLS_EXP(file, token);
+            if(token->token_type == T_TYPE_ID) {
+                func_node = s_search_symtack(table, token->string_value->str);
+                if (func_node != NULL) {
+                    if (func_node->data.isFunction) {
+                        FuncId = *token;
+                        EOL = findNewLineInFile(*file);
+                        *token = get_token(*file);
+                        FUNC_CALLS_EXP(file, token);
+                    }
                 }
             }
             EOL = findNewLineInFile(*file);
@@ -352,8 +394,8 @@ DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file
             if(perform_reduce(table, &stack, count_of_token_before_edge(stack), &expression_type) == -1){
                 freeStack(&stack);
                 *error = 1;
-//                printf("Error: Invalid token\n");
-//                return expression_type;
+                //                printf("Error: Invalid token\n");
+                //                return expression_type;
                 exitWithError("Syntax error: Invalid token\n", ERR_SYNTAX);
             }
         }
@@ -366,15 +408,16 @@ DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file
             expression_type = TYPE_UNKNOWN;
             freeStack(&stack);
             exitWithError("Syntax error: Invalid symbols sequence on expression\n", ERR_SYNTAX);
-//            printf("Error: Invalid token\n");
-//            *error = 1;
-//            return expression_type;
+            //            printf("Error: Invalid token\n");
+            //            *error = 1;
+            //            return expression_type;
         }
         else if (action_letter == END) {
             //printf("Expression type: %d\n", expression_type);
             //print_expression_type(expression_type);
             // printf("Expression OK\n");f
             fseek(*file, -strlen(token->string_value->str), SEEK_CUR);
+
             // printf("token: %s\n", token->string_value->str);
             freeStack(&stack);
             return expression_type;
@@ -388,14 +431,15 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
         case 1:
             // E -> i
             //if(tokens[0].token_type == T_KEYWORD && strcmp(tokens[0].string_value->str, "nil") == 0);
-//      if(tokens[0].token_type == T_TYPE_ID) tokens[0].token_type = convert_symType_to_tokenType(search_SymTable(table, tokens[0].string_value->str)->data.dtype);
-//      if(tokens[0].token_type == T_TYPE_ID || tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || tokens[0].token_type == T_KEYWORD || tokens[0].token_type == T_SING_STRING) {
-//        *expression_type = convert_tokenType_to_symType(tokens[0].token_type);
-//        return 1;
-//      }
+            //      if(tokens[0].token_type == T_TYPE_ID) tokens[0].token_type = convert_symType_to_tokenType(search_SymTable(table, tokens[0].string_value->str)->data.dtype);
+            //      if(tokens[0].token_type == T_TYPE_ID || tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || tokens[0].token_type == T_KEYWORD || tokens[0].token_type == T_SING_STRING) {
+            //        *expression_type = convert_tokenType_to_symType(tokens[0].token_type);
+            //        return 1;
+            //      }
             //printf("Token: %s\n", tokens[0].string_value->str);
             if(tokens[0].token_type == T_TYPE_ID){
                 // AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
+                //Print_Sym_stack(table);
                 AVLNode *node = s_search_symtack(table, tokens[0].string_value->str);
                 // print_SymTable(&(table->items[0]));
                 // print_SymTable(table->items[0]);
@@ -403,7 +447,9 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
                     printf("Token THAT IS NOT HERE: %s\n", tokens[0].string_value->str);
                     exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
                 }
-                *expression_type = node->data.dtype;
+                if(node->data.isFunction) *expression_type = node->data.returnType;
+                else *expression_type = node->data.dtype;
+
                 if(is_nullable(*expression_type)){
                     if(node->data.isNil) *expression_type = TYPE_NIL;
                 }
@@ -419,16 +465,16 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
             // E -> E!
             //print_expression_type(*expression_type);
             if(*expression_type == TYPE_NIL){
-//                *expression_type = TYPE_UNKNOWN;
-//                fprintf(stderr, "Error: Cannot use ! operator on nil\n");
-//                return -1;
+                //                *expression_type = TYPE_UNKNOWN;
+                //                fprintf(stderr, "Error: Cannot use ! operator on nil\n");
+                //                return -1;
                 exitWithError("Semantic error: Cannot use ! operator on nil\n", ERR_SEMANT_TYPE);
             }
             if(tokens[0].grammar_token_type == T_NT && tokens[1].token_type == T_NOTNIL) {
                 if (!is_nullable(*expression_type)) {
                     exitWithError("Semantic error: Cannot use ! operator on non-nullable type\n", ERR_SEMANT_TYPE);
-//                    fprintf(stderr, "Error: Cannot use ! operator on non-nullable type\n");
-//                    return -1;
+                    //                    fprintf(stderr, "Error: Cannot use ! operator on non-nullable type\n");
+                    //                    return -1;
                 }
                 *expression_type -= 4;
                 return 6;
@@ -488,9 +534,9 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
                         return -1;
                 }
             }
-                // E -> (E)
+            // E -> (E)
             else if(tokens[0].token_type == T_LPAR && tokens[1].grammar_token_type == T_NT && tokens[2].token_type == T_RPAR){
-//            *expression_type = *expression_type;
+                //            *expression_type = *expression_type;
                 return 0;
             }
             else return -1;

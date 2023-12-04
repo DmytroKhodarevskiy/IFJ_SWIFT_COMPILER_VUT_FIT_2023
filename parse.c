@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "parse.h"
 
@@ -388,8 +389,7 @@ void STMT(FILE *file){
             SymTable *local_symtable = create_SymTable();
             local_symtable->name = "if";
             // s_push(&stack, *local_symtable);            
-            s_push(&stack, local_symtable);            
-
+            s_push(&stack, local_symtable);
             STMT_LIST(file);
 
             current_token = get_token(file); // get }
@@ -429,8 +429,9 @@ void STMT(FILE *file){
                   local_symtable->name = "else";
                   // s_push(&stack, *local_symtable);     
                   s_push(&stack, local_symtable);     
-
+                  Print_Sym_stack(&stack);
                   STMT_LIST(file);
+                  Print_Sym_stack(&stack);
 
                   s_pop(&stack);
 
@@ -470,9 +471,9 @@ void STMT(FILE *file){
       }
 
   else if (current_token.token_type == T_KEYWORD &&
-           (strcmp(str, "return") == 0)) { // return
-            WasReturn = true;
-            
+           (strcmp(str, "return") == 0)) { //// return
+          WasReturn = true;
+            //Print_Sym_stack(&stack);
             SymData *func_name_sym = s_getFirstFunctionSymData(&stack);
             char* func_name = func_name_sym->name;
             AVLNode *node = search_SymTable(global_symtable, func_name);
@@ -490,7 +491,6 @@ void STMT(FILE *file){
             }
 
             else {
-
               int error = 0;
               current_token = get_token(file); // get exp
               DataType type = parse_expression(&stack, &current_token, &error, &file);
@@ -635,7 +635,7 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
     }
 
     current_token = get_token(file); // get =
-
+    //Print_Sym_stack(&stack);
     int error = 0;
     current_token = get_token(file); // get exp
     DataType type = parse_expression(&stack, &current_token, &error, &file);
@@ -845,6 +845,7 @@ void PARAM_LIST_FIRST(FILE *file, ListFuncParam **params, int *param_cnt){ //cur
 void PARAM_FIRST(FILE *file, ListFuncParam **params){ //current token is (
 
   char* param_name;
+  char *prefix = "_";
   DataType param_type;
   ParamPrefix param_prefix;
 
@@ -857,10 +858,12 @@ void PARAM_FIRST(FILE *file, ListFuncParam **params){ //current token is (
   }
 
   if (current_token.token_type == T_TYPE_ID) {
-    param_prefix = PREFIX_DEFAULT;
+   prefix = current_token.string_value->str;
+   param_prefix = PREFIX_DEFAULT;
   }  
   else {
     param_prefix = PREFIX_UNDERSCORE;
+    prefix = current_token.string_value->str;
   }
 
   current_token = get_token(file); // get id
@@ -884,7 +887,7 @@ void PARAM_FIRST(FILE *file, ListFuncParam **params){ //current token is (
     exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
   }
   
-  *params = addParamToList(*params, param_name, param_type, param_prefix);
+  *params = addParamToList(*params, param_name, param_type, param_prefix, prefix);
 
 }
 

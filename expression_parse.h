@@ -105,7 +105,7 @@ int get_index_from_token(Token token);
  * @return DataType of the expression
  */
 // DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file);
-DataType parse_expression(SymStack *table, Token *token, int *error, FILE** file);
+DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** file);
 
 /**
  * Determines the index of the grammar rule to be applied based on the given tokens.
@@ -151,7 +151,7 @@ void FUNC_CALLS_EXP(FILE **file, Token *current_token);
  * @param file A pointer to the input file.
  * @param current_token A pointer to the current token.
  */
-void ARG_LIST_EXP(FILE **file, Token *current_token);
+void ARG_LIST_EXP(FILE **file, Token *current_token, ListFuncParam *param);
 
 /**
  * @brief Parses an argument expression.
@@ -159,7 +159,7 @@ void ARG_LIST_EXP(FILE **file, Token *current_token);
  * @param file A pointer to the input file.
  * @param current_token A pointer to the current token.
  */
-void ARG_EXP(FILE **file, Token *current_token);
+void ARG_EXP(FILE **file, Token *current_token, ListFuncParam *param);
 
 /**
  * @brief Parses a prefix expression.
@@ -167,7 +167,7 @@ void ARG_EXP(FILE **file, Token *current_token);
  * @param file A pointer to the input file.
  * @param current_token A pointer to the current token.
  */
-void PREFIX_EXP(FILE **file, Token *current_token);
+void PREFIX_EXP(FILE **file, Token *current_token, ListFuncParam *param);
 
 
 //helper functions for parsing expressions with functions as operands

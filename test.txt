@@ -1,62 +1,16 @@
-// var a = 1
-// var b = 2
-// var ca = 2
-// var csd = 2
-// var cdsd = 2
-// if (2 == 2) {
-    var c : Int?
-    c = 2
-// }
-// else
-// {
-    // var c : Int?
-// }
-// c = nil
-// func sum (with a: Int, on b: Int) -> Int {
+var f = 5.0
+var b = 6.0
+var c = 7
+var d : String
+func sum (_ a: Int, on b: Double, _ c: Int) -> Int {
+     var a = 5
+//    if (a == 0){
+//        return b
+//    } else {
+//        return a
+//    }
+        return a
 
-//     var a = 2
-//     a = 3
-//     // var a = 5
-//     // var a = 3
-//     if (a == a) {
-//         var a = 5
-//         // return a // 5 - 2 = 3
-//     }
-//     else {
-//         // return b - a // 2 - 4 = -2
-//     }
-//     // return
-    
-//     // var a = 2
-//     // return a
-//     return  a
-//     // return  a
-// }
+}
 
-// func sum2 (with a: Int, on b: Int) -> Int {
-
-//     // var a = 2
-//     // a = 3
-//     var b = 5
-//     var a = 3
-//     if (a == a) {
-//         var a = 5
-//         var c : Int? = nil
-//         // return a // 5 - 2 = 3
-//     }
-//     else {
-//         return b - a // 2 - 4 = -2
-//     }
-//     // return
-    
-//     while (a == a) {
-//         var a = 5
-//         var c : Int = a
-//         // return a // 5 - 2 = 3
-//     }
-//     // var a = 2
-//     // return a
-//     return b
-//     // return  a
-// }
-// // return
+//d = sum(with: f, on: 6.0, 7)

@@ -8,7 +8,7 @@ var d : Int
 func sum2 (with a: Int, on b: Int) -> Int {
 
     // a = 3
-    a = 4
+    // a = 4
     var a = 2
     // var b = 5
     // var a = 3
@@ -26,7 +26,7 @@ func sum2 (with a: Int, on b: Int) -> Int {
     // while (a == a) {
     //     var a = 5
     //     var c : Int = a
-    //     // return a // 5 - 2 = 3
+        return a - b// 5 - 2 = 3
     // }
     // // var a = 2
     // // return a

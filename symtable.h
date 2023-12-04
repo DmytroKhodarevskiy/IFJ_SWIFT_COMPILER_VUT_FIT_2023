@@ -29,7 +29,8 @@ typedef enum {
 
 typedef struct FuncParam {
     char* name;
-    ParamPrefix prefix; 
+    ParamPrefix prefix;
+    char* prefixName;
     DataType dataType;
     struct FuncParam* next;
 } ListFuncParam;
@@ -91,7 +92,7 @@ AVLNode* findminValueNode(AVLNode* node);
 SymData getSymDataByKey(SymTable* table, char* key); 
 
 void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, ListFuncParam* paramTypes, int paramCount);
-ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType, ParamPrefix prefix);
+ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType, ParamPrefix prefix, char* prefixName);
 int countParams(ListFuncParam* params);
 
 

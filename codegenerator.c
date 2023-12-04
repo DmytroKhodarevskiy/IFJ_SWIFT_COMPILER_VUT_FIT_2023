@@ -59,7 +59,7 @@ int create_file(FILE **file) {
 }
 
 void generate_header(FILE *file) {
-  fprintf(file, "# IFJ dlya liudiej bez lichnoi zhizni\n");
+  // fprintf(file, "# IFJ dlya liudiej bez lichnoi zhizni\n");
   fprintf(file, ".IFJcode23\n");
   fprintf(file, "JUMP $$main\n\n");
 }
@@ -91,10 +91,10 @@ void add_instr(instr_node **head, char *instr) {
             current = current->next;
         }
 
-        printf("current->instr: %s\n", current->instr);
+        // printf("current->instr: %s\n", current->instr);
         // Insert the new node at the end of the list
         current->next = new_node;
-        printf("new_node->instr: %s\n", new_node->instr);
+        // printf("new_node->instr: %s\n", new_node->instr);
     }
 }
 
@@ -226,7 +226,7 @@ void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, char *st
 }
 
 void FUNC_END(instr_node **head, char* retval, char *string) {
-  sprintf(string, "MOVE LF@%%%retval LF@%s\n", retval);
+  sprintf(string, "MOVE LF@%%%%retval LF@%s\n", retval);
   add_instr(head, string);
   string = "POPFRAME\n";
   add_instr(head, string);

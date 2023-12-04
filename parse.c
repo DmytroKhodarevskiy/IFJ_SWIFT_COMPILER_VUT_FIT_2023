@@ -133,7 +133,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
 
               current_token = get_token(file); // get id
 
-              printf("current_token id: %s\n", current_token.string_value->str);
+              // printf("current_token id: %s\n", current_token.string_value->str);
               if (current_token.token_type != T_TYPE_ID){
                 exitWithError("Syntax error: expected id\n", ERR_SYNTAX);
               }
@@ -166,14 +166,14 @@ void FILL_TREES(FILE *file, SymStack *stack){
                   exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
                 }
 
-                  printf("current_token: %s\n", current_token.string_value->str);
+                  // printf("current_token: %s\n", current_token.string_value->str);
                 node_data.dtype = type;
                 current_token = peekNextToken(file); // peek =
                 if (current_token.token_type == T_ASSIGN){
                   current_token = get_token(file); // get =
                   current_token = get_token(file); // get exp
 
-                  printf("current_token: %s\n", current_token.string_value->str);
+                  // printf("current_token: %s\n", current_token.string_value->str);
                   int error = 0;
                   //change to symstack
                   // DataType type = parse_expression(stack, &current_token, &error, &file);
@@ -201,7 +201,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
                   // node_data.dtype = type;
                 }
 
-                printf("current_tokenawdawdawdawdwdawdawdawdawd: %s\n", current_token.string_value->str);
+                // printf("current_tokenawdawdawdawdwdawdawdawdawd: %s\n", current_token.string_value->str);
 
                 // else {
                   // exitWithError("Syntax error: expected =\n", ERR_SYNTAX);
@@ -221,7 +221,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
                 //change to symstack
                 // DataType type = parse_expression(stack, &current_token, &error, &file);
 
-                printf("current_token: %s\n", current_token.string_value->str);
+                // printf("current_token: %s\n", current_token.string_value->str);
 
                 DataType type = parse_expression(stack, &current_token, &error, &file);
 
@@ -248,7 +248,7 @@ void FILL_TREES(FILE *file, SymStack *stack){
               insert_SymTable(global_symtable, id_name, node_data);
               current_token = get_token(file); // get next token
 
-              printf("current_tokenawdawdawd: %s\n", current_token.string_value->str);
+              // printf("current_tokenawdawdawd: %s\n", current_token.string_value->str);
         }
 
 
@@ -644,8 +644,15 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
     // check_symtable = s_peek(&stack);
     // SymData *node_data = search_SymTable(check_symtable, id_name);
     // print_SymTable(stack.items[stack.top]);
+    printf("HEELLO\n");
     // print_SymTable(stack.items[0]);
     AVLNode *node_data = s_search_symtack(&stack, id_name);
+    if (node_data == NULL) {
+      //check
+      exitWithError("Semantic error: variable not declared\n", ERR_SEMANT_FUNC_ARG); 
+    }
+
+
     if (!node_data->data.canbeChanged) {
       //check
       exitWithError("Semantic error: variable is not assignable\n", ERR_SEMANT_FUNC_ARG); 

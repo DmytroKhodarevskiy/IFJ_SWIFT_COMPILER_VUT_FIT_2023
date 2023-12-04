@@ -1,40 +1,9 @@
-// var a = 1
-// var b = 2
-// var ca = 2
-// var csd = 2
-// var cdsd = 2
-// if (2 == 2) {
-    // var c : Int?
-    // c = 2
-// }
-// else
-// {
-    // var c : Int?
-// }
-// c = nil
-// func sum (with a: Int, on b: Int) -> Int {
 
-//     var a = 2
-//     a = 3
-//     // var a = 5
-//     // var a = 3
-//     if (a == a) {
-//         var a = 5
-//         // return a // 5 - 2 = 3
-//     }
-//     else {
-//         // return b - a // 2 - 4 = -2
-//     }
-//     // return
-    
-//     // var a = 2
-//     // return a
-//     return  a
-//     // return  a
-// }
+c = 2
 
-var c = 2
-var d = 2
+
+// var c : Int
+var d : Int
 
 func sum2 (with a: Int, on b: Int) -> Int {
 
@@ -65,6 +34,6 @@ func sum2 (with a: Int, on b: Int) -> Int {
 }
 // // return
 
-var t = sum2(with: 4, on: 4)
+// var t = sum2(with: 4, on: 4)
 // sum2(with: 2, on: 4)
 // sum2(with: 2, on: "awdwad")

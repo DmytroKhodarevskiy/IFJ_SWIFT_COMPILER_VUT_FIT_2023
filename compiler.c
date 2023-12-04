@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
     // printf("file: %s\n", argv[1]);
 
     // FIRST PHASE
-    // Parse(file);
+    Parse(file);
 
     
 
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]){
     //   if (lex_ok) printf("Lexical analysis OK\n");
     // }
 
-    generate_file();
+    // generate_file();
 
     // int a = 5;
     // int b = 6;
@@ -87,73 +87,73 @@ int main(int argc, char* argv[]){
 
 
     // // c = a + b
-    Data data = init_data();
-    instr_node *head = NULL;
+    // Data data = init_data();
+    // instr_node *head = NULL;
 
-    Operand op1, op2;
+    // Operand op1, op2;
 
-    op1.id_name = "param1";
-    op2.id_name = "param2";
+    // op1.id_name = "param1";
+    // op2.id_name = "param2";
 
-    op1.int_val = 55;
-    op2.int_val = 66;
-    // data.op2.id_name = token_b.string_value;
-    // *data.func_param = op1;
-    // *(data.func_param+1) = op2;
-    data.func_param = malloc(2 * sizeof(Operand));
-    // if (data.func_param == NULL) {
-    //     // Handle allocation error
-    // }
+    // op1.int_val = 55;
+    // op2.int_val = 66;
+    // // data.op2.id_name = token_b.string_value;
+    // // *data.func_param = op1;
+    // // *(data.func_param+1) = op2;
+    // data.func_param = malloc(2 * sizeof(Operand));
+    // // if (data.func_param == NULL) {
+    // //     // Handle allocation error
+    // // }
 
-    data.func_param[0] = op1;
-    // printf("data.func_param[0].id_naaaaaaame: %s\n", data.func_param[0].id_name);
-    data.func_param[1] = op2;
+    // data.func_param[0] = op1;
+    // // printf("data.func_param[0].id_naaaaaaame: %s\n", data.func_param[0].id_name);
+    // data.func_param[1] = op2;
 
-    data.func_name = "foo";
-    generate_code(&head, data, GEN_FUNC_START, UNUSED);
+    // data.func_name = "foo";
+    // generate_code(&head, data, GEN_FUNC_START, UNUSED);
 
-    data.op1.id_name = "a";
-    data.op1.int_val = 6;
-    generate_code(&head, data, GEN_CREATE_ID, LF);
-    generate_code(&head, data, GEN_MOVE_INT, LF);
-    generate_code(&head, data, GEN_PUSH, LF);
+    // data.op1.id_name = "a";
+    // data.op1.int_val = 6;
+    // generate_code(&head, data, GEN_CREATE_ID, LF);
+    // generate_code(&head, data, GEN_MOVE_INT, LF);
+    // generate_code(&head, data, GEN_PUSH, LF);
 
-    data.op1.id_name = "b";
-    data.op1.int_val = 7;
-    generate_code(&head, data, GEN_CREATE_ID, LF);
-    generate_code(&head, data, GEN_MOVE_INT, LF);
-    generate_code(&head, data, GEN_PUSH, LF);
+    // data.op1.id_name = "b";
+    // data.op1.int_val = 7;
+    // generate_code(&head, data, GEN_CREATE_ID, LF);
+    // generate_code(&head, data, GEN_MOVE_INT, LF);
+    // generate_code(&head, data, GEN_PUSH, LF);
 
-    generate_code(&head, data, GEN_ADD, UNUSED);
+    // generate_code(&head, data, GEN_ADD, UNUSED);
 
-    data.op1.id_name = "c";
-    generate_code(&head, data, GEN_CREATE_ID, LF);
-    generate_code(&head, data, GEN_ASSIGN, LF);  
-    generate_code(&head, data, GEN_WRITE, LF);
+    // data.op1.id_name = "c";
+    // generate_code(&head, data, GEN_CREATE_ID, LF);
+    // generate_code(&head, data, GEN_ASSIGN, LF);  
+    // generate_code(&head, data, GEN_WRITE, LF);
 
-    generate_code(&head, data, GEN_FUNC_END, UNUSED);
+    // generate_code(&head, data, GEN_FUNC_END, UNUSED);
 
 
-    // print_list(head);
+    // // print_list(head);
 
-    // printf("=====================================\n");
-    generate_code(&head, data, GEN_MAIN, UNUSED);
+    // // printf("=====================================\n");
+    // generate_code(&head, data, GEN_MAIN, UNUSED);
 
-    data.op1.id_name = "global_var";
-    data.op1.int_val = 1337;
-    generate_code(&head, data, GEN_CREATE_ID, GF);
-    generate_code(&head, data, GEN_MOVE_INT, GF);
-    generate_code(&head, data, GEN_PUSH, GF);
+    // data.op1.id_name = "global_var";
+    // data.op1.int_val = 1337;
+    // generate_code(&head, data, GEN_CREATE_ID, GF);
+    // generate_code(&head, data, GEN_MOVE_INT, GF);
+    // generate_code(&head, data, GEN_PUSH, GF);
 
-    generate_code(&head, data, GEN_WRITE, GF);
+    // generate_code(&head, data, GEN_WRITE, GF);
 
-    generate_code(&head, data, GEN_FUNC_CALL, UNUSED);
+    // generate_code(&head, data, GEN_FUNC_CALL, UNUSED);
 
-    // print_list(head);
+    // // print_list(head);
 
-    pop_list_to_file(&head);
+    // pop_list_to_file(&head);
 
-    fclose(file);
+    // fclose(file);
     // free_all();
     // printMemoryList();
     // exitWithError("", ERR_OK);

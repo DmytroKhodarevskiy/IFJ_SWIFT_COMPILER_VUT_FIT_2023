@@ -1,34 +1,33 @@
+# IFJ dlya liudiej bez lichnoi zhizni
 .IFJcode23
 JUMP $$main
 
-LABEL $foo
+LABEL $sum
 PUSHFRAME
 DEFVAR LF@%%retval
 MOVE LF@%%retval nil@nil
-DEFVAR LF@a
-MOVE LF@a int@6
-PUSHS LF@a
-DEFVAR LF@b
-MOVE LF@b int@7
-PUSHS LF@b
-ADDS
+DEFVAR LF@asdasdasdasdasdasdasdac
 DEFVAR LF@c
-POPS LF@c
-WRITE LF@c
-MOVE LF@%%retval LF@c
 POPFRAME
 RETURN
 
 
+
+LABEL $Grinfind
+PUSHFRAME
+DEFVAR LF@%%retval
+MOVE LF@%%retval nil@nil
+DEFVAR LF@Freestyle
+DEFVAR LF@krony
+POPFRAME
+RETURN
+
+
+
 LABEL $$main
 DEFVAR GF@%%retval_main
-DEFVAR GF@global_var
-MOVE GF@global_var int@1337
-PUSHS GF@global_var
-WRITE GF@global_var
-CREATEFRAME
-DEFVAR TF@param1
-MOVE TF@param1 int@55
-DEFVAR TF@param2
-MOVE TF@param2 int@66
-CALL $foo
+DEFVAR GF@c
+DEFVAR GF@ac
+DEFVAR GF@dc
+DEFVAR GF@ddc
+DEFVAR GF@asdasdasdasdasdasdasdac

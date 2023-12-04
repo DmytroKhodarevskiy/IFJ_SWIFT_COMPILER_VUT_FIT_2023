@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #define MAX_LINES 1000
 #define MAX_LINE_LENGTH 256 // Adjust as needed
 
@@ -10,9 +11,15 @@ typedef enum {
 } Frame;
 
 typedef struct instr_node {
+  char *name_of_llist;
   char *instr;
   struct instr_node *next;
 } instr_node;
+
+typedef struct {
+    instr_node **lists; // pointer to an array of linked list heads
+    int size;           // current size of the array
+} instr_list_dynamic;
 
 typedef enum {
   GEN_CREATE_ID, // define global id, id_name must be in data.op1.id_name, YOU CAN SET FRAME
@@ -42,7 +49,15 @@ typedef struct Data {
   Operand op2;
   char *func_name;
   Operand *func_param;
+  unsigned int func_param_count;
 } Data;
+
+instr_list_dynamic *init_instr_list_dynamic();
+// int add_new_linked_list(instr_list_dynamic *list);
+int add_new_linked_list(instr_list_dynamic *list, char *name);
+instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name);
+void print_list_names(instr_list_dynamic *list);
+void pop_all_lists_to_file(instr_list_dynamic *list);
 
 /*
 * Creates an assembly file.

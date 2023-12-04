@@ -67,7 +67,6 @@ int main(int argc, char* argv[]){
     //   if (lex_ok) printf("Lexical analysis OK\n");
     // }
 
-    // generate_file();
 
     // int a = 5;
     // int b = 6;
@@ -86,6 +85,7 @@ int main(int argc, char* argv[]){
     // token_b.string_value->str = "b";
 
 
+    // generate_file();
     // // c = a + b
     // Data data = init_data();
     // instr_node *head = NULL;
@@ -108,7 +108,7 @@ int main(int argc, char* argv[]){
     // data.func_param[0] = op1;
     // // printf("data.func_param[0].id_naaaaaaame: %s\n", data.func_param[0].id_name);
     // data.func_param[1] = op2;
-
+    // data.func_param_count = 2;
     // data.func_name = "foo";
     // generate_code(&head, data, GEN_FUNC_START, UNUSED);
 
@@ -154,7 +154,7 @@ int main(int argc, char* argv[]){
     // pop_list_to_file(&head);
 
     // fclose(file);
-    // free_all();
-    // printMemoryList();
-    // exitWithError("", ERR_OK);
+    // // free_all();
+    // // printMemoryList();
+    exitWithError("", ERR_OK);
 }

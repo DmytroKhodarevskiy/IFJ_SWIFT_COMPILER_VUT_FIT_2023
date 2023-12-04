@@ -148,7 +148,8 @@ void FILL_TREES(FILE *file, SymStack *stack){
               node_data.isGlobal = true;
               node_data.isFunction = false;
               // node_data.local_SymTable = NULL;
-              node_data.isDefined = true;
+              // node_data.isDefined = true;
+              node_data.isDefined = false;
 
               current_token = peekNextToken(file); // peek : or =
 
@@ -1002,6 +1003,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
   SymTable *check_symtable = create_SymTable();
   // Print_Sym_stack(&stack);
   check_symtable = s_peek(&stack);
+  // if (!(!strcmp(check_symtable->name, "global"))) {
   if (!(!strcmp(check_symtable->name, "global"))) {
     if (search_SymTable(check_symtable, current_token.string_value->str) != NULL) {
 
@@ -1011,6 +1013,10 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
   }
 
   else {
+    AVLNode *set_defined = search_SymTable(check_symtable, current_token.string_value->str);
+    if (set_defined != NULL) {
+      set_defined->data.isDefined = true;
+    }
 
     current_token = get_token(file); // get : or =
     

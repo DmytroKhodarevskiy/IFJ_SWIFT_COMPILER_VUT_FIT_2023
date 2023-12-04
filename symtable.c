@@ -111,6 +111,9 @@ AVLNode* search_SymTable(SymTable* table, char* key) {
         int compareResult = strcmp(current->key, key);
 
         if (compareResult == 0) {
+            if (current->data.isDefined == false) {
+                return NULL;
+            }
             return current;
         } else if (compareResult > 0) {
             current = current->left;

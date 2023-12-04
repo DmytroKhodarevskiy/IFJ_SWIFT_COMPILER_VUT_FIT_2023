@@ -110,36 +110,42 @@ int main(int argc, char* argv[]){
     data.func_param[1] = op2;
 
     data.func_name = "foo";
-    generate_code(&head, data, GEN_FUNC_START);
+    generate_code(&head, data, GEN_FUNC_START, UNUSED);
 
     data.op1.id_name = "a";
     data.op1.int_val = 6;
-    generate_code(&head, data, GEN_CREATE_ID);
-    generate_code(&head, data, GEN_MOVE);
-    generate_code(&head, data, GEN_PUSH);
+    generate_code(&head, data, GEN_CREATE_ID, LF);
+    generate_code(&head, data, GEN_MOVE_INT, LF);
+    generate_code(&head, data, GEN_PUSH, LF);
 
     data.op1.id_name = "b";
     data.op1.int_val = 7;
-    generate_code(&head, data, GEN_CREATE_ID);
-    generate_code(&head, data, GEN_MOVE);
-    generate_code(&head, data, GEN_PUSH);
+    generate_code(&head, data, GEN_CREATE_ID, LF);
+    generate_code(&head, data, GEN_MOVE_INT, LF);
+    generate_code(&head, data, GEN_PUSH, LF);
 
-    generate_code(&head, data, GEN_ADD);
+    generate_code(&head, data, GEN_ADD, UNUSED);
 
     data.op1.id_name = "c";
-    generate_code(&head, data, GEN_CREATE_ID);
-    generate_code(&head, data, GEN_ASSIGN);  
-    generate_code(&head, data, GEN_WRITE);
+    generate_code(&head, data, GEN_CREATE_ID, LF);
+    generate_code(&head, data, GEN_ASSIGN, LF);  
+    generate_code(&head, data, GEN_WRITE, LF);
 
-    generate_code(&head, data, GEN_FUNC_END);
+    generate_code(&head, data, GEN_FUNC_END, UNUSED);
 
-    generate_code(&head, data, GEN_MAIN);
 
     // print_list(head);
 
     // printf("=====================================\n");
+    generate_code(&head, data, GEN_MAIN, UNUSED);
 
-    generate_code(&head, data, GEN_FUNC_CALL);
+    data.op1.id_name = "global_var";
+    data.op1.int_val = 1337;
+    generate_code(&head, data, GEN_CREATE_ID, GF);
+    generate_code(&head, data, GEN_MOVE_INT, GF);
+    generate_code(&head, data, GEN_PUSH, GF);
+    
+    generate_code(&head, data, GEN_FUNC_CALL, UNUSED);
 
     // print_list(head);
 

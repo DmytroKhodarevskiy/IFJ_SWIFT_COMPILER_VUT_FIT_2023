@@ -144,7 +144,9 @@ int main(int argc, char* argv[]){
     generate_code(&head, data, GEN_CREATE_ID, GF);
     generate_code(&head, data, GEN_MOVE_INT, GF);
     generate_code(&head, data, GEN_PUSH, GF);
-    
+
+    generate_code(&head, data, GEN_WRITE, GF);
+
     generate_code(&head, data, GEN_FUNC_CALL, UNUSED);
 
     // print_list(head);

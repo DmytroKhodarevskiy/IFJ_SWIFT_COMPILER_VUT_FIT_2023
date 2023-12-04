@@ -226,7 +226,7 @@ void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, char *st
 }
 
 void FUNC_END(instr_node **head, char* retval, char *string) {
-  sprintf(string, "MOVE LF@%%retval LF@%s\n", retval);
+  sprintf(string, "MOVE LF@%%%retval LF@%s\n", retval);
   add_instr(head, string);
   string = "POPFRAME\n";
   add_instr(head, string);

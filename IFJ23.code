@@ -16,7 +16,7 @@ ADDS
 DEFVAR LF@c
 POPS LF@c
 WRITE LF@c
-MOVE LF@%retval LF@c
+MOVE LF@%%retval LF@c
 POPFRAME
 RETURN
 
@@ -26,6 +26,7 @@ DEFVAR GF@%%retval_main
 DEFVAR GF@global_var
 MOVE GF@global_var int@1337
 PUSHS GF@global_var
+WRITE GF@global_var
 CREATEFRAME
 DEFVAR TF@param1
 MOVE TF@param1 int@55

@@ -446,7 +446,7 @@ int countParams(ListFuncParam* params) {
 void printFuncParamList(ListFuncParam* list) {
     const ListFuncParam* current = list;
     while (current != NULL) {
-        printf("Parameter Name: %s, Data Type: %d, Prefix: %d, prefix string: %s\n", current->name, current->dataType, current->prefix, current->prefixName);
+        fprintf(stderr, "Parameter Name: %s, Data Type: %d, Prefix: %d, prefix string: %s\n", current->name, current->dataType, current->prefix, current->prefixName);
         current = current->next;
     }
 }
@@ -513,18 +513,22 @@ bool updateSymData(SymTable* table, char* key, SymData newData) {
 void print_SymData(SymData* data) {
     if (!data) return;
 
-    printf("Name: %s, DataType: %d, isDefined: %d, canbeChanged: %d, isGlobal: %d, isFunction: %d IsNil: %d\n",
+    fprintf(stderr, "Name: %s, DataType: %d, isDefined: %d, canbeChanged: %d, isGlobal: %d, isFunction: %d IsNil: %d\n",
            data->name, data->dtype, data->isDefined, data->canbeChanged, data->isGlobal, data->isFunction, data->isNil);
 
     if (data->isFunction) {
         printf(", ReturnType: %d, ParamCount: %d\n", data->returnType, data->paramCount);
         ListFuncParam* param = &data->paramTypes;
-        while (param) {
-            printf("Param: %s, DataType: %d , Prefixes: %d\n", param->name, param->dataType, param->prefix);
-            param = param->next;
+            if (data->paramCount != 0) {
+                while (param) {
+                    if (param != NULL)
+                    fprintf(stderr, "Param: %s, DataType: %d , Prefixes: %d\n", param->name, param->dataType, param->prefix);
+                    if (param != NULL)
+                    param = param->next;
+            }
         }
     } else {
-        printf("\n");
+        fprintf(stderr, "\n");
     }
 }
 
@@ -533,9 +537,10 @@ void inOrderTraversal(AVLNode* node) {
         return;
     }
     inOrderTraversal(node->left);
-    printf("Key: %s, ", node->key);
+    fprintf(stderr, "Key: %s, ", node->key);
     print_SymData(&node->data);
     inOrderTraversal(node->right);
+    // printf("CHEGO\n");
 }
 
 /**
@@ -546,13 +551,13 @@ void inOrderTraversal(AVLNode* node) {
  */
 void print_SymTable(SymTable* table) {
     if (table == NULL || table->root == NULL) {
-        printf("Symbol table is empty or not initialized.\n");
+        fprintf(stderr, "Symbol table is empty or not initialized.\n");
         return;
     }
 
-    printf("Symbol Table Contents:\n");
+    fprintf(stderr, "Symbol Table Contents:\n");
     inOrderTraversal(table->root);
-    printf("\n");
+    fprintf(stderr, "\n");
 }
 
 
@@ -582,7 +587,7 @@ void print_AVLTree(AVLNode* node, int space) {
 
 void printTree(SymTable* table) {
     if (table == NULL || table->root == NULL) {
-        printf("Symbol table is empty or not initialized.\n");
+        fprintf(stderr, "Symbol table is empty or not initialized.\n");
         return;
     }
 

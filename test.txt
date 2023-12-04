@@ -9,6 +9,16 @@ var c : Int
     // a // 2
     // a // 2
     // return d!
+    if (c == c) {
+
+var d : Int? = nil
+c = 2
+d = 2
+var x = c ?? d!
+    }
+    else {
+        var d : Int? = nil
+    }
 
 func a () -> Int? {
     var d : Int? = nil

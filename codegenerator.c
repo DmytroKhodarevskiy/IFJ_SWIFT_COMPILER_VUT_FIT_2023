@@ -25,6 +25,35 @@ char *frame_name;
 
 //TODO: replace string with vsprintf
 
+char *type_to_string(DataType type) {
+       switch (type) {
+           case TYPE_INT:
+               return "int";
+           case TYPE_DOUBLE:
+               return "float";
+           case TYPE_STRING:
+               return "string";
+           case TYPE_NIL:
+               return "nil";
+           case TYPE_INT_NULLABLE:
+               return "int";
+           case TYPE_DOUBLE_NULLABLE:
+               return "float";
+           case TYPE_STRING_NULLABLE:
+               return "string";
+           case TYPE_VOID:
+               return "void";
+           case FUNC:
+               return "func";
+           case TYPE_UNKNOWN:
+               return "unknown";
+           case TYPE_BOOL:
+               return "bool";
+           default:
+               return "unknown";
+       }
+}
+
 char *create_instr_string(const char *format, ...) {
     va_list args;
     va_start(args, format);
@@ -41,7 +70,7 @@ void print_list(const instr_node *head) {
     int count = 0;
     
     while (current != NULL) {
-        printf("Node %d: %s", count, current->instr);
+        fprintf(stderr, "Node %d: %s", count, current->instr);
         current = current->next;
         count++;
     }
@@ -58,10 +87,16 @@ int create_file(FILE **file) {
     return EXIT_SUCCESS;
 }
 
-void generate_header(FILE *file) {
-  fprintf(file, "# IFJ dlya liudiej bez lichnoi zhizni\n");
-  fprintf(file, ".IFJcode23\n");
-  fprintf(file, "JUMP $$main");
+// void generate_header(FILE *file) {
+//   fprintf(file, "# IFJ dlya liudiej bez lichnoi zhizni\n");
+//   fprintf(file, ".IFJcode23\n");
+//   fprintf(file, "JUMP $$main");
+// }
+
+void generate_header() {
+    printf( "# IFJ dlya liudiej bez lichnoi zhizni\n");
+    printf( ".IFJcode23\n");
+    printf( "JUMP $$main");
 }
 
 // instr_node *create_node(char *instr) {
@@ -79,8 +114,6 @@ void generate_header(FILE *file) {
 
 void add_instr(instr_node **head, char *instr) {
 
-    // printf("instruction to add to list: %s\n", instr);
-
     instr_node *new_node = malloc(sizeof(instr_node));
     if (new_node == NULL) {
         // Handle memory allocation error
@@ -89,13 +122,10 @@ void add_instr(instr_node **head, char *instr) {
     }
 
     new_node->instr = instr;
-    // printf("new_node->instr: %s\n", new_node->instr);
     new_node->next = NULL;
 
     // If the list is empty, make the new node the head
     if (*head == NULL) {
-
-        // printf("head is null\n");
         *head = new_node;
     } else {
         // Traverse the list to find the last node
@@ -104,311 +134,324 @@ void add_instr(instr_node **head, char *instr) {
             current = current->next;
         }
 
-        // printf("current->instr: %s\n", current->instr);
         // Insert the new node at the end of the list
         current->next = new_node;
-        // printf("new_node->instr: %s\n", new_node->instr);
     }
 }
 
 // define global id, id_name must be in data.op.id_name
-void CREATE_ID(instr_node **head, char *id_name, char *string, Frame frame) {
-  SET_FRAME(frame);
-  sprintf(string, "DEFVAR %s@%s\n", frame_name, id_name);
-  add_instr(head, string);
+void CREATE_ID(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
+    SET_FRAME(frame);
+    sprintf(string, "DEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
+    add_instr(head, string);
 }
 
 // move int value in data.op.int_val to data.op.id_name
-void MOVE(instr_node **head, char *id_name, char *value, char *string, Frame frame, token_type type){
-  SET_FRAME(frame);
-  char *type_string;
-  if (type == T_INT) {
-        type_string = "int";
-  } else if (type == T_SING_STRING) {
-        type_string = "string";
-  } else if (type == T_DOUBLE) {
-        type_string = "double";
-  } else {
-        type_string = "unknown";
-  }
-  sprintf(string,"MOVE %s@%s %s@%s\n", frame_name, id_name, type_string, value);
-  add_instr(head, string);
+void MOVE(instr_node **head, char *id_name, char *value, char *string, int deepness, Frame frame, DataType type){
+    SET_FRAME(frame);
+    char *type_string;
+    type_string = type_to_string(type);
+
+    if (type == TYPE_DOUBLE) {
+        float val = atof(value);
+        sprintf(string,"MOVE %s@%s_%d %s@%a\n", frame_name, id_name, deepness, type_string, val);
+    }
+    else
+        sprintf(string,"MOVE %s@%s_%d %s@%s\n", frame_name, id_name, deepness, type_string, value);
+
+    add_instr(head, string);
 }
 
 // assign value from the stack to data.op.id_name
-void ASSIGN(instr_node **head, char *id_name, char *string, Frame frame) {
-  SET_FRAME(frame);
-  sprintf(string, "POPS %s@%s\n", frame_name, id_name);
-  add_instr(head, string);
+void ASSIGN(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
+    SET_FRAME(frame);
+    sprintf(string, "POPS %s@%s\n", frame_name, id_name);
+    add_instr(head, string);
 }
 
 // write value of data.op.id_name to stdout
-void WRITE(instr_node **head, char *id_name, char *string, Frame frame) {
-  SET_FRAME(frame);
-  sprintf(string, "WRITE %s@%s\n", frame_name, id_name);
-  add_instr(head, string);
+void WRITE(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
+    SET_FRAME(frame);
+    sprintf(string, "WRITE %s@%s_%d\n", frame_name, id_name, deepness);
+    add_instr(head, string);
 }
 
 // begin expression, clear stack
 void BEGIN_EXPR(instr_node **head, char *string) {
-  string = "CLEARS\n";
-  add_instr(head, string);
+    string = "CLEARS\n";
+    add_instr(head, string);
 }
 
 // push value of data.op.id_name to stack
-void PUSH(instr_node **head, char *id_name, char *string, Frame frame) {
-  SET_FRAME(frame);
-  sprintf(string, "PUSHS %s@%s\n", frame_name, id_name);
-  add_instr(head, string);
+void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame frame, DataType type, char *value) {
+    SET_FRAME(frame);
+    char *type_string;
+    type_string = type_to_string(type);
+    if(type == TYPE_UNKNOWN)
+        sprintf(string, "PUSHS %s@%s_%d\n", frame_name, id_name, deepness);
+    else if(type == TYPE_DOUBLE) {
+        float val = atof(value);
+        sprintf(string, "PUSHS %s@%a\n", type_string, val);
+    }
+    else{
+        sprintf(string, "PUSHS %s@%s\n", type_string, value);
+    }
+
+    add_instr(head, string);
 }
 
 // add two values from stack (top two) and push result to stack
 void ADD(instr_node **head, char *string) {
-  string = "ADDS\n";
-  add_instr(head, string);
+    string = "ADDS\n";
+    add_instr(head, string);
 }
 
 // subtract two values from stack (top two) and push result to stack
 void SUB(instr_node **head, char *string) {
-  string = "SUBS\n";
-  add_instr(head, string);
+    string = "SUBS\n";
+    add_instr(head, string);
 }
 
 // multiply two values from stack (top two) and push result to stack
 void MUL(instr_node **head, char *string) {
-  string = "MULS\n";
-  add_instr(head, string);
+    string = "MULS\n";
+    add_instr(head, string);
 }
 
 // divide two values from stack (top two) and push result to stack
 void DIV(instr_node **head, char *string) {
-  string = "DIVS\n";
-  add_instr(head, string);
+    string = "DIVS\n";
+    add_instr(head, string);
 }
 
 void MAIN(instr_node **head, char *string) {
-  string = "\n";
-  add_instr(head, string);
-  string = "LABEL $$main\n";
-  add_instr(head, string);
-  string = "DEFVAR GF@%%retval_main\n";
-  add_instr(head, string);
+    string = "\n";
+    add_instr(head, string);
+    string = "LABEL $$main\n";
+    add_instr(head, string);
+    string = "DEFVAR GF@%%retval_main\n";
+    add_instr(head, string);
 }
 
 void FUNC_START(instr_node **head, char *func_name, char *string) {
-  sprintf(string, "\n\nLABEL $%s\n", func_name);
-  add_instr(head, string);
-  string = "PUSHFRAME\n";
-  add_instr(head, string);
-  string = "DEFVAR LF@%%retval\n";
-  add_instr(head, string);
-  string = "MOVE LF@%%retval nil@nil\n";
-  add_instr(head, string);
+    sprintf(string, "\n\nLABEL $%s\n", func_name);
+    add_instr(head, string);
+    string = "PUSHFRAME\n";
+    add_instr(head, string);
+    string = "DEFVAR LF@%%retval\n";
+    add_instr(head, string);
+    string = "MOVE LF@%%retval nil@nil\n";
+    add_instr(head, string);
 }
 
 void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, unsigned int func_param_count, char *string) {
-  // string = "CREATEFRAME\n";
-  sprintf(string, "CREATEFRAME\n");
-  add_instr(head, string);
+    // string = "CREATEFRAME\n";
+    sprintf(string, "CREATEFRAME\n");
+    add_instr(head, string);
 
-  // while (func_param != NULL) {
-  //   sprintf(string, "DEFVAR TF@%s\n", func_param->id_name);
-  //   add_instr(head, string);
-  //   sprintf(string, "MOVE TF@%s int@%d\n", func_param->id_name, func_param->int_val);
-  //   add_instr(head, string);
-  //   func_param++;
-  // }
-  // for (int i = 0; i < 2; i++) {
+    // while (func_param != NULL) {
+    //   sprintf(string, "DEFVAR TF@%s\n", func_param->id_name);
+    //   add_instr(head, string);
+    //   sprintf(string, "MOVE TF@%s int@%d\n", func_param->id_name, func_param->int_val);
+    //   add_instr(head, string);
+    //   func_param++;
+    // }
+    // for (int i = 0; i < 2; i++) {
 
-  //   sprintf(string, "DEFVAR TF@%s\n", func_param[i].id_name);
-  //   // printf("string: %s\n", string);
-  //   add_instr(head, string);
+    //   sprintf(string, "DEFVAR TF@%s\n", func_param[i].id_name);
+    //   // printf("string: %s\n", string);
+    //   add_instr(head, string);
 
-  //   sprintf(string, "MOVE TF@%s int@%d\n", func_param[i].id_name, func_param[i].int_val);
-  //   add_instr(head, string);
-  // }
+    //   sprintf(string, "MOVE TF@%s int@%d\n", func_param[i].id_name, func_param[i].int_val);
+    //   add_instr(head, string);
+    // }
 
-  for (int i = 0; i < func_param_count; i++) {
-    char *instr = create_instr_string("DEFVAR TF@%s\n", func_param[i].id_name);
+    for (int i = 0; i < func_param_count; i++) {
+        char *instr = create_instr_string("DEFVAR TF@%s\n", func_param[i].id_name);
+        if (instr != NULL) {
+            add_instr(head, instr);
+        }
+
+        instr = create_instr_string("MOVE TF@%s int@%s\n", func_param[i].id_name, func_param[i].val);
+        if (instr != NULL) {
+            add_instr(head, instr);
+        }
+    }
+
+    // sprintf(string, "CALL $%s\n", func_name);
+    // add_instr(head, string);
+    char *instr = create_instr_string("CALL $%s\n", func_name);
     if (instr != NULL) {
         add_instr(head, instr);
     }
-
-    instr = create_instr_string("MOVE TF@%s int@%s\n", func_param[i].id_name, func_param[i].val);
-    if (instr != NULL) {
-        add_instr(head, instr);
-    }
-}
-
-  // sprintf(string, "CALL $%s\n", func_name);
-  // add_instr(head, string);
-  char *instr = create_instr_string("CALL $%s\n", func_name);
-  if (instr != NULL) {
-    add_instr(head, instr);
-  }
 }
 
 void FUNC_END(instr_node **head, char* retval, char *string) {
-  // sprintf(string, "MOVE LF@%%%%retval LF@%s\n", retval);
-  // add_instr(head, string);
-  string = "POPFRAME\n";
-  add_instr(head, string);
-  string = "RETURN\n\n";
-  add_instr(head, string);
+    // sprintf(string, "MOVE LF@%%%%retval LF@%s\n", retval);
+    // add_instr(head, string);
+    string = "POPFRAME\n";
+    add_instr(head, string);
+    string = "RETURN\n\n";
+    add_instr(head, string);
 }
 
-int generate_code(instr_node **head, Data data, gencode gencode, Frame frame) {
-  
-  // GENERATE ALL SHIT HERE :)
+int generate_code(instr_node **head, Data data, gencode gencode, int deepness, Frame frame) {
 
-  char *string = malloc(MAX_LINE_LENGTH * sizeof(char)); 
-  if (string == NULL) {
-      // Handle memory allocation error
-      return EXIT_FAILURE;
-  }
+    // GENERATE ALL SHIT HERE :)
 
-  switch (gencode) {
+    char *string = malloc(MAX_LINE_LENGTH * sizeof(char));
+    if (string == NULL) {
+        // Handle memory allocation error
+        return EXIT_FAILURE;
+    }
 
-    char *id_name_create;
-    char *id_name_assign;
-    char *id_name_write;
-    char *id_name_push;
-    char *retval;
-    char *id_name_move;
-    char *func_name;
-    char *val;
-    token_type type;
-    // Operand func_param[10];
+    switch (gencode) {
 
-    // define data.op.id_name to global
-    case GEN_CREATE_ID:
-        // char *id_name_create;
-        id_name_create = data.op.id_name;
-        CREATE_ID(head, id_name_create, string, frame);
-        break;
-    
-    // moves int value in data.op.int_val to data.op.id_name
-    case GEN_MOVE:
-        val = data.op.val;
-        id_name_move = data.op.id_name;
-        type = data.op.type;
-        MOVE(head, id_name_move, val, string, frame, type);
-        break;
-    
-    // pop value from expression to data.op.id_name
-    case GEN_ASSIGN:
-        // char *id_name_assign;
-        id_name_assign = data.op.id_name;
-        ASSIGN(head, id_name_assign, string, frame);
-        break;
-    
-    // write value of data.op.id_name
-    case GEN_WRITE:
-        // char *id_name_write;
-        id_name_write = data.op.id_name;
-        WRITE(head, id_name_write, string, frame);
-        break;
-    
-    // begin expression, clear stack
-    case GEN_BEGIN_EXPR:
-        BEGIN_EXPR(head, string);
-        break;
-    
-    // push value of data.op.id_name to stack
-    case GEN_PUSH:
-        // char *id_name_push;
-        id_name_push = data.op.id_name;
-        PUSH(head, id_name_push, string, frame);
-        break;
-    
-    // add two values from stack (top two) and push result to stack
-    case GEN_ADD:
-        ADD(head, string);
-        break;
+        char *id_name_create;
+        char *id_name_assign;
+        char *id_name_write;
+        char *id_name_push;
+        char *retval;
+        char *id_name_move;
+        char *func_name;
+        char *val;
+        DataType type;
+        // Operand func_param[10];
 
-    // subtract two values from stack (top two) and push result to stack
-    case GEN_SUB:
-        SUB(head, string);
-        break;
+        // define data.op.id_name to global
+        case GEN_CREATE_ID:
+            // char *id_name_create;
+            id_name_create = data.op.id_name;
+            CREATE_ID(head, id_name_create, string, deepness, frame);
+            break;
 
-    // multiply two values from stack (top two) and push result to stack
-    case GEN_MUL:
-        MUL(head, string);
-        break;
+        // moves int value in data.op.int_val to data.op.id_name
+        case GEN_MOVE:
+            val = data.op.val;
+            id_name_move = data.op.id_name;
+            type = data.op.type;
+            MOVE(head, id_name_move, val, string, deepness, frame, type);
+            break;
 
-    // divide two values from stack (top two) and push result to stack
-    case GEN_DIV:
-        DIV(head, string);
-        break;
+        // pop value from expression to data.op.id_name
+        case GEN_ASSIGN:
+            // char *id_name_assign;
+            id_name_assign = data.op.id_name;
+            ASSIGN(head, id_name_assign, string, deepness, frame);
+            break;
 
-    // generate main function
-    case GEN_MAIN:
-        MAIN(head, string);
-        break;
+        // write value of data.op.id_name
+        case GEN_WRITE:
+            // char *id_name_write;
+            id_name_write = data.op.id_name;
+            WRITE(head, id_name_write, string, deepness, frame);
+            break;
 
-    // generate function start
-    case GEN_FUNC_START:
-        // char *func_name;
-        func_name = data.func_name;
-        FUNC_START(head, func_name, string);
-        break;
+        // begin expression, clear stack
+        case GEN_BEGIN_EXPR:
+            BEGIN_EXPR(head, string);
+            break;
 
-    // generate function end
-    case GEN_FUNC_END:
-        // char *retval;
-        retval = data.op.id_name;
-        FUNC_END(head, retval, string);
-        break;
+        // push value of data.op.id_name to stack
+        case GEN_PUSH:
+            // char *id_name_push;
+            val = data.op.val;
+            id_name_push = data.op.id_name;
+            fprintf(stderr, "hue:( %s )\n", data.op.id_name);
 
-    // generate function call
-    case GEN_FUNC_CALL:
-        // char *func_name;
-        // Operand *func_param;
-        func_name = data.func_name;
-        // printf("dara.func_name: %s\n", data.func_name);
-        // printf("dara.func_param1.id: %s\n", data.func_param[0].id_name);
-        // printf("dara.func_param2.id: %s\n", data.func_param[1].id_name);
-        // printf("dara.func_param1.int_val: %d\n", data.func_param[0].int_val);
-        // printf("dara.func_param2.int_val: %d\n", data.func_param[1].int_val);
-        // printf("---------------------------\n");
-        // func_param = data.func_param;
-        FUNC_CALL(head, func_name, data.func_param, data.func_param_count ,string);
-        break;
+            type = data.op.type;
+            PUSH(head, id_name_push, string, deepness, frame, type, val);
+            break;
 
-    // Add default case to handle unexpected values
-    default:
-        // Handle unexpected case
-        break;
-  }
+        // add two values from stack (top two) and push result to stack
+        case GEN_ADD:
+            ADD(head, string);
+            break;
 
-  return EXIT_SUCCESS;
+        // subtract two values from stack (top two) and push result to stack
+        case GEN_SUB:
+            SUB(head, string);
+            break;
+
+        // multiply two values from stack (top two) and push result to stack
+        case GEN_MUL:
+            MUL(head, string);
+            break;
+
+        // divide two values from stack (top two) and push result to stack
+        case GEN_DIV:
+            DIV(head, string);
+            break;
+
+        // generate main function
+        case GEN_MAIN:
+            MAIN(head, string);
+            break;
+
+        // generate function start
+        case GEN_FUNC_START:
+            // char *func_name;
+            func_name = data.func_name;
+            FUNC_START(head, func_name, string);
+            break;
+
+        // generate function end
+        case GEN_FUNC_END:
+            // char *retval;
+            retval = data.op.id_name;
+            FUNC_END(head, retval, string);
+            break;
+
+        // generate function call
+        case GEN_FUNC_CALL:
+            // char *func_name;
+            // Operand *func_param;
+            func_name = data.func_name;
+            // printf("dara.func_name: %s\n", data.func_name);
+            // printf("dara.func_param1.id: %s\n", data.func_param[0].id_name);
+            // printf("dara.func_param2.id: %s\n", data.func_param[1].id_name);
+            // printf("dara.func_param1.int_val: %d\n", data.func_param[0].int_val);
+            // printf("dara.func_param2.int_val: %d\n", data.func_param[1].int_val);
+            // printf("---------------------------\n");
+            // func_param = data.func_param;
+            FUNC_CALL(head, func_name, data.func_param, data.func_param_count ,string);
+            break;
+
+        // Add default case to handle unexpected values
+        default:
+            // Handle unexpected case
+            break;
+    }
+
+    return EXIT_SUCCESS;
 }
 
 void pop_list_to_file(instr_node **head) {
-  FILE *file = fopen("IFJ23.code", "a");
-  if (file == NULL) {
-    perror("Error opening file");
-    return;
-  }
-  instr_node *current = *head;
-  int cnt = 6;
-  while (current != NULL) {
-    // printf("instruction to print to file on line %d: %s", cnt, current->instr);
-    fprintf(file, "%s", current->instr);
-    cnt++;
-    instr_node *tmp = current;
-    current = current->next;
-    // printf("instruction to print to file on line %d: %s", cnt, tmp->instr);
-    // free(tmp->instr);
-    tmp->instr = NULL;
-    // printf("instruction to prindawdawdwat to file on line %d: %s\n", cnt, tmp->instr);
-    free(tmp);
-  }
-  fclose(file);
+    FILE *file = fopen("IFJ23.code", "a");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+    instr_node *current = *head;
+    int cnt = 6;
+    while (current != NULL) {
+        // printf("instruction to print to file on line %d: %s", cnt, current->instr);
+        // fprintf(file, "%s", current->instr);
+        printf( "%s", current->instr);
+        cnt++;
+        instr_node *tmp = current;
+        current = current->next;
+        // printf("instruction to print to file on line %d: %s", cnt, tmp->instr);
+        // free(tmp->instr);
+        tmp->instr = NULL;
+        // printf("instruction to prindawdawdwat to file on line %d: %s\n", cnt, tmp->instr);
+        free(tmp);
+    }
+    fclose(file);
 }
 
 void destroy_file() {
-  remove("IFJ23.code"); 
+    remove("IFJ23.code");
 }
 
 
@@ -418,35 +461,36 @@ void destroy_file() {
 // data.id2_name = b
 // generate(data, GEN_ADD);
 Data init_data() {
-  Data data;
-  data.func_name = NULL;
-  // data.func_param = NULL;
-  data.op.id_name = NULL;
-  data.op2.id_name = NULL;
-  return data;
+    Data data;
+    data.func_name = NULL;
+    // data.func_param = NULL;
+    data.op.id_name = NULL;
+    data.op.type = TYPE_UNKNOWN;
+    data.op2.id_name = NULL;
+    return data;
 }
 
 int generate_file() {
-  int status;
+    int status;
 
-  destroy_file();
+    destroy_file();
 
-  FILE *file;
-  status = create_file(&file);
+    FILE *file;
+    status = create_file(&file);
 
-  if (status == EXIT_FAILURE) {
-    return EXIT_FAILURE;
-  }
+    if (status == EXIT_FAILURE) {
+        return EXIT_FAILURE;
+    }
 
-  generate_header(file);
-  // status = generate_code(file);
-  // if (status == EXIT_FAILURE) {
+    generate_header(file);
+    // status = generate_code(file);
+    // if (status == EXIT_FAILURE) {
     // return EXIT_FAILURE;
-  // }
+    // }
 
-  fclose(file);
+    fclose(file);
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
 // Function to initialize instr_list_dynamic
@@ -480,14 +524,14 @@ int add_new_linked_list(instr_list_dynamic *list, char *name) {
         return -1; // Error: malloc failed
     }
 
-    printf("GRINFIND NA BITE\n");
-    printf("name: %s\n", name);
+    // printf("GRINFIND NA BITE\n");
+    // printf("name: %s\n", name);
     // Allocate memory and set the name for the new head node
     new_head->name_of_llist = strdup(name); // 'strdup' allocates memory and copies the string
     new_head->instr = NULL;
     new_head->next = NULL;
 
-    printf("new_head->name_of_llist: %s\n", new_head->name_of_llist);
+    // printf("new_head->name_of_llist: %s\n", new_head->name_of_llist);
 
     // Update the list structure
     list->lists = new_lists;
@@ -497,14 +541,13 @@ int add_new_linked_list(instr_list_dynamic *list, char *name) {
 }
 
 // Function to search the linked list in instr_list_dynamic by the name of the linked list
-instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name) {
+instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node) {
     if (list == NULL || name == NULL) {
         return NULL; // Handle NULL pointers
     }
 
     // Iterate over the array of list heads
     for (int i = 0; i < list->size; ++i) {
-        printf("i: %d\n", i);
         instr_node *current = list->lists[i];
         // Traverse the linked list
         while (current != NULL && current->name_of_llist != NULL) {
@@ -515,7 +558,7 @@ instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name) {
 
         }
     }
-    return NULL; // List with the given name not found
+    return main_node; // List with the given name not found
 }
 
 void pop_all_lists_to_file(instr_list_dynamic *list) {
@@ -530,7 +573,6 @@ void pop_all_lists_to_file(instr_list_dynamic *list) {
         return; // Handle NULL pointer for list
     }
 
-    printf("List size: %d\n", list->size);
     for (int i = 0; i < list->size; i++) {
         instr_node *current = list->lists[i];
         // Check if the list is not empty
@@ -541,7 +583,8 @@ void pop_all_lists_to_file(instr_list_dynamic *list) {
             current = current->next;
             while (current != NULL) {
                 if (current->instr != NULL) {
-                    fprintf(file, "%s", current->instr); // Write instruction to file
+                    // fprintf(file, "%s", current->instr); // Write instruction to file
+                    printf("%s", current->instr); // Write instruction to file
                     // free(current->instr);
                 }
                 instr_node *tmp = current;
@@ -558,12 +601,9 @@ void pop_all_lists_to_file(instr_list_dynamic *list) {
 }
 
 void print_list_names(instr_list_dynamic *list) {
-    // printf("List size: ");
     if (list == NULL) {
         return; // Handle NULL pointer
     }
-
-    // printf("List size: %d\n", list->size);
 
     for (int i = 0; i < list->size; i++) {
         instr_node *current = list->lists[i];

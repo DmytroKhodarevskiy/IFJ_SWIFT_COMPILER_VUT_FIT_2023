@@ -1,20 +1,21 @@
 #include <stdio.h>
 #include <string.h>
 #include "tokenizer.h"
+#include "symtable.h"
 #define MAX_LINES 1000
 #define MAX_LINE_LENGTH 256 // Adjust as needed
 
 typedef enum {
-  GF,
-  LF,
-  TF,
-  UNUSED
+    GF,
+    LF,
+    TF,
+    UNUSED
 } Frame;
 
 typedef struct instr_node {
-  char *name_of_llist;
-  char *instr;
-  struct instr_node *next;
+    char *name_of_llist;
+    char *instr;
+    struct instr_node *next;
 } instr_node;
 
 typedef struct {
@@ -23,40 +24,40 @@ typedef struct {
 } instr_list_dynamic;
 
 typedef enum {
-  GEN_CREATE_ID, // define global id, id_name must be in data.op1.id_name, YOU CAN SET FRAME
-  GEN_ADD, // add two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
-  GEN_SUB, // subtract two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
-  GEN_MUL, // multiply two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
-  GEN_DIV, // divide two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
-  GEN_BEGIN_EXPR, // begin expression, clear stack, CANT SET FRAME (USE UNUSED)
-  GEN_PUSH, // push to stack, YOU CAN SET FRAME
-  GEN_ASSIGN, // assign value from the stack to data.op1.id_name, YOU CAN SET FRAME
-  GEN_WRITE, // write value of data.op1.id_name to stdout, YOU CAN SET FRAME
-  GEN_MOVE, // move specified value to data.op.id_name, YOU CAN SET FRAME
-  GEN_MAIN, // generate main function, CANT SET FRAME (USE UNUSED)
-  GEN_FUNC_START, // generate function start, CANT SET FRAME (USE UNUSED)
-  GEN_FUNC_END, // generate function end, CANT SET FRAME (USE UNUSED)
-  GEN_FUNC_CALL // generate function call, CANT SET FRAME (USE UNUSED)
+    GEN_CREATE_ID, // define global id, id_name must be in data.op1.id_name, YOU CAN SET FRAME
+    GEN_ADD, // add two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_SUB, // subtract two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_MUL, // multiply two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_DIV, // divide two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_BEGIN_EXPR, // begin expression, clear stack, CANT SET FRAME (USE UNUSED)
+    GEN_PUSH, // push to stack, YOU CAN SET FRAME
+    GEN_ASSIGN, // assign value from the stack to data.op1.id_name, YOU CAN SET FRAME
+    GEN_WRITE, // write value of data.op1.id_name to stdout, YOU CAN SET FRAME
+    GEN_MOVE, // move int value in data.op1.int_val to data.op1.id_name, YOU CAN SET FRAME
+    GEN_MAIN, // generate main function, CANT SET FRAME (USE UNUSED)
+    GEN_FUNC_START, // generate function start, CANT SET FRAME (USE UNUSED)
+    GEN_FUNC_END, // generate function end, CANT SET FRAME (USE UNUSED)
+    GEN_FUNC_CALL // generate function call, CANT SET FRAME (USE UNUSED)
 } gencode;
 
 typedef struct Operand {
-  char *id_name;
-  char *val;
-  token_type type;
+    char *id_name;
+    char *val;
+    token_type type;
 } Operand;
 
 typedef struct Data {
-  Operand op;
-  Operand op2;
-  char *func_name;
-  Operand *func_param;
-  unsigned int func_param_count;
+    Operand op;
+    Operand op2;
+    char *func_name;
+    Operand *func_param;
+    unsigned int func_param_count;
 } Data;
 
 instr_list_dynamic *init_instr_list_dynamic();
 // int add_new_linked_list(instr_list_dynamic *list);
 int add_new_linked_list(instr_list_dynamic *list, char *name);
-instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name);
+instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node);
 void print_list_names(instr_list_dynamic *list);
 void pop_all_lists_to_file(instr_list_dynamic *list);
 
@@ -98,7 +99,7 @@ Operand init_operand();
 instr_node *init_instr_node();
 
 /*
-* deletes the asm file 
+* deletes the asm file
 */
 void destroy_file();
 
@@ -122,4 +123,3 @@ void generate_function(FILE *file, char *func_name);
 * generates the new instrucitons file with header and main
 */
 int generate_file();
-

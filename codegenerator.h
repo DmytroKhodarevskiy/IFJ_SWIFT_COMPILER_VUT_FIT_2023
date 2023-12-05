@@ -32,7 +32,7 @@ typedef enum {
   GEN_PUSH, // push to stack, YOU CAN SET FRAME
   GEN_ASSIGN, // assign value from the stack to data.op1.id_name, YOU CAN SET FRAME
   GEN_WRITE, // write value of data.op1.id_name to stdout, YOU CAN SET FRAME
-  GEN_MOVE, // move int value in data.op1.int_val to data.op1.id_name, YOU CAN SET FRAME
+  GEN_MOVE, // move specified value to data.op.id_name, YOU CAN SET FRAME
   GEN_MAIN, // generate main function, CANT SET FRAME (USE UNUSED)
   GEN_FUNC_START, // generate function start, CANT SET FRAME (USE UNUSED)
   GEN_FUNC_END, // generate function end, CANT SET FRAME (USE UNUSED)

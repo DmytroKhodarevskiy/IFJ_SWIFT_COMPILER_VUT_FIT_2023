@@ -52,6 +52,6 @@ void ARG_WRITE_LIST(FILE *file);
 void ARG_WRITE(FILE *file);
 void WRITE_CALLS(FILE *file);
 
-
+void insert_include_functions_sym_table();
 
 #endif // PARSE_H

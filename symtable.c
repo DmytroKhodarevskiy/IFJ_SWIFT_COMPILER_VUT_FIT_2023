@@ -517,7 +517,9 @@ void print_SymData(SymData* data) {
            data->name, data->dtype, data->isDefined, data->canbeChanged, data->isGlobal, data->isFunction, data->isNil);
 
     if (data->isFunction) {
-        printf(", ReturnType: %d, ParamCount: %d\n", data->returnType, data->paramCount);
+
+        
+        fprintf(stderr, ", ReturnType: %d, ParamCount: %d\n", data->returnType, data->paramCount);
         ListFuncParam* param = &data->paramTypes;
             if (data->paramCount != 0) {
                 while (param) {

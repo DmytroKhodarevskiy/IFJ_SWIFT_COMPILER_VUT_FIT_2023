@@ -305,7 +305,6 @@ Token get_token(FILE *file){
                 } else {
                     token.token_type = T_MINUS;
                     copyString(token.string_value->str, token_string->str);
-                    printf("token string: %s\n", token_string->str);
                     return token;
                 }
                 break;

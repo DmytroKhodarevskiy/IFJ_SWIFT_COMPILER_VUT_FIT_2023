@@ -105,7 +105,8 @@ void destroy_file();
 /*
 * Generates the header of the assembly file.
 */
-void generate_header(FILE *file);
+// void generate_header(FILE *file);
+void generate_header();
 
 /*
 * Generates the main function of the assembly file.

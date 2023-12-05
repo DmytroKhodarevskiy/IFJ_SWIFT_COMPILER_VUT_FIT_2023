@@ -41,7 +41,7 @@ void print_list(const instr_node *head) {
     int count = 0;
     
     while (current != NULL) {
-        printf("Node %d: %s", count, current->instr);
+        fprintf(stderr, "Node %d: %s", count, current->instr);
         current = current->next;
         count++;
     }
@@ -58,10 +58,16 @@ int create_file(FILE **file) {
     return EXIT_SUCCESS;
 }
 
-void generate_header(FILE *file) {
-  fprintf(file, "# IFJ dlya liudiej bez lichnoi zhizni\n");
-  fprintf(file, ".IFJcode23\n");
-  fprintf(file, "JUMP $$main");
+// void generate_header(FILE *file) {
+//   fprintf(file, "# IFJ dlya liudiej bez lichnoi zhizni\n");
+//   fprintf(file, ".IFJcode23\n");
+//   fprintf(file, "JUMP $$main");
+// }
+
+void generate_header() {
+  printf( "# IFJ dlya liudiej bez lichnoi zhizni\n");
+  printf( ".IFJcode23\n");
+  printf( "JUMP $$main");
 }
 
 // instr_node *create_node(char *instr) {
@@ -79,8 +85,6 @@ void generate_header(FILE *file) {
 
 void add_instr(instr_node **head, char *instr) {
 
-    // printf("instruction to add to list: %s\n", instr);
-
     instr_node *new_node = malloc(sizeof(instr_node));
     if (new_node == NULL) {
         // Handle memory allocation error
@@ -89,13 +93,10 @@ void add_instr(instr_node **head, char *instr) {
     }
 
     new_node->instr = instr;
-    // printf("new_node->instr: %s\n", new_node->instr);
     new_node->next = NULL;
 
     // If the list is empty, make the new node the head
     if (*head == NULL) {
-
-        // printf("head is null\n");
         *head = new_node;
     } else {
         // Traverse the list to find the last node
@@ -104,10 +105,8 @@ void add_instr(instr_node **head, char *instr) {
             current = current->next;
         }
 
-        // printf("current->instr: %s\n", current->instr);
         // Insert the new node at the end of the list
         current->next = new_node;
-        // printf("new_node->instr: %s\n", new_node->instr);
     }
 }
 
@@ -127,7 +126,7 @@ void MOVE(instr_node **head, char *id_name, char *value, char *string, int deepn
   } else if (type == T_SING_STRING) {
         type_string = "string";
   } else if (type == T_DOUBLE) {
-        type_string = "double";
+        type_string = "float";
   } else {
         type_string = "unknown";
   }
@@ -394,7 +393,8 @@ void pop_list_to_file(instr_node **head) {
   int cnt = 6;
   while (current != NULL) {
     // printf("instruction to print to file on line %d: %s", cnt, current->instr);
-    fprintf(file, "%s", current->instr);
+    // fprintf(file, "%s", current->instr);
+    printf( "%s", current->instr);
     cnt++;
     instr_node *tmp = current;
     current = current->next;
@@ -480,14 +480,14 @@ int add_new_linked_list(instr_list_dynamic *list, char *name) {
         return -1; // Error: malloc failed
     }
 
-    printf("GRINFIND NA BITE\n");
-    printf("name: %s\n", name);
+    // printf("GRINFIND NA BITE\n");
+    // printf("name: %s\n", name);
     // Allocate memory and set the name for the new head node
     new_head->name_of_llist = strdup(name); // 'strdup' allocates memory and copies the string
     new_head->instr = NULL;
     new_head->next = NULL;
 
-    printf("new_head->name_of_llist: %s\n", new_head->name_of_llist);
+    // printf("new_head->name_of_llist: %s\n", new_head->name_of_llist);
 
     // Update the list structure
     list->lists = new_lists;
@@ -504,7 +504,6 @@ instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name) {
 
     // Iterate over the array of list heads
     for (int i = 0; i < list->size; ++i) {
-        printf("i: %d\n", i);
         instr_node *current = list->lists[i];
         // Traverse the linked list
         while (current != NULL && current->name_of_llist != NULL) {
@@ -530,7 +529,6 @@ void pop_all_lists_to_file(instr_list_dynamic *list) {
         return; // Handle NULL pointer for list
     }
 
-    printf("List size: %d\n", list->size);
     for (int i = 0; i < list->size; i++) {
         instr_node *current = list->lists[i];
         // Check if the list is not empty
@@ -541,7 +539,8 @@ void pop_all_lists_to_file(instr_list_dynamic *list) {
             current = current->next;
             while (current != NULL) {
                 if (current->instr != NULL) {
-                    fprintf(file, "%s", current->instr); // Write instruction to file
+                    // fprintf(file, "%s", current->instr); // Write instruction to file
+                    printf("%s", current->instr); // Write instruction to file
                     // free(current->instr);
                 }
                 instr_node *tmp = current;
@@ -558,12 +557,9 @@ void pop_all_lists_to_file(instr_list_dynamic *list) {
 }
 
 void print_list_names(instr_list_dynamic *list) {
-    // printf("List size: ");
     if (list == NULL) {
         return; // Handle NULL pointer
     }
-
-    // printf("List size: %d\n", list->size);
 
     for (int i = 0; i < list->size; i++) {
         instr_node *current = list->lists[i];

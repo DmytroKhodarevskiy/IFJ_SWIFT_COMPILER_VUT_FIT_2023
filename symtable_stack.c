@@ -42,11 +42,9 @@ SymTable *s_peek(SymStack *stack) {
 
 void s_push(SymStack *stack, SymTable *item) {
 
-  // printf("pushing: %s\n", item->name);
 
   if (stack->top == stack->size - 1) {
     // Stack is full, resize it
-    // printf("YA SIUDA NE ZAHODIL\n");
     s_resizeStack(stack);
   }
 
@@ -87,24 +85,17 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
   table = create_SymTable();
   int i;
 
-  // printf("stack->top: %d\n", stack->top);
 
   for (i = stack->top; i >= 0; i--) {
     
-    // printf("i: %d\n", i);
-    // printf("function_naadadme:\n");
 
     table = stack->items[i];
-    // printf("function_naadadme:\n");
     
     char function_name[256];
     // char *function_name = table->name;
     strncpy(function_name, table->name, strlen(table->name) + 1);
-    // printf("table->name: %s\n", table->name);
-    // printf("function_name: %s\n", function_name);
     node = search_SymTable(table, key);
 
-    // printf("function_name: %s\n", function_name);
 
     if (node != NULL) {
       // data = node->data;
@@ -114,7 +105,6 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
     // SymTable *global = create_SymTable();
     SymTable *global;
     global = stack->items[0];
-    // printf("function_name: %s\n", function_name);
     funcnode = search_SymTable(global, function_name);
     if (funcnode == NULL) {
       fprintf(stderr, "Error: Undefined function\n");
@@ -124,22 +114,9 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
       if (funcnode != NULL) {     
           if (funcnode->data.isFunction) {
 
-    // printf("HEEEEEEREEEE?\n");
-            // printf("function_namedawdwa: %s\n", function_name);
-    // printf("HEEEEEEREEEE?\n");
-            // printf("funcnode: %s\n", funcnode->data.paramTypes.name);
-            // printf("key: %s\n", key);
-            // if (funcnode->data.paramTypes.next == NULL)
-                // printf("PIZDA\n");
-
-            // if (&funcnode->data.paramTypes == NULL)
-                // printf("PIZDA\n");
             if (funcnode->data.paramCount != 0)
               node = s_search_param_list(&funcnode->data.paramTypes, key);
 
-    // printf("HEEEEEEREEEE?\n");
-            // if (node != NULL)
-              // printf("node: %s\n", node->data.name);
             if (node != NULL)
               return node;
           }
@@ -147,6 +124,7 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
 
     }
 
+  fprintf(stderr, "Error: Undefined variable or function, symstack search failed\n");
   return NULL;
   // exitWithError("Error: Undefined variable or function\n", ERR_SEMANT_UNDF_VALUE);
 }
@@ -164,32 +142,23 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
 
     while (current != NULL) {
         if (strcmp(current->name, key) == 0) {
-            // printf("current->name: %s\n", current->name);
-            // printf("key: %s\n", key);
             parameter = current->name;
             break;
             // return current; // Name found, return the node
         }
-            // printf("key: %s\n", key);
-            // printf("current->name: %s\n", current->name);
         current = current->next;
     }
 
-  // printf("parameter: %s\n", parameter);
 
   if (parameter == NULL) 
       return NULL; // Name not found
 
-  // printf("parameter: %s\n", parameter);
 
     (*node).data = initSymData();
 
-  // printf("parameter: %s\n", parameter);
     (*node).data.dtype = current->dataType;
     (*node).data.name = parameter;
-  // printf("parameter: %s\n", parameter);
     // strncpy((*node).data.name, parameter, strlen(parameter) + 1);
-  // printf("parameter: %s\n", parameter);
 
     (*node).key = parameter;
     (*node).left = NULL;
@@ -205,45 +174,29 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
     (*node).data.paramTypes.next = NULL;
     (*node).data.returnType = TYPE_UNKNOWN;
 
-    // printf("node->data.name: %s\n", node->data.name);
-    // printf("node->data.dtype: %d\n", node->data.dtype);
-    // printf("node->data.isDefined: %d\n", node->data.isDefined);
-    // printf("node->data.isFunction: %d\n", node->data.isFunction);
-    // printf("node->data.isGlobal: %d\n", node->data.isGlobal);
-    // printf("node->data.canbeChanged: %d\n", node->data.canbeChanged);
-    // printf("node->data.paramCount: %d\n", node->data.paramCount);
-    // printf("node->data.paramTypes.next: %p\n", node->data.paramTypes.next);
-    // printf("node->data.returnType: %d\n", node->data.returnType);
-
-    // printf("node->data.name: %s\n", node->data.name);
     return node;
 }
 
 void Print_Sym_stack(SymStack *stack) {
-  // printf("[$] ");
   
   int i;
   SymTable *table;
   // AVLNode *node;
   // ListFuncParam *param;
 
-  printf("[$] ");
+  fprintf(stderr, "[$] ");
 
   for (i = 0; i <= stack->top; i++) {
     // table = *(stack->items) + i;
     table = stack->items[i];
 
 
-    printf("%s ", table->name);
-    // printf("Symbol table: %s\n", table->name);
-    // printf("--------------------------------------------------\n");
-    // printf("Name\t\tType\t\tDefined\t\tGlobal\t\tCan be changed\t\tFunction\t\tReturn type\t\tParameter count\t\tParameter types\n");
-    // printf("--------------------------------------------------\n");
+    fprintf(stderr, "%s ", table->name);
 
     // node = table->root;
     // Print_Sym_table(node);
   }
-    printf("\n");
+    fprintf(stderr, "\n");
 }
 
 SymData* s_getFirstFunctionSymData(SymStack *stack) {

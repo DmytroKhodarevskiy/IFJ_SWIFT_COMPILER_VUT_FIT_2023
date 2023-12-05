@@ -118,7 +118,7 @@ void CREATE_ID(instr_node **head, char *id_name, char *string, Frame frame) {
   add_instr(head, string);
 }
 
-// move specified value to data.op.id_name
+// move int value in data.op.int_val to data.op.id_name
 void MOVE(instr_node **head, char *id_name, char *value, char *string, Frame frame, token_type type){
   SET_FRAME(frame);
   char *type_string;

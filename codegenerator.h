@@ -41,7 +41,10 @@ typedef enum {
   GEN_IF_CHECK,
   GEN_ELSE_START,
   GEN_IF_END,
-  GEN_ELSE_IF_END
+  GEN_ELSE_IF_END,
+  GEN_PUSHFRAME,
+  GEN_CREATEFRAME,
+  GEN_POPFRAME
 } gencode;
 
 typedef struct Operand {

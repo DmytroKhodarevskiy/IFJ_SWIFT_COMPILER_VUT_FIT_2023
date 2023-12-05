@@ -567,7 +567,7 @@ void print_SymTable(SymTable* table) {
 
 void printSpaces(int count) {
     for (int i = 0; i < count; i++) {
-        printf("   ");
+       fprintf(stderr, "   ");
     }
 }
 
@@ -580,9 +580,9 @@ void print_AVLTree(AVLNode* node, int space) {
 
     print_AVLTree(node->right, space);
 
-    printf("\n");
+    fprintf(stderr, "\n");
     printSpaces(space);
-    printf("%s\n", node->key);
+    fprintf(stderr, "%s\n", node->key);
 
     print_AVLTree(node->left, space);
 }

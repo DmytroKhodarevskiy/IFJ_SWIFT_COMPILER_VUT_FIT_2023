@@ -113,7 +113,7 @@ void add_instr(instr_node **head, char *instr) {
 // define global id, id_name must be in data.op.id_name
 void CREATE_ID(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
   SET_FRAME(frame);
-  sprintf(string, "DEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
+  sprintf(string, "\n# declare a var\nDEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
   add_instr(head, string);
 }
 
@@ -133,10 +133,10 @@ void MOVE(instr_node **head, char *id_name, char *value, char *string, int deepn
 
   if (type == T_DOUBLE) {
     float val = atof(value);
-    sprintf(string,"MOVE %s@%s_%d %s@%a\n", frame_name, id_name, deepness, type_string, val);
+    sprintf(string,"# assign\nMOVE %s@%s_%d %s@%a\n", frame_name, id_name, deepness, type_string, val);
   }
   else
-    sprintf(string,"MOVE %s@%s_%d %s@%s\n", frame_name, id_name, deepness, type_string, value);
+    sprintf(string,"# assign\nMOVE %s@%s_%d %s@%s\n", frame_name, id_name, deepness, type_string, value);
   
   add_instr(head, string);
 }
@@ -151,7 +151,7 @@ void ASSIGN(instr_node **head, char *id_name, char *string, int deepness, Frame 
 // write value of data.op.id_name to stdout
 void WRITE(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
   SET_FRAME(frame);
-  sprintf(string, "WRITE %s@%s_%d\n", frame_name, id_name, deepness);
+  sprintf(string, "\n# write(...)\nWRITE %s@%s_%d\n", frame_name, id_name, deepness);
   add_instr(head, string);
 }
 
@@ -199,6 +199,10 @@ void MAIN(instr_node **head, char *string) {
   add_instr(head, string);
   string = "DEFVAR GF@%%retval_main\n";
   add_instr(head, string);
+  string = "CREATEFRAME\n";
+  add_instr(head, string);
+  string = "PUSHFRAME\n";
+  add_instr(head, string);
 }
 
 void FUNC_START(instr_node **head, char *func_name, char *string) {
@@ -212,9 +216,19 @@ void FUNC_START(instr_node **head, char *func_name, char *string) {
   add_instr(head, string);
 }
 
+void CREATEFRAME(instr_node **head, char *string) {
+  string = "CREATEFRAME\n";
+  add_instr(head, string);
+}
+
+void PUSHFRAME(instr_node **head, char *string) {
+  string = "PUSHFRAME\n";
+  add_instr(head, string);
+}
+
 void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, unsigned int func_param_count, char *string) {
   // string = "CREATEFRAME\n";
-  sprintf(string, "CREATEFRAME\n");
+  sprintf(string, "\nCREATEFRAME\n");
   add_instr(head, string);
 
   // while (func_param != NULL) {
@@ -240,7 +254,7 @@ void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, unsigned
         add_instr(head, instr);
     }
 
-    instr = create_instr_string("MOVE TF@%s int@%s\n", func_param[i].id_name, func_param[i].val);
+    instr = create_instr_string("MOVE TF@%s int@%s\n# ..., %s,\n", func_param[i].id_name, func_param[i].val, func_param[i].id_name);
     if (instr != NULL) {
         add_instr(head, instr);
     }
@@ -248,7 +262,7 @@ void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, unsigned
 
   // sprintf(string, "CALL $%s\n", func_name);
   // add_instr(head, string);
-  char *instr = create_instr_string("CALL $%s\n", func_name);
+  char *instr = create_instr_string("CALL $%s\n# %s(...)\n", func_name, func_name);
   if (instr != NULL) {
     add_instr(head, instr);
   }
@@ -259,25 +273,25 @@ void FUNC_END(instr_node **head, char* retval, char *string) {
   // add_instr(head, string);
   string = "POPFRAME\n";
   add_instr(head, string);
-  string = "RETURN\n\n";
+  string = "RETURN\n# }\n";
   add_instr(head, string);
 }
 
 //CALL ONCE IN MAIN
 void IF_START(instr_node **head, char *string, int deepness) {
-  string = "DEFVAR GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED\n";
+  string = "DEFVAR GF@%%%%res\n";
   add_instr(head, string);
 }
 
 
 // ADD INDEX + SYMTABLE NAME TO LABEL
 void IF_CHECK(instr_node **head, char *string, int deepness) {
-  string = "POPS GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED\n";
+  string = "\n# if (res) \nPOPS GF@%%%%res\n";
   add_instr(head, string);
   // string = "JUMPIFNEQ $IF_ELSE_%d GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED bool@true\n", deepness;
   // add_instr(head, string);
 
-  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_%d GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED bool@true\n", deepness);
+  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_%d GF@%%%%res bool@true\n# {\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -287,7 +301,7 @@ void IF_END(instr_node **head, char *string, int deepness) {
   // string = "JUMP $IF_END\n";
   // add_instr(head, string);
 
-  char *instr = create_instr_string("JUMP $IF_END_%d\n", deepness);
+  char *instr = create_instr_string("JUMP $IF_END_%d\n# }\n\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -297,7 +311,7 @@ void IF_END(instr_node **head, char *string, int deepness) {
 void ELSE_START(instr_node **head, char *string, int deepness) {
   // string = "LABEL $IF_ELSE\n";
   // add_instr(head, string);
-  char *instr = create_instr_string("LABEL $IF_ELSE_%d\n", deepness);
+  char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_%d\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -307,7 +321,7 @@ void ELSE_IF_END(instr_node **head, char *string, int deepness) {
   // string = "LABEL $IF_END\n";
   // add_instr(head, string);
 
-  char *instr = create_instr_string("LABEL $IF_END_%d\n", deepness);
+  char *instr = create_instr_string("LABEL $IF_END_%d\n# }\n\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -333,6 +347,15 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
     char *val;
     token_type type;
     // Operand func_param[10];
+
+    case GEN_CREATEFRAME:
+        CREATEFRAME(head, string);
+        break;
+
+    case GEN_PUSHFRAME:
+        PUSHFRAME(head, string);
+        break;
+
     case GEN_IF_START:
         IF_START(head, string, deepness);
         break;

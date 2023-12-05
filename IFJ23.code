@@ -4,6 +4,57 @@ JUMP $$main
 
 LABEL $$main
 DEFVAR GF@%%retval_main
-DEFVAR GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED
+CREATEFRAME
+PUSHFRAME
+DEFVAR GF@%%%%res
+
+# declare a var
 DEFVAR GF@a_0
+# assign
 MOVE GF@a_0 int@6
+
+# if (res) 
+POPS GF@%%%%res
+JUMPIFNEQ $IF_ELSE_0 GF@%%res bool@true
+# {
+
+# declare a var
+DEFVAR LF@OUTERIF_1
+# assign
+MOVE LF@OUTERIF_1 int@5
+
+# if (res) 
+POPS GF@%%%%res
+JUMPIFNEQ $IF_ELSE_1 GF@%%res bool@true
+# {
+
+# declare a var
+DEFVAR LF@INNERIF_2
+# assign
+MOVE LF@INNERIF_2 int@5
+JUMP $IF_END_1
+# }
+
+# else { 
+LABEL $IF_ELSE_1
+
+# declare a var
+DEFVAR LF@INNERELSE_2
+# assign
+MOVE LF@INNERELSE_2 int@5
+LABEL $IF_END_1
+# }
+
+JUMP $IF_END_0
+# }
+
+# else { 
+LABEL $IF_ELSE_0
+
+# declare a var
+DEFVAR LF@OUTERELSE_1
+# assign
+MOVE LF@OUTERELSE_1 int@5
+LABEL $IF_END_0
+# }
+

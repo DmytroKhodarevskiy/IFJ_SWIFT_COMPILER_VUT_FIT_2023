@@ -240,14 +240,16 @@ int Get_deepness_current(SymStack *stack) {
 int Get_deepness_of_var(SymStack *stack, char* id_name) {
   int i;
   SymTable *table;
-  int deepness = 0;
+  // int deepness = 0;
+  int deepness = stack->top;
 
-  for (i = 0; i <= stack->top; i++) {
+  // for (i = 0; i <= stack->top; i++) {
+  for (i = stack->top; i > 0; i--) {
     table = stack->items[i];
     if (search_SymTable(table, id_name) != NULL) {
       return deepness;
     }
-    deepness++;
+    deepness--;
   }
 
   fprintf(stderr, "Error: Variable not found in the stack for deepness...\n");

@@ -14,7 +14,7 @@ instr_list_dynamic *instr_list = NULL;
 Token current_token;
 int PHASE = 1;
 
-
+int if_while_cnt = 0;
 
 
 
@@ -110,6 +110,8 @@ void insert_include_functions_sym_table() {
 
 
 }
+
+
 void Parse(FILE *file){
 
     // double a = 22.22;
@@ -171,7 +173,7 @@ void PHASE_FIRST(FILE *file){
     FILL_TREES(file, &stack);
 
     // print_SymTable(global_symtable);
-    // printTree(global_symtable);
+    printTree(global_symtable);
 
 }
 
@@ -1419,5 +1421,14 @@ void EXP(FILE *file){
       instr_node *node = search_by_name_in_list(instr_list, Name->name);
       generate_code(&node, data, GEN_IF_CHECK, deep, UNUSED);
     }
+  }
+}
+
+void Transfer_LFvars(instr_node *node, Data data, int deepness, int frame) {
+  if (frame == GF) {
+    generate_code(&main_gen, data, GEN_MOVE, deepness, GF);
+  }
+  else {
+    generate_code(&node, data, GEN_MOVE, deepness, LF);
   }
 }

@@ -9,6 +9,7 @@ MOVE LF@%%retval nil@nil
 DEFVAR LF@asdasdasdasdasdasdasdac_1
 DEFVAR LF@c_1
 MOVE LF@c_1 int@7
+MOVE GF@d_0 float@0x1.cp+1
 POPFRAME
 RETURN
 
@@ -19,6 +20,8 @@ PUSHFRAME
 DEFVAR LF@%%retval
 MOVE LF@%%retval nil@nil
 DEFVAR LF@Freestyle_1
+DEFVAR LF@c_1
+MOVE LF@c_1 int@7
 DEFVAR LF@krony_1
 MOVE LF@krony_1 int@0
 POPFRAME
@@ -31,6 +34,6 @@ DEFVAR GF@%%retval_main
 DEFVAR GF@a_0
 MOVE GF@a_0 int@4
 DEFVAR GF@d_0
-MOVE GF@d_0 float@2.456445
+MOVE GF@d_0 float@0x1.3a6ccap+1
 DEFVAR GF@c_0
 DEFVAR GF@t_0

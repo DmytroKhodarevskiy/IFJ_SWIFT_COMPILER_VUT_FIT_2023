@@ -15,6 +15,9 @@ Token current_token;
 int PHASE = 1;
 
 void Parse(FILE *file){
+
+    // double a = 22.22;
+    // fprintf(stderr, "float: %a\n", a);
     // PROGRAM(file);
     PHASE_FIRST(file);
     PHASE = 2;
@@ -623,7 +626,10 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
 
       int deep = Get_deepness_of_var(&stack, node_data->key);
 
-      generate_code(&node, data, GEN_MOVE, deep, LF);
+      if (deep == 0)
+        generate_code(&node, data, GEN_MOVE, deep, GF);
+      else
+        generate_code(&node, data, GEN_MOVE, deep, LF);
     }
 
     DataType type = parse_expression(&stack, &current_token, &error, &file);

@@ -130,7 +130,14 @@ void MOVE(instr_node **head, char *id_name, char *value, char *string, int deepn
   } else {
         type_string = "unknown";
   }
-  sprintf(string,"MOVE %s@%s_%d %s@%s\n", frame_name, id_name, deepness, type_string, value);
+
+  if (type == T_DOUBLE) {
+    float val = atof(value);
+    sprintf(string,"MOVE %s@%s_%d %s@%a\n", frame_name, id_name, deepness, type_string, val);
+  }
+  else
+    sprintf(string,"MOVE %s@%s_%d %s@%s\n", frame_name, id_name, deepness, type_string, value);
+  
   add_instr(head, string);
 }
 

@@ -14,6 +14,7 @@ var c : String
 func sum () -> Int {
    var asdasdasdasdasdasdasdac : Int
    var c = 7
+   d = 3.5
    // var a : Int
    // var b : Int
    // var c : Int
@@ -25,6 +26,7 @@ var t : Int
 
 func Grinfind () -> String? {
    var Freestyle : String
+   var c = 7
    //Freestyle = "Ye ya mmm ee vipil proteinchik, e e mi poshli smotret kinchik"
    var krony : Int
    krony = 0

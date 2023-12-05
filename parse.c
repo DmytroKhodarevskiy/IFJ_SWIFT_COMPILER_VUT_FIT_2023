@@ -321,6 +321,9 @@ void STMT(FILE *file){
 
             // s_push(&stack, *local_symtable);            
             s_push(&stack, local_symtable);
+
+            // int deepness = Get_deepness_current(&stack);
+
             STMT_LIST(file);
 
             current_token = get_token(file); // get }
@@ -350,6 +353,8 @@ void STMT(FILE *file){
             // check_symtable = s_peek(&stack);
           int deep = Get_deepness_current(&stack);
           // if (!strcmp(check_symtable->name, "global")) {
+          fprintf(stderr, "StACKTOP: %d\n", stack.top);
+
           if (Name == NULL) {
             fprintf(stderr, "Name is NULL\n");
             // data.op.val = "if";
@@ -414,11 +419,11 @@ void STMT(FILE *file){
           // if (!strcmp(check_symtable->name, "global")) {
           if (Name == NULL) {
             // data.op.val = "if";
-            generate_code(&main_gen, data, GEN_ELSE_IF_END, 0, UNUSED);
+            generate_code(&main_gen, data, GEN_ELSE_IF_END, deep, UNUSED);
           }
           else {
             instr_node *node = search_by_name_in_list(instr_list, Name->name);
-            generate_code(&node, data, GEN_ELSE_IF_END, 0, UNUSED);
+            generate_code(&node, data, GEN_ELSE_IF_END, deep, UNUSED);
           }
 
       }
@@ -1102,22 +1107,34 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
     Data data;
 
     // if (!strcmp(check_symtable->name, "global")) {
-    if (Name == NULL)  {
+    if (Name == NULL && stack.top == 0)  {
       data.op.val = current_token.string_value->str;
       data.op.id_name = node_data.name;
       data.op.type = current_token.token_type;
       generate_code(&main_gen, data, GEN_MOVE, 0, GF);
     }
     else {
-      data.op.val = current_token.string_value->str;
-      data.op.id_name = node_data.name;
-      data.op.type = current_token.token_type;
-      instr_node *node = search_by_name_in_list(instr_list, Name->name);
-      // int deep = Get_deepness_of_var(&stack, node_data.name);
-      int deep = Get_deepness_current(&stack);
 
-      generate_code(&node, data, GEN_MOVE, deep, LF);
+      if (Name == NULL && stack.top != 0) {
+        int deepness = Get_deepness_current(&stack);
+        data.op.val = current_token.string_value->str;
+        data.op.id_name = node_data.name;
+        data.op.type = current_token.token_type;
+        generate_code(&main_gen, data, GEN_MOVE, deepness, LF);
+      }
+      else {
+
+        data.op.val = current_token.string_value->str;
+        data.op.id_name = node_data.name;
+        data.op.type = current_token.token_type;
+        instr_node *node = search_by_name_in_list(instr_list, Name->name);
+        // int deep = Get_deepness_of_var(&stack, node_data.name);
+        int deep = Get_deepness_current(&stack);
+
+        generate_code(&node, data, GEN_MOVE, deep, LF);
+      }
     }
+
     type = parse_expression(&stack, &current_token, &error, &file);
     if (type == TYPE_UNKNOWN){
       exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
@@ -1275,9 +1292,9 @@ void EXP(FILE *file){
   // SymTable *check_symtable = create_SymTable();
   // check_symtable = s_peek(&stack);
   SymData *Name = s_getFirstFunctionSymData(&stack);
-
+  int deep = Get_deepness_current(&stack);
   // if(!strcmp(check_symtable->name, "global")) {
-  if(Name == NULL) {
+  if(Name == NULL && stack.top == 0) {
     Data data;
     // data.op.val = current_token.string_value->str;
     // data.op.type = current_token.token_type;
@@ -1286,9 +1303,18 @@ void EXP(FILE *file){
 
   else {
 
+    if (Name == NULL && stack.top != 0) {
+      Data data;
+      // data.op.val = current_token.string_value->str;
+      // data.op.type = current_token.token_type;
+      generate_code(&main_gen, data, GEN_IF_CHECK, deep, LF);
+    }
+    else {
+      Data data;
+
     // instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
-    instr_node *node = search_by_name_in_list(instr_list, Name->name);
-    Data data;
-    generate_code(&node, data, GEN_IF_CHECK, 0, UNUSED);
+      instr_node *node = search_by_name_in_list(instr_list, Name->name);
+      generate_code(&node, data, GEN_IF_CHECK, deep, UNUSED);
+    }
   }
 }

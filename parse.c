@@ -14,6 +14,102 @@ instr_list_dynamic *instr_list = NULL;
 Token current_token;
 int PHASE = 1;
 
+
+
+
+
+
+void insert_include_functions_sym_table() {
+
+
+  // Int2Double
+  ListFuncParam intParam;
+  intParam.name = "term";
+  intParam.prefix = PREFIX_UNDERSCORE;
+  intParam.prefixName = NULL;
+  intParam.dataType = TYPE_INT;
+  intParam.next = NULL;
+  insert_FunctionSymTable(global_symtable, " Int2Double", TYPE_DOUBLE, &intParam, 1);
+  
+   // Double2Int 
+   ListFuncParam doubleParam;
+   doubleParam.name = "term";
+   doubleParam.prefix = PREFIX_UNDERSCORE;
+   doubleParam.prefixName = NULL;
+   doubleParam.dataType = TYPE_DOUBLE;
+   doubleParam.next = NULL;
+   insert_FunctionSymTable(global_symtable, "Double2Int", TYPE_INT, &doubleParam, 1);
+
+   // length
+   ListFuncParam stringParam;
+   stringParam.name = "s";
+   stringParam.prefix = PREFIX_UNDERSCORE;
+   stringParam.prefixName = NULL;
+   stringParam.dataType = TYPE_STRING;
+   stringParam.next = NULL;
+   insert_FunctionSymTable(global_symtable,"length", TYPE_INT, &stringParam, 1);
+
+
+   // ord 
+   ListFuncParam stringParamOrd;
+   stringParamOrd.name = "c";
+   stringParamOrd.prefix = PREFIX_UNDERSCORE;
+   stringParamOrd.prefixName = NULL;
+   stringParamOrd.dataType = TYPE_STRING;
+   stringParamOrd.next = NULL;
+   insert_FunctionSymTable(global_symtable, "ord", TYPE_INT , &stringParamOrd, 1);
+
+   // chr
+   ListFuncParam intParamChr;
+   intParamChr.name = "i";
+   intParamChr.prefix = PREFIX_UNDERSCORE;
+   intParamChr.prefixName = NULL;
+   intParamChr.dataType = TYPE_INT;
+   intParamChr.next = NULL;
+
+   insert_FunctionSymTable(global_symtable, "chr", TYPE_STRING, &intParamChr, 1);
+
+
+   // ReadInt 
+    ListFuncParam intParamReadInt;
+    intParamReadInt.name = "Int";
+    intParamReadInt.prefix = PREFIX_UNDERSCORE;
+    intParamReadInt.prefixName = NULL;
+    intParamReadInt.dataType = TYPE_INT;
+    intParamReadInt.next = NULL;
+    insert_FunctionSymTable(global_symtable, "readInt", TYPE_INT_NULLABLE, &intParamReadInt, 1);
+
+  // ReadDouble
+    ListFuncParam doubleParamReadDouble;
+    doubleParamReadDouble.name = "Double";
+    doubleParamReadDouble.prefix = PREFIX_UNDERSCORE;
+    doubleParamReadDouble.prefixName = NULL;
+    doubleParamReadDouble.dataType = TYPE_DOUBLE;
+    doubleParamReadDouble.next = NULL;
+    insert_FunctionSymTable(global_symtable, "readDouble", TYPE_DOUBLE_NULLABLE, &doubleParamReadDouble, 1);
+
+  
+  // ReadString
+    ListFuncParam stringParamReadString;
+    stringParamReadString.name = "String";
+    stringParamReadString.prefix = PREFIX_UNDERSCORE;
+    stringParamReadString.prefixName = NULL;
+    stringParamReadString.dataType = TYPE_STRING;
+    stringParamReadString.next = NULL;
+    insert_FunctionSymTable(global_symtable, "readString", TYPE_STRING_NULLABLE, &stringParamReadString, 1);
+
+  //substr addParamToList
+  ListFuncParam* paramaterListSubStr = NULL;
+  paramaterListSubStr = addParamToList(paramaterListSubStr, "s", TYPE_STRING, PREFIX_UNDERSCORE, NULL);
+
+  paramaterListSubStr = addParamToList(paramaterListSubStr, "i", TYPE_INT, PREFIX_UNDERSCORE, NULL);
+
+  paramaterListSubStr = addParamToList(paramaterListSubStr, "j", TYPE_INT , PREFIX_UNDERSCORE, NULL);
+
+  insert_FunctionSymTable(global_symtable, "substr", TYPE_STRING, paramaterListSubStr, 3);
+
+
+}
 void Parse(FILE *file){
     // PROGRAM(file);
     PHASE_FIRST(file);
@@ -21,7 +117,9 @@ void Parse(FILE *file){
     linenum = 0;
     rewind(file);
     fprintf(stderr, "FIRST PHASE DONE\n");
-
+    fprintf(stderr, "-------------------------------\n");
+    print_SymTable(global_symtable);
+    fprintf(stderr, "------------------------------------------------------------------------------=---\n");
 
     // print_SymTable(global_symtable);
     // print_SymTable(&(stack.items[stack.top]));
@@ -116,11 +214,14 @@ void FILL_TREES(FILE *file, SymStack *stack){
     current_token = get_token(file); // get first token
 
     SymTable current_symtable = *(stack->items[stack->top]);
-
+    insert_include_functions_sym_table();
 
     while (current_token.token_type != T_EOF) {
 
       // char *str = current_token.string_value->str;
+      
+
+
 
       if ((current_token.token_type == T_KEYWORD && (!strcmp(current_token.string_value->str, "func") ||
           !strcmp(current_token.string_value->str, "return"))) || 
@@ -563,7 +664,7 @@ void STMT(FILE *file){
 }
 
 void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
-  
+
   char *id_name = current_token.string_value->str;
   Token check_token = peekNextToken(file); // peek = or (
   // peekNextToken(file); // peek = or (
@@ -647,7 +748,9 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
   // TODO: check if function is declared
   // else if (current_token.token_type == T_LPAR) {
   else if (check_token.token_type == T_LPAR) {
+    
     if (!strcmp(id_name, "write")) {
+      
       current_token = get_token(file); // get (
       WRITE_CALLS(file);
       return;
@@ -709,7 +812,7 @@ void ARG_WRITE_LIST(FILE *file){ //current token is (
       current_token.token_type == T_EXPONENT_INT ||
       current_token.token_type == T_EXPONENT_FLOAT ||
       current_token.token_type == T_TYPE_ID)) return;
-
+  
   ARG_WRITE(file);
 
   current_token = peekNextToken(file);

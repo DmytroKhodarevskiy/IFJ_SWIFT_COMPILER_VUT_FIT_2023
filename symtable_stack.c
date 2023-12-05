@@ -107,7 +107,7 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
     global = stack->items[0];
     funcnode = search_SymTable(global, function_name);
     if (funcnode == NULL) {
-      fprintf(stderr, "Error: Undefined function\n");
+ 
     }
 
 
@@ -124,7 +124,6 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
 
     }
 
-  fprintf(stderr, "Error: Undefined variable or function, symstack search failed\n");
   return NULL;
   // exitWithError("Error: Undefined variable or function\n", ERR_SEMANT_UNDF_VALUE);
 }

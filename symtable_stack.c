@@ -272,3 +272,32 @@ SymData* s_getFirstFunctionSymData(SymStack *stack) {
     return NULL;
 }
 
+int Get_deepness_current(SymStack *stack) {
+  int i;
+  SymTable *table;
+  int deepness = -1;
+
+  for (i = 0; i <= stack->top; i++) {
+    table = stack->items[i];
+    deepness++;
+  }
+
+  return deepness;
+}
+
+int Get_deepness_of_var(SymStack *stack, char* id_name) {
+  int i;
+  SymTable *table;
+  int deepness = 0;
+
+  for (i = 0; i <= stack->top; i++) {
+    table = stack->items[i];
+    if (search_SymTable(table, id_name) != NULL) {
+      return deepness;
+    }
+    deepness++;
+  }
+
+  fprintf(stderr, "Error: Variable not found in the stack for deepness...\n");
+  return -1;
+}

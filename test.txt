@@ -1,7 +1,7 @@
 var a : Int = 4
 var d = 2.456445
 var c : String
-c = "Hello world"
+c = "Hello_world"
 
 // c = 2
 // 273473#283838
@@ -11,15 +11,15 @@ c = "Hello world"
 //var ddc : Int
 //var asdasdasdasdasdasdasdac : Int
 //
-//func sum () -> Int {
-//    var asdasdasdasdasdasdasdac : Int
-//    var c : Int
-//    // var a : Int
-//    // var b : Int
-//    // var c : Int
-//    // var c : Int
-//    return 5
-//}
+func sum () -> Int {
+   var asdasdasdasdasdasdasdac : Int
+   var c : Int
+   // var a : Int
+   // var b : Int
+   // var c : Int
+   // var c : Int
+   return 5
+}
 //
 //func Grinfind () -> String? {
 //    var Freestyle : String

@@ -44,6 +44,10 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key);
 // void Print_Sym_stack(SymStack stack);
 void Print_Sym_stack(SymStack *stack);
 SymData* s_getFirstFunctionSymData(SymStack *stack);
+// int Get_Deepness(SymStack *stack);
+int Get_deepness_current(SymStack *stack);
+int Get_deepness_of_var(SymStack *stack, char* id_name) ;
+
 
 
 

@@ -79,7 +79,8 @@ void pop_list_to_file(instr_node **head);
 * Generates code based on the given parameters.
 */
 // int generate_code(instr_node **head, Data data, gencode gencode);
-int generate_code(instr_node **head, Data data, gencode gencode, Frame frame);
+// int generate_code(instr_node **head, Data data, gencode gencode, Frame frame);
+int generate_code(instr_node **head, Data data, gencode gencode, int deepness, Frame frame);
 
 /*
 * Initializes the data structure.

@@ -2,11 +2,22 @@
 .IFJcode23
 JUMP $$main
 
+LABEL $sum
+PUSHFRAME
+DEFVAR LF@%%retval
+MOVE LF@%%retval nil@nil
+DEFVAR LF@asdasdasdasdasdasdasdac_1
+DEFVAR LF@c_1
+POPFRAME
+RETURN
+
+
+
 LABEL $$main
 DEFVAR GF@%%retval_main
-DEFVAR GF@a
-MOVE GF@a int@4
-DEFVAR GF@d
-MOVE GF@d double@2.456445
-DEFVAR GF@c
-MOVE GF@c string@"Hello world"
+DEFVAR GF@a_0
+MOVE GF@a_0 int@4
+DEFVAR GF@d_0
+MOVE GF@d_0 double@2.456445
+DEFVAR GF@c_0
+MOVE GF@c_0 string@"Hello_world"

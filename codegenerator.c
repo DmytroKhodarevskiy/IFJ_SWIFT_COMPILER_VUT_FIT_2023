@@ -263,10 +263,58 @@ void FUNC_END(instr_node **head, char* retval, char *string) {
   add_instr(head, string);
 }
 
+//CALL ONCE IN MAIN
+void IF_START(instr_node **head, char *string, int deepness) {
+  string = "DEFVAR GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED\n";
+  add_instr(head, string);
+}
+
+
+// ADD INDEX + SYMTABLE NAME TO LABEL
+void IF_CHECK(instr_node **head, char *string, int deepness) {
+  string = "POPS GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED\n";
+  add_instr(head, string);
+  // string = "JUMPIFNEQ $IF_ELSE_%d GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED bool@true\n", deepness;
+  // add_instr(head, string);
+
+  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_%d GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED bool@true\n", deepness);
+  if (instr != NULL) {
+      add_instr(head, instr);
+  }
+}
+
+void IF_END(instr_node **head, char *string, int deepness) {
+  // string = "JUMP $IF_END\n";
+  // add_instr(head, string);
+
+  char *instr = create_instr_string("JUMP $IF_END_%d\n", deepness);
+  if (instr != NULL) {
+      add_instr(head, instr);
+  }
+}
+
+// ADD INDEX + SYMTABLE NAME TO LABEL
+void ELSE_START(instr_node **head, char *string, int deepness) {
+  // string = "LABEL $IF_ELSE\n";
+  // add_instr(head, string);
+  char *instr = create_instr_string("LABEL $IF_ELSE_%d\n", deepness);
+  if (instr != NULL) {
+      add_instr(head, instr);
+  }
+}
+
+void ELSE_IF_END(instr_node **head, char *string, int deepness) {
+  // string = "LABEL $IF_END\n";
+  // add_instr(head, string);
+
+  char *instr = create_instr_string("LABEL $IF_END_%d\n", deepness);
+  if (instr != NULL) {
+      add_instr(head, instr);
+  }
+}
+
 int generate_code(instr_node **head, Data data, gencode gencode, int deepness, Frame frame) {
   
-  // GENERATE ALL SHIT HERE :)
-
   char *string = malloc(MAX_LINE_LENGTH * sizeof(char)); 
   if (string == NULL) {
       // Handle memory allocation error
@@ -285,6 +333,25 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
     char *val;
     token_type type;
     // Operand func_param[10];
+    case GEN_IF_START:
+        IF_START(head, string, deepness);
+        break;
+
+    case GEN_IF_CHECK:
+        IF_CHECK(head, string, deepness);
+        break;
+
+    case GEN_IF_END:
+        IF_END(head, string, deepness);
+        break;
+
+    case GEN_ELSE_START:
+        ELSE_START(head, string, deepness);
+        break;
+
+    case GEN_ELSE_IF_END:
+        ELSE_IF_END(head, string, deepness);
+        break;
 
     // define data.op.id_name to global
     case GEN_CREATE_ID:

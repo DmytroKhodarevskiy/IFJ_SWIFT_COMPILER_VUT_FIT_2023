@@ -1,7 +1,29 @@
-var a : Int = 4
-var d = 2.456445
-var c : String
+var a : Int
+// var d = 2.456445
+// var c : String
 //c = "Hello_world"
+
+if (a==a) {
+    var OUTERIF = 5
+    // var c : Int? = nil
+
+    if (a==a) {
+        var INNERIF = 5
+        // var c : Int? = nil
+        // return a // 5 - 2 = 3
+    }
+    else {
+        var INNERELSE = 5
+        // var c : Int? = nil
+        // return a // 5 - 2 = 3
+    }
+    // return a // 5 - 2 = 3
+}
+else {
+    var OUTERELSE = 5
+    // var c : Int? = nil
+    // return a // 5 - 2 = 3
+}
 
 // c = 2
 // 273473#283838
@@ -11,31 +33,32 @@ var c : String
 //var ddc : Int
 //var asdasdasdasdasdasdasdac : Int
 //
-func sum () -> Int {
-   var asdasdasdasdasdasdasdac : Int
-   var c = 7
-   d = 3.5
-   // var a : Int
-   // var b : Int
-   // var c : Int
-   // var c : Int
-   return 5
-}
+// func sum () -> Int {
+//    var asdasdasdasdasdasdasdac : Int
+//    var c = 7
+//    d = 3.5
 
-var t : Int
+//    // var a : Int
+//    // var b : Int
+//    // var c : Int
+//    // var c : Int
+//    return 5
+// }
 
-func Grinfind () -> String? {
-   var Freestyle : String
-   var c = 7
+// var t : Int
+
+// func Grinfind () -> String? {
+//    var Freestyle : String
+//    var c = 7
    //Freestyle = "Ye ya mmm ee vipil proteinchik, e e mi poshli smotret kinchik"
-   var krony : Int
-   krony = 0
+//    var krony : Int
+//    krony = 0
    // var a : Int
    // var b : Int
    // var c : Int
    // var c : Int
-   return Freestyle
-}
+//    return Freestyle
+// }
 
 
 

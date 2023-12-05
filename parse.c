@@ -573,7 +573,7 @@ void STMT(FILE *file){
               s_pop(&stack);
               WasReturn = false;
 
-              // data.op1.id_name
+              // data.op.id_name
 
               // printf("HELLO\n");
               generate_code(&node, data, GEN_FUNC_END, UNUSED);
@@ -622,6 +622,7 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
     // printf("id_name: %s\n", id_name);
     // printTree(stack.items[0]);
     AVLNode *node_data = s_search_symtack(&stack, id_name);
+
     // printf("HERE?\n");
     if (node_data == NULL) {
       //check
@@ -648,6 +649,31 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
     // printf("HERE?\n");
     current_token = get_token(file); // get exp
     // printf("EXPRESSION STARTS WITH: %s\n", current_token.string_value->str);
+
+    SymTable *check_symtable = create_SymTable();
+    check_symtable = s_peek(&stack);
+    // print_SymTable(global_symtable);
+    Print_Sym_stack(&stack);
+    printf("FUNCTION NAME: %s\n", check_symtable->name);
+
+    Data data;
+    if (!strcmp(check_symtable->name, "global")) {
+      data.op.val = current_token.string_value->str;
+      data.op.id_name = node_data->key;
+      data.op.type = current_token.token_type;
+      printf("variable name - %s\n",node_data->key);
+      generate_code(&main_gen, data, GEN_MOVE, GF);
+    }
+    else {
+      // printf("check_symtable->name: %s\n", check_symtable->name);
+      data.op.val = current_token.string_value->str;
+      data.op.id_name = node_data->key;
+      data.op.type = current_token.token_type;
+      instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
+      printf("node name: %s\n", node->name_of_llist);
+      generate_code(&node, data, GEN_MOVE, LF);
+    }
+
     DataType type = parse_expression(&stack, &current_token, &error, &file);
     if (type != TYPE_NIL) {
       node_data->data.isNil = false;
@@ -1008,12 +1034,12 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
 
   Data data;
   if (!strcmp(check_symtable->name, "global")) {
-    data.op1.id_name = node_data.name;
+    data.op.id_name = node_data.name;
     generate_code(&main_gen, data, GEN_CREATE_ID, GF);
   }
   else {
     // printf("check_symtable->name: %s\n", check_symtable->name);
-    data.op1.id_name = node_data.name;
+    data.op.id_name = node_data.name;
     instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
     printf("node name: %s\n", node->name_of_llist);
     generate_code(&node, data, GEN_CREATE_ID, LF);
@@ -1034,14 +1060,30 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
       //check
       node_data.isNil = true;
     }
-    MB_ASSIGN_EXPR(file, type, &node_data.isNil);
+    MB_ASSIGN_EXPR(file, type, &node_data);
     node_data.dtype = type;
   }
-
   else if (current_token.token_type == T_ASSIGN){
     current_token = get_token(file); // get exp
     int error = 0;
     // printf("token: %s\n", current_token.string_value->str);
+    Data data;
+    if (!strcmp(check_symtable->name, "global")) {
+      data.op.val = current_token.string_value->str;
+      data.op.id_name = node_data.name;
+      data.op.type = current_token.token_type;
+      printf("variable name - %s\n",node_data.name);
+      generate_code(&main_gen, data, GEN_MOVE, GF);
+    }
+    else {
+      // printf("check_symtable->name: %s\n", check_symtable->name);
+      data.op.val = current_token.string_value->str;
+      data.op.id_name = node_data.name;
+      data.op.type = current_token.token_type;
+      instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
+      printf("node name: %s\n", node->name_of_llist);
+      generate_code(&node, data, GEN_MOVE, LF);
+    }
     type = parse_expression(&stack, &current_token, &error, &file);
     if (type == TYPE_UNKNOWN){
       exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
@@ -1069,7 +1111,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
 
 }
 
-void MB_ASSIGN_EXPR(FILE *file, DataType type, bool *isNIL){ //current token is keyword
+void MB_ASSIGN_EXPR(FILE *file, DataType type, SymData *node_data){ //current token is keyword
   current_token = peekNextToken(file); // check if next token is =
 
   // printf("token: %s\n", current_token.string_value->str);
@@ -1078,7 +1120,29 @@ void MB_ASSIGN_EXPR(FILE *file, DataType type, bool *isNIL){ //current token is 
     current_token = get_token(file); // get =
     current_token = get_token(file); // get exp
 
-    // printf("EHEHEHEHEHEEHEHEHEH\n");
+    SymTable *check_symtable = create_SymTable();
+    check_symtable = s_peek(&stack);
+    // print_SymTable(global_symtable);
+    Print_Sym_stack(&stack);
+    printf("FUNCTION NAME: %s\n", check_symtable->name);
+
+    Data data;
+    if (!strcmp(check_symtable->name, "global")) {
+      data.op.val = current_token.string_value->str;
+      data.op.id_name = node_data->name;
+      data.op.type = current_token.token_type;
+      printf("variable name - %s\n",node_data->name);
+      generate_code(&main_gen, data, GEN_MOVE, GF);
+    }
+    else {
+      // printf("check_symtable->name: %s\n", check_symtable->name);
+      data.op.val = current_token.string_value->str;
+      data.op.id_name = node_data->name;
+      data.op.type = current_token.token_type;
+      instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
+      printf("node name: %s\n", node->name_of_llist);
+      generate_code(&node, data, GEN_MOVE, LF);
+    }
 
     int error = 0;
     DataType exp_type = parse_expression(&stack, &current_token, &error, &file);
@@ -1090,7 +1154,7 @@ void MB_ASSIGN_EXPR(FILE *file, DataType type, bool *isNIL){ //current token is 
     
     
     if (exp_type == TYPE_NIL) {
-      *isNIL = true;
+      node_data->isNil = true;
     }
 
     // if (type != typee){

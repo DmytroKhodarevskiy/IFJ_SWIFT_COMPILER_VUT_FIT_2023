@@ -111,28 +111,38 @@ void add_instr(instr_node **head, char *instr) {
     }
 }
 
-// define global id, id_name must be in data.op1.id_name
+// define global id, id_name must be in data.op.id_name
 void CREATE_ID(instr_node **head, char *id_name, char *string, Frame frame) {
   SET_FRAME(frame);
   sprintf(string, "DEFVAR %s@%s\n", frame_name, id_name);
   add_instr(head, string);
 }
 
-// move int value in data.op1.int_val to data.op1.id_name
-void MOVE_INT(instr_node **head, char *id_name, int value, char *string, Frame frame) {
+// move int value in data.op.int_val to data.op.id_name
+void MOVE(instr_node **head, char *id_name, char *value, char *string, Frame frame, token_type type){
   SET_FRAME(frame);
-  sprintf(string,"MOVE %s@%s int@%d\n", frame_name, id_name, value);
+  char *type_string;
+  if (type == T_INT) {
+        type_string = "int";
+  } else if (type == T_SING_STRING) {
+        type_string = "string";
+  } else if (type == T_DOUBLE) {
+        type_string = "double";
+  } else {
+        type_string = "unknown";
+  }
+  sprintf(string,"MOVE %s@%s %s@%s\n", frame_name, id_name, type_string, value);
   add_instr(head, string);
 }
 
-// assign value from the stack to data.op1.id_name
+// assign value from the stack to data.op.id_name
 void ASSIGN(instr_node **head, char *id_name, char *string, Frame frame) {
   SET_FRAME(frame);
   sprintf(string, "POPS %s@%s\n", frame_name, id_name);
   add_instr(head, string);
 }
 
-// write value of data.op1.id_name to stdout
+// write value of data.op.id_name to stdout
 void WRITE(instr_node **head, char *id_name, char *string, Frame frame) {
   SET_FRAME(frame);
   sprintf(string, "WRITE %s@%s\n", frame_name, id_name);
@@ -145,7 +155,7 @@ void BEGIN_EXPR(instr_node **head, char *string) {
   add_instr(head, string);
 }
 
-// push value of data.op1.id_name to stack
+// push value of data.op.id_name to stack
 void PUSH(instr_node **head, char *id_name, char *string, Frame frame) {
   SET_FRAME(frame);
   sprintf(string, "PUSHS %s@%s\n", frame_name, id_name);
@@ -224,7 +234,7 @@ void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, unsigned
         add_instr(head, instr);
     }
 
-    instr = create_instr_string("MOVE TF@%s int@%d\n", func_param[i].id_name, func_param[i].int_val);
+    instr = create_instr_string("MOVE TF@%s int@%s\n", func_param[i].id_name, func_param[i].val);
     if (instr != NULL) {
         add_instr(head, instr);
     }
@@ -266,34 +276,36 @@ int generate_code(instr_node **head, Data data, gencode gencode, Frame frame) {
     char *retval;
     char *id_name_move;
     char *func_name;
-    int int_val;
+    char *val;
+    token_type type;
     // Operand func_param[10];
 
-    // define data.op1.id_name to global
+    // define data.op.id_name to global
     case GEN_CREATE_ID:
         // char *id_name_create;
-        id_name_create = data.op1.id_name;
+        id_name_create = data.op.id_name;
         CREATE_ID(head, id_name_create, string, frame);
         break;
     
-    // moves int value in data.op1.int_val to data.op1.id_name
-    case GEN_MOVE_INT:
-        int_val = data.op1.int_val;
-        id_name_move = data.op1.id_name;
-        MOVE_INT(head, id_name_move, int_val, string, frame);
+    // moves int value in data.op.int_val to data.op.id_name
+    case GEN_MOVE:
+        val = data.op.val;
+        id_name_move = data.op.id_name;
+        type = data.op.type;
+        MOVE(head, id_name_move, val, string, frame, type);
         break;
     
-    // pop value from expression to data.op1.id_name
+    // pop value from expression to data.op.id_name
     case GEN_ASSIGN:
         // char *id_name_assign;
-        id_name_assign = data.op1.id_name;
+        id_name_assign = data.op.id_name;
         ASSIGN(head, id_name_assign, string, frame);
         break;
     
-    // write value of data.op1.id_name
+    // write value of data.op.id_name
     case GEN_WRITE:
         // char *id_name_write;
-        id_name_write = data.op1.id_name;
+        id_name_write = data.op.id_name;
         WRITE(head, id_name_write, string, frame);
         break;
     
@@ -302,10 +314,10 @@ int generate_code(instr_node **head, Data data, gencode gencode, Frame frame) {
         BEGIN_EXPR(head, string);
         break;
     
-    // push value of data.op1.id_name to stack
+    // push value of data.op.id_name to stack
     case GEN_PUSH:
         // char *id_name_push;
-        id_name_push = data.op1.id_name;
+        id_name_push = data.op.id_name;
         PUSH(head, id_name_push, string, frame);
         break;
     
@@ -344,7 +356,7 @@ int generate_code(instr_node **head, Data data, gencode gencode, Frame frame) {
     // generate function end
     case GEN_FUNC_END:
         // char *retval;
-        retval = data.op1.id_name;
+        retval = data.op.id_name;
         FUNC_END(head, retval, string);
         break;
 
@@ -409,7 +421,7 @@ Data init_data() {
   Data data;
   data.func_name = NULL;
   // data.func_param = NULL;
-  data.op1.id_name = NULL;
+  data.op.id_name = NULL;
   data.op2.id_name = NULL;
   return data;
 }

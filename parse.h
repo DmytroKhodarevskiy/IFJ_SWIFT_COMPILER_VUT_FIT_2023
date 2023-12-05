@@ -24,7 +24,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable);
 void TYPE(FILE *file, DataType *type);
 // void MB_ASSIGN_EXPR(FILE *file);
 // void MB_ASSIGN_EXPR(FILE *file, DataType type);
-void MB_ASSIGN_EXPR(FILE *file, DataType type, bool *isNIL);
+void MB_ASSIGN_EXPR(FILE *file, DataType type, SymData *node_data);
 void WHILE_EXP(FILE *file);
 void PARAM_LIST(FILE *file);
 void PARAM(FILE *file);

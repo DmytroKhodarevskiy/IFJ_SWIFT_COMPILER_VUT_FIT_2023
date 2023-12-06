@@ -1,0 +1,15 @@
+LABEL $%ord
+PUSHFRAME
+DEFVAR LF@%retval
+DEFVAR LF@%strlen
+STRLEN LF@%strlen LF@param
+DEFVAR LF@%bool
+EQ LF@%bool LF@%strlen int@0
+JUMPIFEQ $%eq_to_zero LF@%bool bool@true
+STR2INT LF@%retval LF@param int@0
+JUMP $ord_end
+LABEL $%eq_to_zero
+MOVE LF@%retval int@0
+LABEL $%ord_end
+POPFRAME
+RETURN

@@ -2,11 +2,118 @@
 .IFJcode23
 JUMP $$main
 
+# Write function
+LABEL $%write
+WRITE LF@%param
+RETURN
+# end of write ---------
+
+# Int2Double function
+LABEL $%int2float
+PUSHFRAME
+DEFVAR LF@%retval
+INT2FLOAT LF@%retval LF@%param
+POPFRAME
+RETURN
+# end of int2float ---------
+
+# Double2Int function
+LABEL $%double2int
+PUSHFRAME
+DEFVAR LF@%retval
+FLOAT2INT LF@%retval LF@%param
+POPFRAME
+RETURN
+# end of double2int ---------
+
+# Length function
+LABEL $%length
+PUSHFRAME
+DEFVAR LF@%retval
+STRLEN LF@%retval LF@%param
+POPFRAME
+RETURN
+# end of length ---------
+
+# Ord function
+LABEL $%ord
+PUSHFRAME
+DEFVAR LF@%retval
+DEFVAR LF@%strlen
+STRLEN LF@%strlen LF@%param
+DEFVAR LF@%bool
+EQ LF@%bool LF@%strlen int@0
+JUMPIFEQ $%eq_to_zero LF@%bool bool@true
+STR2INT LF@%retval LF%param int@0
+JUMP $%ord_end
+LABEL $%eq_to_zero
+MOVE LF@%retval int@0
+LABEL $%ord_end
+POPFRAME
+RETURN
+# end of ord ---------
+
+
 LABEL $$main
 DEFVAR GF@%%retval_main
-DEFVAR GF@a
-MOVE GF@a int@4
-DEFVAR GF@d
-MOVE GF@d double@2.456445
-DEFVAR GF@c
-MOVE GF@c string@"Hello world"
+DEFVAR GF?temp_1
+DEFVAR GF?temp_2
+CREATEFRAME
+PUSHFRAME
+DEFVAR GF@%%%%res
+
+# declare a var
+DEFVAR GF@a_0
+# assign
+MOVE GF@a_0 int@6
+PUSHS int@6
+PUSHS unknown@À„eºU
+PUSHS unknown@À„eºU
+EQS
+
+# if (res) 
+POPS GF@%%%%res
+JUMPIFNEQ $IF_ELSE_d0 GF@%%res bool@true
+# {
+PUSHS unknown@À„eºU
+PUSHS unknown@À„eºU
+EQS
+
+# if (res) 
+POPS GF@%%%%res
+JUMPIFNEQ $IF_ELSE_d1 GF@%%res bool@true
+# {
+JUMP $IF_END_d1
+# }
+
+# else { 
+LABEL $IF_ELSE_d1
+LABEL $IF_END_d1
+# }
+
+PUSHS unknown@À„eºU
+PUSHS unknown@À„eºU
+EQS
+
+# if (res) 
+POPS GF@%%%%res
+JUMPIFNEQ $IF_ELSE_d1 GF@%%res bool@true
+# {
+JUMP $IF_END_d1
+# }
+
+# else { 
+LABEL $IF_ELSE_d1
+LABEL $IF_END_d1
+# }
+
+JUMP $IF_END_d0
+# }
+
+# else { 
+LABEL $IF_ELSE_d0
+LABEL $IF_END_d0
+# }
+
+# EXIT 
+EXIT int@0

@@ -49,8 +49,8 @@ int main(int argc, char* argv[]){
     //     token = init_token();
     //     token = get_token(file);
 
-    //     printf("TOKEN TYPE: %d\n", token.token_type);
-    //     printf("TOKEN STRING: %s\n", token.string_value->str);
+    //     fprintf(stderr, "TOKEN TYPE: %d\n", token.token_type);
+    //     fprintf(stderr, "TOKEN STRING: %s\n", token.string_value->str);
 
     //     if (token.token_type == T_ERR) {
     //         exitWithError("Lexical analysis failed\n", ERR_LEX);

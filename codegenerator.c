@@ -25,35 +25,6 @@ char *frame_name;
 
 //TODO: replace string with vsprintf
 
-char *type_to_string(DataType type) {
-       switch (type) {
-           case TYPE_INT:
-               return "int";
-           case TYPE_DOUBLE:
-               return "float";
-           case TYPE_STRING:
-               return "string";
-           case TYPE_NIL:
-               return "nil";
-           case TYPE_INT_NULLABLE:
-               return "int";
-           case TYPE_DOUBLE_NULLABLE:
-               return "float";
-           case TYPE_STRING_NULLABLE:
-               return "string";
-           case TYPE_VOID:
-               return "void";
-           case FUNC:
-               return "func";
-           case TYPE_UNKNOWN:
-               return "unknown";
-           case TYPE_BOOL:
-               return "bool";
-           default:
-               return "unknown";
-       }
-}
-
 char *create_instr_string(const char *format, ...) {
     va_list args;
     va_start(args, format);
@@ -94,9 +65,9 @@ int create_file(FILE **file) {
 // }
 
 void generate_header() {
-    printf( "# IFJ dlya liudiej bez lichnoi zhizni\n");
-    printf( ".IFJcode23\n");
-    printf( "JUMP $$main");
+  printf( "# IFJ dlya liudiej bez lichnoi zhizni\n");
+  printf( ".IFJcode23\n");
+  printf( "JUMP $$main");
 }
 
 // instr_node *create_node(char *instr) {
@@ -141,48 +112,61 @@ void add_instr(instr_node **head, char *instr) {
 
 // define global id, id_name must be in data.op.id_name
 void CREATE_ID(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
-    SET_FRAME(frame);
-    sprintf(string, "DEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
-    add_instr(head, string);
+  SET_FRAME(frame);
+  sprintf(string, "\n# declare a var\nDEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
+  add_instr(head, string);
 }
 
 // move int value in data.op.int_val to data.op.id_name
-void MOVE(instr_node **head, char *id_name, char *value, char *string, int deepness, Frame frame, DataType type){
-    SET_FRAME(frame);
-    char *type_string;
-    type_string = type_to_string(type);
+void MOVE(instr_node **head, char *id_name, char *value, char *string, int deepness, Frame frame, token_type type){
+  SET_FRAME(frame);
+  char *type_string;
+  if (type == T_INT) {
+        type_string = "int";
+  } else if (type == T_SING_STRING) {
+        type_string = "string";
+  } else if (type == T_DOUBLE) {
+        type_string = "float";
+  } else {
+        type_string = "unknown";
+  }
 
-    if (type == TYPE_DOUBLE) {
-        float val = atof(value);
-        sprintf(string,"MOVE %s@%s_%d %s@%a\n", frame_name, id_name, deepness, type_string, val);
-    }
-    else
-        sprintf(string,"MOVE %s@%s_%d %s@%s\n", frame_name, id_name, deepness, type_string, value);
-
-    add_instr(head, string);
+  if (type == T_DOUBLE) {
+    float val = atof(value);
+    sprintf(string,"# assign\nMOVE %s@%s_%d %s@%a\n", frame_name, id_name, deepness, type_string, val);
+  }
+  else
+    sprintf(string,"# assign\nMOVE %s@%s_%d %s@%s\n", frame_name, id_name, deepness, type_string, value);
+  
+  add_instr(head, string);
 }
 
 // assign value from the stack to data.op.id_name
 void ASSIGN(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
-    SET_FRAME(frame);
-    sprintf(string, "POPS %s@%s\n", frame_name, id_name);
-    add_instr(head, string);
+  SET_FRAME(frame);
+  sprintf(string, "POPS %s@%s\n", frame_name, id_name);
+  add_instr(head, string);
 }
 
 // write value of data.op.id_name to stdout
 void WRITE(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
-    SET_FRAME(frame);
-    sprintf(string, "WRITE %s@%s_%d\n", frame_name, id_name, deepness);
-    add_instr(head, string);
+  SET_FRAME(frame);
+  sprintf(string, "\n# write(...)\nWRITE %s@%s_%d\n", frame_name, id_name, deepness);
+  add_instr(head, string);
 }
 
 // begin expression, clear stack
 void BEGIN_EXPR(instr_node **head, char *string) {
-    string = "CLEARS\n";
-    add_instr(head, string);
+  string = "CLEARS\n";
+  add_instr(head, string);
 }
 
 // push value of data.op.id_name to stack
+// void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
+//   SET_FRAME(frame);
+//   sprintf(string, "PUSHS %s@%s_%d\n", frame_name, id_name, deepness);
+//   add_instr(head, string);
+// }
 void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame frame, DataType type, char *value) {
     SET_FRAME(frame);
     char *type_string;
@@ -204,26 +188,26 @@ void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame fr
 
 // add two values from stack (top two) and push result to stack
 void ADD(instr_node **head, char *string) {
-    string = "ADDS\n";
-    add_instr(head, string);
+  string = "ADDS\n";
+  add_instr(head, string);
 }
 
 // subtract two values from stack (top two) and push result to stack
 void SUB(instr_node **head, char *string) {
-    string = "SUBS\n";
-    add_instr(head, string);
+  string = "SUBS\n";
+  add_instr(head, string);
 }
 
 // multiply two values from stack (top two) and push result to stack
 void MUL(instr_node **head, char *string) {
-    string = "MULS\n";
-    add_instr(head, string);
+  string = "MULS\n";
+  add_instr(head, string);
 }
 
 // divide two values from stack (top two) and push result to stack
 void DIV(instr_node **head, char *string) {
-    string = "DIVS\n";
-    add_instr(head, string);
+  string = "DIVS\n";
+  add_instr(head, string);
 }
 
 void IDIV(instr_node **head, char *string) {
@@ -281,78 +265,92 @@ void STRI2INT(instr_node **head, char *string) {
 }
 
 void MAIN(instr_node **head, char *string) {
-    string = "\n";
-    add_instr(head, string);
-    string = "LABEL $$main\n";
-    add_instr(head, string);
-    string = "DEFVAR GF@%%retval_main\n";
-    add_instr(head, string);
+  string = "\n";
+  add_instr(head, string);
+  string = "LABEL $$main\n";
+  add_instr(head, string);
+  string = "DEFVAR GF@%%retval_main\n";
+  add_instr(head, string);
     string = "DEFVAR GF?temp_1\n";
     add_instr(head, string);
     string = "DEFVAR GF?temp_2\n";
     add_instr(head, string);
+  string = "CREATEFRAME\n";
+  add_instr(head, string);
+  string = "PUSHFRAME\n";
+  add_instr(head, string);
 }
 
 void FUNC_START(instr_node **head, char *func_name, char *string) {
-    sprintf(string, "\n\nLABEL $%s\n", func_name);
-    add_instr(head, string);
-    string = "PUSHFRAME\n";
-    add_instr(head, string);
-    string = "DEFVAR LF@%%retval\n";
-    add_instr(head, string);
-    string = "MOVE LF@%%retval nil@nil\n";
-    add_instr(head, string);
+  sprintf(string, "\n\nLABEL $%s\n", func_name);
+  add_instr(head, string);
+  string = "PUSHFRAME\n";
+  add_instr(head, string);
+  string = "DEFVAR LF@%%retval\n";
+  add_instr(head, string);
+  string = "MOVE LF@%%retval nil@nil\n";
+  add_instr(head, string);
+}
+
+void CREATEFRAME(instr_node **head, char *string) {
+  string = "CREATEFRAME\n";
+  add_instr(head, string);
+}
+
+void PUSHFRAME(instr_node **head, char *string) {
+  string = "PUSHFRAME\n";
+  add_instr(head, string);
 }
 
 void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, unsigned int func_param_count, char *string) {
-    // string = "CREATEFRAME\n";
-    sprintf(string, "CREATEFRAME\n");
-    add_instr(head, string);
+  // string = "CREATEFRAME\n";
+  sprintf(string, "\nCREATEFRAME\n");
+  add_instr(head, string);
 
-    // while (func_param != NULL) {
-    //   sprintf(string, "DEFVAR TF@%s\n", func_param->id_name);
-    //   add_instr(head, string);
-    //   sprintf(string, "MOVE TF@%s int@%d\n", func_param->id_name, func_param->int_val);
-    //   add_instr(head, string);
-    //   func_param++;
-    // }
-    // for (int i = 0; i < 2; i++) {
+  // while (func_param != NULL) {
+  //   sprintf(string, "DEFVAR TF@%s\n", func_param->id_name);
+  //   add_instr(head, string);
+  //   sprintf(string, "MOVE TF@%s int@%d\n", func_param->id_name, func_param->int_val);
+  //   add_instr(head, string);
+  //   func_param++;
+  // }
+  // for (int i = 0; i < 2; i++) {
 
-    //   sprintf(string, "DEFVAR TF@%s\n", func_param[i].id_name);
-    //   // printf("string: %s\n", string);
-    //   add_instr(head, string);
+  //   sprintf(string, "DEFVAR TF@%s\n", func_param[i].id_name);
+  //   // printf("string: %s\n", string);
+  //   add_instr(head, string);
 
-    //   sprintf(string, "MOVE TF@%s int@%d\n", func_param[i].id_name, func_param[i].int_val);
-    //   add_instr(head, string);
-    // }
+  //   sprintf(string, "MOVE TF@%s int@%d\n", func_param[i].id_name, func_param[i].int_val);
+  //   add_instr(head, string);
+  // }
 
-    for (int i = 0; i < func_param_count; i++) {
-        char *instr = create_instr_string("DEFVAR TF@%s\n", func_param[i].id_name);
-        if (instr != NULL) {
-            add_instr(head, instr);
-        }
-
-        instr = create_instr_string("MOVE TF@%s int@%s\n", func_param[i].id_name, func_param[i].val);
-        if (instr != NULL) {
-            add_instr(head, instr);
-        }
-    }
-
-    // sprintf(string, "CALL $%s\n", func_name);
-    // add_instr(head, string);
-    char *instr = create_instr_string("CALL $%s\n", func_name);
+  for (int i = 0; i < func_param_count; i++) {
+    char *instr = create_instr_string("DEFVAR TF@%s\n", func_param[i].id_name);
     if (instr != NULL) {
         add_instr(head, instr);
     }
+
+    instr = create_instr_string("MOVE TF@%s int@%s\n# ..., %s,\n", func_param[i].id_name, func_param[i].val, func_param[i].id_name);
+    if (instr != NULL) {
+        add_instr(head, instr);
+    }
+  }
+
+  // sprintf(string, "CALL $%s\n", func_name);
+  // add_instr(head, string);
+  char *instr = create_instr_string("CALL $%s\n# %s(...)\n", func_name, func_name);
+  if (instr != NULL) {
+    add_instr(head, instr);
+  }
 }
 
 void FUNC_END(instr_node **head, char* retval, char *string) {
-    // sprintf(string, "MOVE LF@%%%%retval LF@%s\n", retval);
-    // add_instr(head, string);
-    string = "POPFRAME\n";
-    add_instr(head, string);
-    string = "RETURN\n\n";
-    add_instr(head, string);
+  // sprintf(string, "MOVE LF@%%%%retval LF@%s\n", retval);
+  // add_instr(head, string);
+  string = "POPFRAME\n";
+  add_instr(head, string);
+  string = "RETURN\n# }\n";
+  add_instr(head, string);
 }
 
 void POP_TMP(instr_node **head, char *string, int deepness) {
@@ -365,63 +363,306 @@ void PUSH_TMP(instr_node **head, char *string, int deepness) {
     add_instr(head, string);
 }
 
+//CALL ONCE IN MAIN
+void IF_START(instr_node **head, char *string, int deepness) {
+  string = "DEFVAR GF@%%%%res\n";
+  add_instr(head, string);
+}
+
+
+// ADD INDEX + SYMTABLE NAME TO LABEL
+void IF_CHECK(instr_node **head, char *string, int deepness, int else_cnt) {
+  string = "\n# if (res) \nPOPS GF@%%%%res\n";
+  add_instr(head, string);
+  // string = "JUMPIFNEQ $IF_ELSE_%d GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED bool@true\n", deepness;
+  // add_instr(head, string);
+
+  // char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d_c%d GF@%%%%res bool@true\n# {\n", deepness, else_cnt);
+  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d GF@%%%%res bool@true\n# {\n", deepness);
+  if (instr != NULL) {
+      add_instr(head, instr);
+  }
+}
+
+void IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
+  // string = "JUMP $IF_END\n";
+  // add_instr(head, string);
+
+  // char *instr = create_instr_string("JUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  char *instr = create_instr_string("JUMP $IF_END_d%d\n# }\n\n", deepness);
+  if (instr != NULL) {
+      add_instr(head, instr);
+  }
+}
+
+// ADD INDEX + SYMTABLE NAME TO LABEL
+void ELSE_START(instr_node **head, char *string, int deepness, int else_cnt) {
+  // string = "LABEL $IF_ELSE\n";
+  // add_instr(head, string);
+  // char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
+  char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d\n", deepness);
+  if (instr != NULL) {
+      add_instr(head, instr);
+  }
+}
+
+void ELSE_IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
+  // string = "LABEL $IF_END\n";
+  // add_instr(head, string);
+
+  // char *instr = create_instr_string("LABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  char *instr = create_instr_string("LABEL $IF_END_d%d\n# }\n\n", deepness);
+  if (instr != NULL) {
+      add_instr(head, instr);
+  }
+}
+
+
+void EXIT(instr_node **head, char *string) {
+  string = "# EXIT \nEXIT int@0\n";
+  add_instr(head, string);
+}
+
+void BUILTIN(instr_node **head, char *string) {
+  //WRITE
+  char *instr = create_instr_string("\n\n# Write function\nLABEL $%%write\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  // instr = create_instr_string("PUSHFRAME\n");
+  // if (instr != NULL) 
+      // add_instr(head, instr);
+  instr = create_instr_string("WRITE LF@%%param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  // instr = create_instr_string("POPFRAME\n");
+  // if (instr != NULL) 
+      // add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of write ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+  //INT2DOUBLE
+  instr = create_instr_string("\n# Int2Double function\nLABEL $%%int2float\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("INT2FLOAT LF@%%retval LF@%%param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of int2float ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+  //DOUBLE2INT
+  instr = create_instr_string("\n# Double2Int function\nLABEL $%%double2int\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("FLOAT2INT LF@%%retval LF@%%param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of double2int ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+  //LENGTH
+  instr = create_instr_string("\n# Length function\nLABEL $%%length\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("STRLEN LF@%%retval LF@%%param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of length ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+    //SUBSTR
+  // instr = create_instr_string("\n# Substr function\nLABEL $substr\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("PUSHFRAME\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%retval\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%tmp\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%tmp2\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%tmp3\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("MOVE LF@%%tmp int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("MOVE LF@%%tmp2 int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("MOVE LF@%%tmp3 int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("LT LF@%%tmp3 LF@param2 int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("JUMPIFEQ $substr_end LF@%%tmp3 bool@true\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("LT LF@%%tmp3 LF@param3 int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("JUMPIFEQ $substr_end LF@%%tmp3 bool@true\n");
+
+  // CHR
+  // instr = create_instr_string("\n# Chr function\nLABEL $chr\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("PUSHFRAME\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%retval\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%tmp\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+
+  //ORD
+  instr = create_instr_string("\n# Ord function\nLABEL $%%ord\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%strlen\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("STRLEN LF@%%strlen LF@%%param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%bool\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("EQ LF@%%bool LF@%%strlen int@0\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMPIFEQ $%%eq_to_zero LF@%%bool bool@true\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("STR2INT LF@%%retval LF%%param int@0\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMP $%%ord_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%eq_to_zero\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("MOVE LF@%%retval int@0\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%ord_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of ord ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+
+
+}
+
 int generate_code(instr_node **head, Data data, gencode gencode, int deepness, Frame frame) {
+  
+  char *string = malloc(MAX_LINE_LENGTH * sizeof(char)); 
+  if (string == NULL) {
+      // Handle memory allocation error
+      return EXIT_FAILURE;
+  }
 
-    // GENERATE ALL SHIT HERE :)
+  // int if_while_cnt = data.int_while_cnt;
+  int if_cnt = data.if_cnt;
+  int else_cnt = data.else_cnt;
 
-    char *string = malloc(MAX_LINE_LENGTH * sizeof(char));
-    if (string == NULL) {
-        // Handle memory allocation error
-        return EXIT_FAILURE;
-    }
+  fprintf(stderr, "if_cnt: %d\n", if_cnt);
+  fprintf(stderr, "else_cnt: %d\n", else_cnt);
 
-    switch (gencode) {
+  switch (gencode) {
 
-        char *id_name_create;
-        char *id_name_assign;
-        char *id_name_write;
-        char *id_name_push;
-        char *retval;
-        char *id_name_move;
-        char *func_name;
-        char *val;
-        DataType type;
-        // Operand func_param[10];
+    char *id_name_create;
+    char *id_name_assign;
+    char *id_name_write;
+    char *id_name_push;
+    char *retval;
+    char *id_name_move;
+    char *func_name;
+    char *val;
+    token_type type;
+    // Operand func_param[10];
+    case GEN_BUILTIN:
+        BUILTIN(head, string);
+        break;
 
-        // define data.op.id_name to global
-        case GEN_CREATE_ID:
-            // char *id_name_create;
-            id_name_create = data.op.id_name;
-            CREATE_ID(head, id_name_create, string, deepness, frame);
-            break;
+    case GEN_EXIT:
+        EXIT(head, string);
+        break;
 
-        // moves int value in data.op.int_val to data.op.id_name
-        case GEN_MOVE:
-            val = data.op.val;
-            id_name_move = data.op.id_name;
-            type = data.op.type;
-            MOVE(head, id_name_move, val, string, deepness, frame, type);
-            break;
+    case GEN_CREATEFRAME:
+        CREATEFRAME(head, string);
+        break;
 
-        // pop value from expression to data.op.id_name
-        case GEN_ASSIGN:
-            // char *id_name_assign;
-            id_name_assign = data.op.id_name;
-            ASSIGN(head, id_name_assign, string, deepness, frame);
-            break;
+    case GEN_PUSHFRAME:
+        PUSHFRAME(head, string);
+        break;
 
-        // write value of data.op.id_name
-        case GEN_WRITE:
-            // char *id_name_write;
-            id_name_write = data.op.id_name;
-            WRITE(head, id_name_write, string, deepness, frame);
-            break;
+    case GEN_IF_START:
+        IF_START(head, string, deepness);
+        break;
 
-        // begin expression, clear stack
-        case GEN_BEGIN_EXPR:
-            BEGIN_EXPR(head, string);
-            break;
+    case GEN_IF_CHECK:
+        IF_CHECK(head, string, deepness, else_cnt);
+        break;
 
+    case GEN_IF_END:
+        IF_END(head, string, deepness, if_cnt);
+        break;
+
+    case GEN_ELSE_START:
+        ELSE_START(head, string, deepness, else_cnt);
+        break;
         // push value of data.op.id_name to stack
         case GEN_PUSH:
             // char *id_name_push;
@@ -431,29 +672,70 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
             type = data.op.type;
             PUSH(head, id_name_push, string, deepness, frame, type, val);
             break;
+
         case GEN_PUSH_TMP:
             PUSH_TMP(head, string, deepness);
             break;
 
-        // add two values from stack (top two) and push result to stack
-        case GEN_ADD:
-            ADD(head, string);
-            break;
+    case GEN_ELSE_IF_END:
+        ELSE_IF_END(head, string, deepness, if_cnt);
+        break;
 
-        // subtract two values from stack (top two) and push result to stack
-        case GEN_SUB:
-            SUB(head, string);
-            break;
+    // define data.op.id_name to global
+    case GEN_CREATE_ID:
+        // char *id_name_create;
+        id_name_create = data.op.id_name;
+        CREATE_ID(head, id_name_create, string, deepness, frame);
+        break;
+    
+    // moves int value in data.op.int_val to data.op.id_name
+    case GEN_MOVE:
+        val = data.op.val;
+        id_name_move = data.op.id_name;
+        type = data.op.type;
+        MOVE(head, id_name_move, val, string, deepness, frame, type);
+        break;
+    
+    // pop value from expression to data.op.id_name
+    case GEN_ASSIGN:
+        // char *id_name_assign;
+        id_name_assign = data.op.id_name;
+        ASSIGN(head, id_name_assign, string, deepness, frame);
+        break;
+    
+    // write value of data.op.id_name
+    case GEN_WRITE:
+        // char *id_name_write;
+        id_name_write = data.op.id_name;
+        WRITE(head, id_name_write, string, deepness, frame);
+        break;
+    
+    // begin expression, clear stack
+    case GEN_BEGIN_EXPR:
+        BEGIN_EXPR(head, string);
+        break;
+    
+    // push value of data.op.id_name to stack
+    // case GEN_PUSH:
+    //     // char *id_name_push;
+    //     id_name_push = data.op.id_name;
+    //     PUSH(head, id_name_push, string, deepness, frame);
+    //     break;
+    
+    // add two values from stack (top two) and push result to stack
+    case GEN_ADD:
+        ADD(head, string);
+        break;
 
-        // multiply two values from stack (top two) and push result to stack
-        case GEN_MUL:
-            MUL(head, string);
-            break;
+    // subtract two values from stack (top two) and push result to stack
+    case GEN_SUB:
+        SUB(head, string);
+        break;
 
-        // divide two values from stack (top two) and push result to stack
-        case GEN_DIV:
-            DIV(head, string);
-            break;
+    // multiply two values from stack (top two) and push result to stack
+    case GEN_MUL:
+        MUL(head, string);
+        break;
 
         case GEN_IDIV:
             IDIV(head, string);
@@ -506,71 +788,80 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
         case GEN_MAIN:
             MAIN(head, string);
             break;
+    // divide two values from stack (top two) and push result to stack
+    case GEN_DIV:
+        DIV(head, string);
+        break;
 
-        // generate function start
-        case GEN_FUNC_START:
-            // char *func_name;
-            func_name = data.func_name;
-            FUNC_START(head, func_name, string);
-            break;
+    // generate main function
+    // case GEN_MAIN:
+    //     MAIN(head, string);
+    //     break;
 
-        // generate function end
-        case GEN_FUNC_END:
-            // char *retval;
-            retval = data.op.id_name;
-            FUNC_END(head, retval, string);
-            break;
+    // generate function start
+    case GEN_FUNC_START:
+        // char *func_name;
+        func_name = data.func_name;
+        FUNC_START(head, func_name, string);
+        break;
 
-        // generate function call
-        case GEN_FUNC_CALL:
-            // char *func_name;
-            // Operand *func_param;
-            func_name = data.func_name;
-            // printf("dara.func_name: %s\n", data.func_name);
-            // printf("dara.func_param1.id: %s\n", data.func_param[0].id_name);
-            // printf("dara.func_param2.id: %s\n", data.func_param[1].id_name);
-            // printf("dara.func_param1.int_val: %d\n", data.func_param[0].int_val);
-            // printf("dara.func_param2.int_val: %d\n", data.func_param[1].int_val);
-            // printf("---------------------------\n");
-            // func_param = data.func_param;
-            FUNC_CALL(head, func_name, data.func_param, data.func_param_count ,string);
-            break;
+    // generate function end
+    case GEN_FUNC_END:
+        // char *retval;
+        retval = data.op.id_name;
+        FUNC_END(head, retval, string);
+        break;
 
-        // Add default case to handle unexpected values
-        default:
-            // Handle unexpected case
-            break;
-    }
+    // generate function call
+    case GEN_FUNC_CALL:
+        // char *func_name;
+        // Operand *func_param;
+        func_name = data.func_name;
+        // printf("dara.func_name: %s\n", data.func_name);
+        // printf("dara.func_param1.id: %s\n", data.func_param[0].id_name);
+        // printf("dara.func_param2.id: %s\n", data.func_param[1].id_name);
+        // printf("dara.func_param1.int_val: %d\n", data.func_param[0].int_val);
+        // printf("dara.func_param2.int_val: %d\n", data.func_param[1].int_val);
+        // printf("---------------------------\n");
+        // func_param = data.func_param;
+        FUNC_CALL(head, func_name, data.func_param, data.func_param_count ,string);
+        break;
 
-    return EXIT_SUCCESS;
+    // Add default case to handle unexpected values
+    default:
+        // Handle unexpected case
+        break;
+  }
+
+  return EXIT_SUCCESS;
 }
 
 void pop_list_to_file(instr_node **head) {
-    FILE *file = fopen("IFJ23.code", "a");
-    if (file == NULL) {
-        perror("Error opening file");
-        return;
-    }
-    instr_node *current = *head;
-    int cnt = 6;
-    while (current != NULL) {
-        // printf("instruction to print to file on line %d: %s", cnt, current->instr);
-        // fprintf(file, "%s", current->instr);
-        printf( "%s", current->instr);
-        cnt++;
-        instr_node *tmp = current;
-        current = current->next;
-        // printf("instruction to print to file on line %d: %s", cnt, tmp->instr);
-        // free(tmp->instr);
-        tmp->instr = NULL;
-        // printf("instruction to prindawdawdwat to file on line %d: %s\n", cnt, tmp->instr);
-        free(tmp);
-    }
-    fclose(file);
+  FILE *file = fopen("IFJ23.code", "a");
+  if (file == NULL) {
+    perror("Error opening file");
+    return;
+  }
+  instr_node *current = *head;
+  int cnt = 6;
+  while (current != NULL) {
+    // printf("instruction to print to file on line %d: %s", cnt, current->instr);
+    // fprintf(file, "%s", current->instr);
+    printf( "%s", current->instr);
+    cnt++;
+    instr_node *tmp = current;
+    current = current->next;
+    // printf("instruction to print to file on line %d: %s", cnt, tmp->instr);
+    // free(tmp->instr);
+    tmp->instr = NULL;
+    // printf("instruction to prindawdawdwat to file on line %d: %s\n", cnt, tmp->instr);
+    free(tmp);
+  }
+  fclose(file);
 }
 
 void destroy_file() {
-    remove("IFJ23.code");
+  remove("IFJ23.code"); 
 }
 
 
@@ -580,36 +871,35 @@ void destroy_file() {
 // data.id2_name = b
 // generate(data, GEN_ADD);
 Data init_data() {
-    Data data;
-    data.func_name = NULL;
-    // data.func_param = NULL;
-    data.op.id_name = NULL;
-    data.op.type = TYPE_UNKNOWN;
-    data.op2.id_name = NULL;
-    return data;
+  Data data;
+  data.func_name = NULL;
+  // data.func_param = NULL;
+  data.op.id_name = NULL;
+  data.op2.id_name = NULL;
+  return data;
 }
 
 int generate_file() {
-    int status;
+  int status;
 
-    destroy_file();
+  destroy_file();
 
-    FILE *file;
-    status = create_file(&file);
+  FILE *file;
+  status = create_file(&file);
 
-    if (status == EXIT_FAILURE) {
-        return EXIT_FAILURE;
-    }
+  if (status == EXIT_FAILURE) {
+    return EXIT_FAILURE;
+  }
 
-    generate_header(file);
-    // status = generate_code(file);
-    // if (status == EXIT_FAILURE) {
+  generate_header(file);
+  // status = generate_code(file);
+  // if (status == EXIT_FAILURE) {
     // return EXIT_FAILURE;
-    // }
+  // }
 
-    fclose(file);
+  fclose(file);
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 // Function to initialize instr_list_dynamic
@@ -659,6 +949,35 @@ int add_new_linked_list(instr_list_dynamic *list, char *name) {
     return 0; // Success
 }
 
+char *type_to_string(DataType type) {
+       switch (type) {
+           case TYPE_INT:
+               return "int";
+           case TYPE_DOUBLE:
+               return "float";
+           case TYPE_STRING:
+               return "string";
+           case TYPE_NIL:
+               return "nil";
+           case TYPE_INT_NULLABLE:
+               return "int";
+           case TYPE_DOUBLE_NULLABLE:
+               return "float";
+           case TYPE_STRING_NULLABLE:
+               return "string";
+           case TYPE_VOID:
+               return "void";
+           case FUNC:
+               return "func";
+           case TYPE_UNKNOWN:
+               return "unknown";
+           case TYPE_BOOL:
+               return "bool";
+           default:
+               return "unknown";
+       }
+}
+
 // Function to search the linked list in instr_list_dynamic by the name of the linked list
 instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node) {
     if (list == NULL || name == NULL) {
@@ -678,6 +997,7 @@ instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, i
         }
     }
     return main_node; // List with the given name not found
+    // return NULL; // List with the given name not found
 }
 
 void pop_all_lists_to_file(instr_list_dynamic *list) {

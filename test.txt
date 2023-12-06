@@ -9,10 +9,9 @@
 //    b = 228
 //}
 
-var a : Int = 5
-var b : Int = 5
+var a : Double = Int2Double(2) + Int2Double(16)
 
-write(a, b, 6, 7, 8)
+//write(a, b, 6, 7, 8)
 
 
 //         if (a==a) {

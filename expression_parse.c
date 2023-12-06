@@ -12,6 +12,7 @@ bool double_to_int = false;
 
 
 
+
 int precedence_table[size_table][size_table] = {
 
         // +-  */ rel  !   ??  (   )   i   $
@@ -27,17 +28,22 @@ int precedence_table[size_table][size_table] = {
 
 };
 
-void generate_covert(Token *token, DataType type){
+void generate_covert(Token *token, DataType *type){
+    if(int_to_double == false && double_to_int == false) return;
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
     Data data = init_data();
     data.op.id_name = token->string_value->str;
     data.op.val = token->string_value->str;
-    data.op.type = type;
+    data.op.type = *type;
     instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
     if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data, GEN_PUSH, 0, GF);
     else generate_code(&node_inst, data, GEN_PUSH, 0, LF);
-
+    if(int_to_double) generate_code(&node_inst, data, GEN_INT2FLOAT, 0, UNUSED);
+    else if(double_to_int) generate_code(&node_inst, data, GEN_FLOAT2INT, 0, UNUSED);
+    int_to_double = false;
+    double_to_int = false;
+    return;
 }
 
 void build_in_function(char *id_name){
@@ -49,15 +55,29 @@ void build_in_function(char *id_name){
         string = "CALL $%%readString\n";
         add_instr(&node_inst, string);
     }
+    else if(!strcmp(id_name, "readInt")){
+        char *string = malloc(sizeof(char) * 256);
+        string = "CALL $%%readInt\n";
+        add_instr(&node_inst, string);
+    }
+    else if(!strcmp(id_name, "readDouble")){
+        char *string = malloc(sizeof(char) * 256);
+        string = "CALL $%%readDouble\n";
+        add_instr(&node_inst, string);
+
+    }
     else if(!strcmp(id_name, "length")){
         char *string = malloc(sizeof(char) * 256);
         string = "CALL $%%length\n";
         add_instr(&node_inst, string);
     }
-
-
+    else if(!strcmp(id_name, "Int2Double")){
+        int_to_double = true;
+    }
+    else if(!strcmp(id_name, "Double2Int")){
+        double_to_int = true;
+    }
     return;
-
 }
 
 void push_literal(char *val, DataType type){
@@ -148,7 +168,6 @@ void ARG_LIST_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //cur
         ARG_LIST_EXP(file, current_token, param);
     }
     else {
-        // *current_token = get_token(file); // get )
         if(param != NULL) {
             exitWithError("Semantic error: Too few arguments\n", ERR_SEMANT_TYPE);
         }
@@ -172,7 +191,6 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
     //printf("token befroe: %s\n", current_token->string_value->str);
     *current_token = get_token(*file); // get id
     //printf("token after: %s\n", current_token->string_value->str);
-
     if(current_token->token_type == T_TYPE_ID){
         AVLNode *node = s_search_symtack(table, current_token->string_value->str);
         if(peekNextToken(*file).token_type == T_COLON){
@@ -197,6 +215,7 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
             exitWithError("Semantic error: Wrong type of argument\n", ERR_SEMANT_TYPE);
         }
     }
+    generate_covert(current_token, &param->dataType);
 }
 
 void PREFIX_EXP(FILE **file, Token *current_token, ListFuncParam *param){ //current token is (
@@ -480,6 +499,7 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
                 func_node = s_search_symtack(table, token->string_value->str);
                 if (func_node != NULL) {
                     if (func_node->data.isFunction) {
+                        build_in_function(token->string_value->str);
                         FuncId = *token;
                         EOL = findNewLineInFile(*file);
                         *token = get_token(*file);
@@ -539,12 +559,15 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                     exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
                 }
                 if(node->data.isFunction) *expression_type = node->data.returnType;
-                else *expression_type = node->data.dtype;
+                else{
+                    *expression_type = node->data.dtype;
+                    push_variable(tokens[0].string_value->str);
+                }
 
                 if(is_nullable(*expression_type)){
                     if(node->data.isNil) *expression_type = TYPE_NIL;
                 }
-                push_variable(tokens[0].string_value->str);
+
                 return 1;
             }
             if(tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || (tokens[0].token_type == T_KEYWORD && strcmp(tokens[0].string_value->str, "nil") == 0) || tokens[0].token_type == T_SING_STRING) {

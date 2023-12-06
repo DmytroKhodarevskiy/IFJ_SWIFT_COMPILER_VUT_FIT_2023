@@ -31,7 +31,7 @@ void insert_include_functions_sym_table() {
   intParam.prefixName = NULL;
   intParam.dataType = TYPE_INT;
   intParam.next = NULL;
-  insert_FunctionSymTable(global_symtable, " Int2Double", TYPE_DOUBLE, &intParam, 1);
+  insert_FunctionSymTable(global_symtable, "Int2Double", TYPE_DOUBLE, &intParam, 1);
   
    // Double2Int 
    ListFuncParam doubleParam;

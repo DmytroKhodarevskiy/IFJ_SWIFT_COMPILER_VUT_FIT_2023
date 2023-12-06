@@ -369,7 +369,7 @@ void PUSH_TMP(instr_node **head, char *string, int deepness) {
 
 //CALL ONCE IN MAIN
 void IF_START(instr_node **head, char *string, int deepness) {
-  string = "DEFVAR GF@%%res\n";
+  string = "DEFVAR GF@%%res\n\n";
   add_instr(head, string);
 }
 
@@ -382,7 +382,7 @@ void IF_CHECK(instr_node **head, char *string, int deepness, int else_cnt) {
   // add_instr(head, string);
 
   // char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d_c%d GF@%%%%res bool@true\n# {\n", deepness, else_cnt);
-  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d GF@%%res bool@true\n# {\n", deepness);
+  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d GF@%%%%res bool@true\n# {\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }

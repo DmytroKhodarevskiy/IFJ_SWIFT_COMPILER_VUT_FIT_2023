@@ -1,43 +1,40 @@
 
 var b : Int = 5
-var a : Int = b
+var a : Int = b - 1
 
-// if (a==a) {
-    // var c : Int? = nil
-    // var d : Int = 2
-    // var e : Int = 3 +3
-// }
-// else {
-// }
-        // var d = 2.456445
-        // var c : String
-        //c = "Hello_world"
+if (a < b) {
+    b = 1337
+}
+else {
+    b = 228
+}
+  
 
 //         if (a==a) {
 //     // var OUTERIF = 5
 //     // var c : Int? = nil
 
-//     if (a==a) {
-//         // var INNERIF = 5
-//         // var c : Int? = nil
-//         // return a // 5 - 2 = 3
-//     }
-//     else {
-//         // var INNERELSE = 5
-//         // var c : Int? = nil
-//         // return a // 5 - 2 = 3
-//     }
+//     // if (a==a) {
+//     //     // var INNERIF = 5
+//     //     // var c : Int? = nil
+//     //     // return a // 5 - 2 = 3
+//     // }
+//     // else {
+//     //     // var INNERELSE = 5
+//     //     // var c : Int? = nil
+//     //     // return a // 5 - 2 = 3
+//     // }
 
-//     if (a==a) {
-//         // var INNERIF = 5
-//         // var c : Int? = nil
-//         // return a // 5 - 2 = 3
-//     }
-//     else {
-//         // var INNERELSE = 5
-//         // var c : Int? = nil
-//         // return a // 5 - 2 = 3
-//     }
+//     // if (a==a) {
+//     //     // var INNERIF = 5
+//     //     // var c : Int? = nil
+//     //     // return a // 5 - 2 = 3
+//     // }
+//     // else {
+//     //     // var INNERELSE = 5
+//     //     // var c : Int? = nil
+//     //     // return a // 5 - 2 = 3
+//     // }
 
 // }
 // else {

@@ -390,11 +390,11 @@ void IF_START(instr_node **head, char *string, int deepness) {
 // ADD INDEX + SYMTABLE NAME TO LABEL
 void IF_CHECK(instr_node **head, char *string, int deepness, int else_cnt) {
 
-  string = "\nCREATEFRAME\n";
-  add_instr(head, string);
+  // string = "\nCREATEFRAME\n";
+  // add_instr(head, string);
 
-  string = "PUSHFRAME\n";
-  add_instr(head, string);
+  // string = "PUSHFRAME\n";
+  // add_instr(head, string);
   // string = "\n# if (res) \nPOPS GF@%%res\n";
   string = "# if (res) \nPOPS GF@%%res\n";
   add_instr(head, string);
@@ -412,7 +412,8 @@ void IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
   // string = "JUMP $IF_END\n";
   // add_instr(head, string);
 
-  char *instr = create_instr_string("POPFRAME\nJUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  char *instr = create_instr_string("JUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  // char *instr = create_instr_string("POPFRAME\nJUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
   // char *instr = create_instr_string("JUMP $IF_END_d%d\n# }\n\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
@@ -423,7 +424,8 @@ void IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
 void ELSE_START(instr_node **head, char *string, int deepness, int else_cnt) {
   // string = "LABEL $IF_ELSE\n";
   // add_instr(head, string);
-  char *instr = create_instr_string("# else { \nCREATEFRAME\nPUSHFRAME\nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
+  char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
+  // char *instr = create_instr_string("# else { \nCREATEFRAME\nPUSHFRAME\nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
   // char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
@@ -434,7 +436,8 @@ void ELSE_IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
   // string = "LABEL $IF_END\n";
   // add_instr(head, string);
 
-  char *instr = create_instr_string("\nPOPFRAME\nLABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  char *instr = create_instr_string("\nLABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  // char *instr = create_instr_string("\nPOPFRAME\nLABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
   // char *instr = create_instr_string("LABEL $IF_END_d%d\n# }\n\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);

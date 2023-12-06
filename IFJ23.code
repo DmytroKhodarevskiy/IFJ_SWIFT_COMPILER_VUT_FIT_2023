@@ -79,27 +79,25 @@ LABEL $$main
 DEFVAR GF@%%retval_main
 DEFVAR GF@?temp_1
 DEFVAR GF@?temp_2
+DEFVAR GF@&str
+MOVE GF@&str string@
 CREATEFRAME
 PUSHFRAME
 DEFVAR GF@%%res
 
-DEFVAR LF@%a
-DEFVAR LF@%b
-MOVE LF@%a int@5
-MOVE LF@%b int@3
+# declare a var
+DEFVAR GF@a_0
+PUSHS string@Hello
+PUSHS string@\032World
+POPS GF@?temp_1
+POPS GF@?temp_2
+CONCAT GF@&str GF@&str GF@?temp_2
+CONCAT GF@&str GF@&str GF@?temp_1
+PUSHS GF@&str
+POPS GF@a_0
 
-CREATEFRAME
-PUSHFRAME
-DEFVAR LF@%a
-DEFVAR LF@%b
-MOVE LF@%a int@1
-MOVE LF@%b int@2
-
-POPFRAME
-POPFRAME
-
-BREAK
-
+# write(...)
+WRITE GF@a_0
 
 # EXIT 
 POPFRAME

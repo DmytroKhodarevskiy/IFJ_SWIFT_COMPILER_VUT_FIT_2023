@@ -85,20 +85,65 @@ JUMP **main_declares**
 LABEL **main_declares_return**
 DEFVAR GF@%%res
 
+DEFVAR GF@a_0
 PUSHS int@1
-PUSHS int@1
-EQS
+POPS GF@a_0
+CLEARS
+
+PUSHS GF@a_0
+PUSHS int@0
+GTS
 # if (res) 
 POPS GF@%%res
 JUMPIFNEQ $IF_ELSE_d0_c0 GF@%%res bool@true
 # {
-PUSHS int@1
+PUSHS int@2
 POPS LF@a_1
+CLEARS
+
+PUSHS LF@a_1
+PUSHS int@0
+GTS
+# if (res) 
+POPS GF@%%res
+JUMPIFNEQ $IF_ELSE_d1_c1 GF@%%res bool@true
+# {
+PUSHS int@3
+POPS LF@b_2
+CLEARS
+
+PUSHS LF@a_1
+PUSHS int@0
+GTS
+# if (res) 
+POPS GF@%%res
+JUMPIFNEQ $IF_ELSE_d2_c2 GF@%%res bool@true
+# {
+PUSHS int@4
+POPS LF@b_3
 CLEARS
 
 
 # write(...)
-WRITE LF@a_1
+WRITE LF@b_3
+JUMP $IF_END_d2_c2
+# }
+
+# else { 
+LABEL $IF_ELSE_d2_c2
+
+LABEL $IF_END_d2_c2
+# }
+
+JUMP $IF_END_d1_c1
+# }
+
+# else { 
+LABEL $IF_ELSE_d1_c1
+
+LABEL $IF_END_d1_c1
+# }
+
 JUMP $IF_END_d0_c0
 # }
 
@@ -106,29 +151,6 @@ JUMP $IF_END_d0_c0
 LABEL $IF_ELSE_d0_c0
 
 LABEL $IF_END_d0_c0
-# }
-
-PUSHS int@1
-PUSHS int@1
-EQS
-# if (res) 
-POPS GF@%%res
-JUMPIFNEQ $IF_ELSE_d0_c1 GF@%%res bool@true
-# {
-PUSHS int@50
-POPS LF@a_1
-CLEARS
-
-
-# write(...)
-WRITE LF@a_1
-JUMP $IF_END_d0_c1
-# }
-
-# else { 
-LABEL $IF_ELSE_d0_c1
-
-LABEL $IF_END_d0_c1
 # }
 
 LABEL **main**
@@ -139,6 +161,7 @@ EXIT int@0
 
 
 LABEL **main_declares**
-# declare a var
 DEFVAR LF@a_1
+DEFVAR LF@b_2
+DEFVAR LF@b_3
 JUMP **main_declares_return**

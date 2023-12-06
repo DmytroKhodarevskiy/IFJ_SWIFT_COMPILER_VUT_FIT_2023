@@ -113,7 +113,8 @@ void add_instr(instr_node **head, char *instr) {
 // define global id, id_name must be in data.op.id_name
 void CREATE_ID(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
   SET_FRAME(frame);
-  sprintf(string, "# declare a var\nDEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
+  // sprintf(string, "# declare a var\nDEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
+  sprintf(string, "DEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
   add_instr(head, string);
 }
 

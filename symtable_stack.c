@@ -34,6 +34,7 @@ SymTable *s_peek(SymStack *stack) {
         // exit(EXIT_FAILURE);
         exitWithError("Error: Stack is empty\n", ERR_INTERNAL);
     }
+
     // return &(stack->items[stack->top]);
     return stack->items[stack->top];
 }
@@ -176,11 +177,23 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
 }
 
 void Print_Sym_stack(SymStack *stack) {
+  
   int i;
   SymTable *table;
+  // AVLNode *node;
+  // ListFuncParam *param;
+
+  fprintf(stderr, "[$] ");
+
   for (i = 0; i <= stack->top; i++) {
     // table = *(stack->items) + i;
     table = stack->items[i];
+
+
+    fprintf(stderr, "%s ", table->name);
+
+    // node = table->root;
+    // Print_Sym_table(node);
   }
     fprintf(stderr, "\n");
 }
@@ -215,6 +228,7 @@ int Get_deepness_current(SymStack *stack) {
   int i;
   SymTable *table;
   int deepness = -1;
+
   for (i = 0; i <= stack->top; i++) {
     table = stack->items[i];
     deepness++;
@@ -228,7 +242,7 @@ int Get_deepness_of_var(SymStack *stack, char* id_name) {
   SymTable *table;
   // int deepness = 0;
   int deepness = stack->top;
-  fprintf(stderr, "s_peek:--------------------------- %d\n", stack->top);
+
   // for (i = 0; i <= stack->top; i++) {
   for (i = stack->top; i >= 0; i--) {
     table = stack->items[i];

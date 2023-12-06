@@ -188,12 +188,14 @@ Token get_token(FILE *file){
         appendToDynamicString(token_string, symbol);
         copyString(token.string_value->str, token_string->str);
 
-//        char next_symbol = (char) fgetc(file);
-//        if (!strcmp(token_string->str, "/")) {
-//          exitWithError("ERROR: Invalid token after '*/'", ERR_LEX);
-//        } else {
-//          ungetc(next_symbol, file);
-//        }
+        // char what;
+        // // if (!strcmp((char)(fgetc(file)), "/")) {
+        // if (what = fgetc(file) == '/') {
+        //   printf("what: %c\n", what);
+        //   exitWithError("ERROR: Invalid token after '*/'", ERR_LEX);
+        // }
+        // ungetc(symbol, file);
+
         return token;
 
       } else if (symbol == '=') {

@@ -66,7 +66,7 @@ typedef enum {
 typedef struct Operand {
   char *id_name;
   char *val;
-  token_type type;
+  DataType type;
 } Operand;
 
 typedef struct Data {

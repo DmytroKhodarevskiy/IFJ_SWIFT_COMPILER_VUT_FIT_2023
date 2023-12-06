@@ -1,3 +1,4 @@
+S ::= [PROGRAM] $
 [PROGRAM] ::= [DECLARE_GLOBAL_FUNC]
 
 [DECLARE_GLOBAL_FUNC] ::= [STMT_LIST]
@@ -13,7 +14,7 @@
 [STMT] ::= [FUNC_DECL]
 [STMT] ::= return [EXP]
 
-// [FUNC_DECL] ::= func id ( [PARAM_LIST] ) -> [TYPE] { [STMT_LIST] }
+
 [FUNC_DECL] ::= func id ( [PARAM_LIST] ) [RETURN_TYPE] { [STMT_LIST] }
 [RETURN_TYPE] ::= -> [TYPE]
 [RETURN_TYPE] ::= ''
@@ -24,7 +25,7 @@
 [MB_WHILE_EXP] ::= ''
 
 [IF_EXP] ::= ( [EXP] )
-[IF_EXP] ::= let id 
+[IF_EXP] ::= let id
 
 [ELSE] ::= else { [STMT_LIST] }
 
@@ -37,13 +38,14 @@
 [MB_ASSIGN_STMT] ::= [FUNC_CALL]
 
 [MB_ASSIGN_EXPR] ::= = [EXP]
+[MB_ASSIGN_EXPR] ::= [FUNC_CALL]
 [MB_ASSIGN_EXPR] ::= ''
 
 [MB_STMT_LET] ::= : [TYPE] [MB_ASSIGN_EXPR]
-[MB_STMT_LET] ::= = [EXP] 
+[MB_STMT_LET] ::= = [EXP]
 
 
-[TYPE] ::= String 
+[TYPE] ::= String
 [TYPE] ::= Int
 [TYPE] ::= Double
 [TYPE] ::= String?
@@ -57,6 +59,8 @@
 [COMP_OP] ::= >=
 [COMP_OP] ::= <
 [COMP_OP] ::= <=
+
+
 [EXP] ::= [T] [EXP_LIST]
 [EXP_LIST] ::= + [T] [EXP_LIST]
 [EXP_LIST] ::= - [T] [EXP_LIST]
@@ -79,11 +83,9 @@
 
 [FUNC_CALL] ::= ( [ARG_LIST] )
 
-// [ARG_LIST] ::= [EXP] [ARG_LIST_REST]
 [ARG_LIST] ::= [ARG] [ARG_LIST_REST]
 [ARG_LIST] ::= ''
 
-// [ARG_LIST_REST] ::= , [EXP] [ARG_LIST_REST]
 [ARG_LIST_REST] ::= , [ARG] [ARG_LIST_REST]
 [ARG_LIST_REST] ::= ''
 

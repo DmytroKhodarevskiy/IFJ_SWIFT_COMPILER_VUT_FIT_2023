@@ -6,7 +6,7 @@
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 
 
-/////////////////////          Helpful functions
+//------------- Helpful functions-----------------//
 
 int height(AVLNode* node) {
     if (node == NULL)
@@ -68,7 +68,7 @@ AVLNode* findminValueNode(AVLNode* node) {
 
 
 
-///////////////////////////////////////////////////////////////////
+//------------- Helpful functions-----------------//
 
 
 
@@ -85,8 +85,7 @@ SymTable* create_SymTable() {
         return NULL;
     }
 
-    // newTable->name = malloc(sizeof(char)*256); // +1 for null terminator
-    // memset(newTable->name, 0, 256 * sizeof(char));
+
     newTable->name = malloc(sizeof(char) * 256);
     memset(newTable->name, 0, 256 * sizeof(char));
 
@@ -111,9 +110,6 @@ AVLNode* search_SymTable(SymTable* table, char* key) {
         int compareResult = strcmp(current->key, key);
 
         if (compareResult == 0) {
-            // if (current->data.isDefined == false) {
-                // return NULL;
-            // }
             return current;
         } else if (compareResult > 0) {
             current = current->left;
@@ -151,31 +147,24 @@ AVLNode* create_AVLNode(char* key, SymData data) {
 }
 
 
+/**
+ * @brief Creates a new symbol data with default values
+ * 
+ * 
+ * @return SymData The newly created symbol data
+ */
 
 SymData initSymData() {
     SymData node;
-    // if (node == NULL) {
-        // return NULL; // Memory allocation failed
-    // }
-
-    // Allocate memory for the name and copy the initialName into it
-    // node->name = malloc(strlen(initialName) + 1); // +1 for null terminator
-    // if (node->name == NULL) {
-        // free(node); // Don't forget to free the node if name allocation fails
-        // return NULL;
-    // }
-    // strcpy(node->name, initialName);
-
-    node.name = "???"; //
-    node.dtype = TYPE_UNKNOWN;//
+    node.name = "???"; 
+    node.dtype = TYPE_UNKNOWN;
     node.isDefined = false;
-    node.canbeChanged = false; //
-    node.isGlobal = false;//
-    node.isFunction = false;//
-    node.returnType = TYPE_UNKNOWN; // Set to an appropriate initial value
-    node.paramTypes.next = NULL; // Set to an appropriate initial value
+    node.canbeChanged = false; 
+    node.isGlobal = false;
+    node.isFunction = false;
+    node.returnType = TYPE_UNKNOWN; 
+    node.paramTypes.next = NULL; 
     node.paramCount = 0;
-    // node.local_SymTable = NULL;
     node.isNil = false;
 
     return node;
@@ -362,19 +351,15 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
         functionData.paramTypes = *params;
         functionData.paramCount = paramCount;
     }
-    // functionData.paramTypes = *params; 
-    // functionData.paramCount = paramCount;
-    
+
     functionData.name = key; 
     functionData.dtype = FUNC; 
     functionData.returnType = returnType;
     functionData.isDefined = true;
     functionData.canbeChanged = false;
     functionData.isFunction = true;
-    functionData.isGlobal = true;
+    functionData.isGlobal = true; 
     functionData.isNil = false;
-    // functionData.local_SymTable = (struct SymTable*)create_SymTable();
-
     insert_SymTable(table, functionData.name, functionData);
 }
 
@@ -397,14 +382,11 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
 ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType, ParamPrefix prefix, char* prefixName) {
   ListFuncParam* newParam = (ListFuncParam*)malloc(sizeof(ListFuncParam));
   if (newParam == NULL) {
-    // Handle memory allocation failure
     return NULL;
   }
 
-  // Allocate memory for the parameter name and copy it
-  newParam->name = (char*)malloc(strlen(paramName) + 1); // +1 for null terminator
+  newParam->name = (char*)malloc(strlen(paramName) + 1); 
   if (newParam->name == NULL) {
-    // Handle memory allocation failure
     free(newParam);
     return NULL;
   }
@@ -431,7 +413,12 @@ ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dat
 
 
 
-
+/**
+ * @brief Counts the number of parameters in the parameter list.
+ *
+ * @param params The head of the parameter list.
+ * @return The number of parameters in the list.
+ */
 int countParams(ListFuncParam* params) {
     int count = 0;
     ListFuncParam* current = params;
@@ -443,6 +430,13 @@ int countParams(ListFuncParam* params) {
 }
 
 
+
+
+/**
+ * @brief Print the parameter list to stderr.
+ * Helper function for debugging.
+ * @param params The head of the parameter list.
+ */
 
 void printFuncParamList(ListFuncParam* list) {
     const ListFuncParam* current = list;
@@ -493,15 +487,11 @@ bool updateSymData(SymTable* table, char* key, SymData newData) {
         fprintf(stderr, "Invalid table or key\n");
         return false;
     }
-
-    // Search for the node with the given key
     AVLNode* node = search_SymTable(table, key);
     if (node == NULL) {
         fprintf(stderr, "Symbol with key '%s' not found\n", key);
         return false;
     }
-
-    // Update the data of the symbol
     node->data = newData;
 
     return true;
@@ -510,7 +500,10 @@ bool updateSymData(SymTable* table, char* key, SymData newData) {
 
 
 
-// FUNCTIONS FOR PRINTING THE SYMBOL TABLE AND TREE
+/**
+ * @brief PrintSymData Helpful function for debbuging.
+ * @param data The data to print.
+ */
 void print_SymData(SymData* data) {
     if (!data) return;
 
@@ -535,6 +528,12 @@ void print_SymData(SymData* data) {
     }
 }
 
+
+/**
+ * @brief Prints the data of a symbol in the symbol table.
+ * 
+ * @param node The root of symtable.
+ */
 void inOrderTraversal(AVLNode* node) {
     if (node == NULL) {
         return;
@@ -543,8 +542,9 @@ void inOrderTraversal(AVLNode* node) {
     fprintf(stderr, "Key: %s, ", node->key);
     print_SymData(&node->data);
     inOrderTraversal(node->right);
-    // printf("CHEGO\n");
 }
+
+
 
 /**
  * @brief Printing the symbol table
@@ -565,6 +565,11 @@ void print_SymTable(SymTable* table) {
 
 
 
+/**
+ * @brief 
+ * Helper function for debugging.
+ * @param count The number of spaces to print.
+ */
 
 void printSpaces(int count) {
     for (int i = 0; i < count; i++) {
@@ -572,6 +577,14 @@ void printSpaces(int count) {
     }
 }
 
+
+
+/**
+ * @brief 
+ * Helper function for printing the AVL tree
+ * @param node The root of the AVL tree.
+ * @param space The number of spaces to print.
+ */
 
 void print_AVLTree(AVLNode* node, int space) {
     if (node == NULL) return;
@@ -588,6 +601,12 @@ void print_AVLTree(AVLNode* node, int space) {
     print_AVLTree(node->left, space);
 }
 
+
+/**
+ * @brief 
+ * Helper function for debugging (Printing the Tree)
+ * @param table The symbol table to print.
+ */
 void printTree(SymTable* table) {
     if (table == NULL || table->root == NULL) {
         fprintf(stderr, "Symbol table is empty or not initialized.\n");

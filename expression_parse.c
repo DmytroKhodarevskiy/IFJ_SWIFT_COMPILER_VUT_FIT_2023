@@ -7,6 +7,8 @@ SymStack *table;
 AVLNode *func_node;
 instr_node *main_gen_list;
 instr_list_dynamic *instr_llist;
+bool int_to_double = false;
+bool double_to_int = false;
 
 
 
@@ -24,6 +26,27 @@ int precedence_table[size_table][size_table] = {
         {S,  S,  S,  S,  S,  S,  E,  S,  END} // $
 
 };
+
+
+void build_in_function(char *id_name){
+    SymTable *check_symtable = create_SymTable();
+    check_symtable = s_peek(table);
+    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    if(!strcmp(id_name, "readString")) {
+        char *string = malloc(sizeof(char) * 256);
+        string = "CALL $%%readString\n";
+        add_instr(&node_inst, string);
+    }
+    else if(!strcmp(id_name, "length")){
+        char *string = malloc(sizeof(char) * 256);
+        string = "CALL $%%length\n";
+        add_instr(&node_inst, string);
+    }
+
+
+    return;
+
+}
 
 void push_literal(char *val, DataType type){
     SymTable *check_symtable = create_SymTable();
@@ -73,11 +96,22 @@ void push_variable(char *id_name){
     }
 }
 
+void concat(int deepness, DataType type)
+{
+    SymTable *check_symtable = create_SymTable();
+    check_symtable = s_peek(table);
+    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    Data data = init_data();
+    generate_code(&node_inst, data, GEN_POP_TMP,  1, UNUSED);
+    generate_code(&node_inst, data, GEN_POP_TMP,  2, UNUSED);
+    generate_code(&node_inst, data, GEN_CONCAT,  0, UNUSED);
+}
 void FUNC_CALLS_EXP(FILE **file,Token *current_token){ //current token is (// *current_token = get_token(file); // get (
     if (current_token->token_type != T_LPAR){
         exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
     }
     ListFuncParam* param = &func_node->data.paramTypes;
+    if(func_node->data.paramCount == 0) param = NULL;
     ARG_LIST_EXP(file, current_token, param);
 
     *current_token = get_token(*file); // get )
@@ -445,6 +479,7 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
                 func_node = s_search_symtack(table, token->string_value->str);
                 if (func_node != NULL) {
                     if (func_node->data.isFunction) {
+                        build_in_function(token->string_value->str);
                         FuncId = *token;
                         EOL = findNewLineInFile(*file);
                         *token = get_token(*file);
@@ -523,16 +558,12 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
             // E -> E!
             //print_expression_type(*expression_type);
             if(*expression_type == TYPE_NIL){
-                //                *expression_type = TYPE_UNKNOWN;
-                //                fprintf(stderr, "Error: Cannot use ! operator on nil\n");
-                //                return -1;
+                print_SymTable(check_symtable);
                 exitWithError("Semantic error: Cannot use ! operator on nil\n", ERR_SEMANT_TYPE);
             }
             if(tokens[0].grammar_token_type == T_NT && tokens[1].token_type == T_NOTNIL) {
                 if (!is_nullable(*expression_type)) {
                     exitWithError("Semantic error: Cannot use ! operator on non-nullable type\n", ERR_SEMANT_TYPE);
-                    //                    fprintf(stderr, "Error: Cannot use ! operator on non-nullable type\n");
-                    //                    return -1;
                 }
                 *expression_type -= 4;
                 return 6;
@@ -547,7 +578,12 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                     // E -> E + E
                     case T_PLUS:
                         *expression_type = get_token_type(tokens[0], tokens[2], 1);
-                        generate_code(&node_inst, data, GEN_ADD,  0, UNUSED);
+                        if(*expression_type == TYPE_STRING) {
+                            generate_code(&node_inst, data, GEN_CONCAT,  0, UNUSED);
+                        }
+                        else {
+                            generate_code(&node_inst, data, GEN_ADD,  0, UNUSED);
+                        }
                         return 2;
                         // E -> E - E
                     case T_MINUS:

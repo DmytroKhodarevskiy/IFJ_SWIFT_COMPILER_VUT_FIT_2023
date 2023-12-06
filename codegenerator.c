@@ -25,6 +25,100 @@ char *frame_name;
 
 //TODO: replace string with vsprintf
 
+char* convert_str(char *IFJStr, char* str)
+{
+    char tmpStr[10];
+
+    if (IFJStr == NULL)
+        return NULL;
+
+    // Check if the input string is "Hello" and handle it specifically
+
+
+    strcpy(IFJStr, "string@");
+
+    size_t srcLen = strlen(str);
+    for (size_t i = 0; i < srcLen; i++)
+    {
+        if (str[i] == '\"') {
+            continue;
+        }
+        size_t len = strlen(IFJStr);
+        if ((str[i] >= 0 && str[i] <= 32) || (str[i]==35))
+        {
+            sprintf(tmpStr, "\\%03d", (int)str[i]);
+            strcat(IFJStr, tmpStr);
+        }
+        else if (str[i] == 36)
+        {
+            strcat(IFJStr, "$");
+        }
+        else if (str[i] == 37)
+        {
+            strcat(IFJStr, "%%");
+        }
+        else if (str[i] == 92) // '\'
+        {
+            if (i + 1 < srcLen)
+            {
+                i++;
+                switch (str[i])
+                {
+                    case 'a':
+                        strcat(IFJStr, "\\007");
+                        break;
+                    case 'b':
+                        strcat(IFJStr, "\\008");
+                        break;
+                    case 't':
+                        strcat(IFJStr, "\\009");
+                        break;
+                    case 'n':
+                        strcat(IFJStr, "\\010");
+                        break;
+                    case 'v':
+                        strcat(IFJStr, "\\011");
+                        break;
+                    case 'f':
+                        strcat(IFJStr, "\\012");
+                        break;
+                    case 'r':
+                        strcat(IFJStr, "\\013");
+                        break;
+                    case 'e':
+                        strcat(IFJStr, "\\027");
+                        break;
+                    case '\'':
+                        strcat(IFJStr, "\\039");
+                        break;
+                    case '\\':
+                        strcat(IFJStr, "\\092");
+                        break;
+                    case '$':
+                        strcat(IFJStr, "\\036");
+                        break;
+                    case '\"':
+                        strcat(IFJStr, "\\034");
+                        break;
+                    default:
+                        strcat(IFJStr, "\\");
+                        IFJStr[len + 1] = str[i];
+                        IFJStr[len + 2] = '\0';
+                        break;
+                }
+            }
+            else
+                strcat(IFJStr, "\\092");
+        }
+        else
+        {
+            IFJStr[len] = str[i];
+            IFJStr[len+1] = '\0';
+        }
+    }
+    return IFJStr;
+}
+
 char *create_instr_string(const char *format, ...) {
     va_list args;
     va_start(args, format);
@@ -178,10 +272,7 @@ void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame fr
     SET_FRAME(frame);
     char *type_string;
     type_string = type_to_string(type);
-
-    fprintf(stderr, "type: %d\n", type);
-    fprintf(stderr, "type_string: %s\n", type_string);
-
+    char *string_to_convert = malloc(MAX_LINE_LENGTH * sizeof(char));
     if(type == TYPE_UNKNOWN)
         sprintf(string, "PUSHS %s@%s_%d\n", frame_name, id_name, deepness);
     else if(type == TYPE_DOUBLE) {
@@ -190,6 +281,8 @@ void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame fr
     }
     else if(type == TYPE_NIL)
         sprintf(string, "PUSHS nil@nil\n");
+    else if(type == TYPE_STRING)
+        sprintf(string, "PUSHS %s\n", convert_str(string_to_convert, value));
     else{
         sprintf(string, "PUSHS %s@%s\n", type_string, value);
     }
@@ -207,6 +300,19 @@ void ADD(instr_node **head, char *string) {
 void SUB(instr_node **head, char *string) {
   string = "SUBS\n";
   add_instr(head, string);
+}
+
+void CONCAT(instr_node **head, char *string) {
+    string = "POPS GF@?temp_1\n";
+    add_instr(head, string);
+    string = "POPS GF@?temp_2\n";
+    add_instr(head, string);
+    string = "CONCAT GF@&str GF@&str GF@?temp_2\n";
+    add_instr(head, string);
+    string = "CONCAT GF@&str GF@&str GF@?temp_1\n";
+    add_instr(head, string);
+    string = "PUSHS GF@&str\n";
+    add_instr(head, string);
 }
 
 // multiply two values from stack (top two) and push result to stack
@@ -285,6 +391,10 @@ void MAIN(instr_node **head, char *string) {
     string = "DEFVAR GF@?temp_1\n";
     add_instr(head, string);
     string = "DEFVAR GF@?temp_2\n";
+    add_instr(head, string);
+    string = "DEFVAR GF@&str\n";
+    add_instr(head, string);
+    string = "MOVE GF@&str string@\n";
     add_instr(head, string);
   string = "CREATEFRAME\n";
   add_instr(head, string);
@@ -693,6 +803,10 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
 
     case GEN_ELSE_IF_END:
         ELSE_IF_END(head, string, deepness, if_cnt);
+        break;
+
+    case GEN_CONCAT:
+        CONCAT(head, string);
         break;
 
     // define data.op.id_name to global

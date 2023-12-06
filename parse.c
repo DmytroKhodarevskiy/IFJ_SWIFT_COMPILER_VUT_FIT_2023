@@ -30,7 +30,7 @@ void insert_include_functions_sym_table() {
   intParam.prefixName = NULL;
   intParam.dataType = TYPE_INT;
   intParam.next = NULL;
-  insert_FunctionSymTable(global_symtable, " Int2Double", TYPE_DOUBLE, &intParam, 1);
+  insert_FunctionSymTable(global_symtable, "Int2Double", TYPE_DOUBLE, &intParam, 1);
   
    // Double2Int 
    ListFuncParam doubleParam;
@@ -78,7 +78,7 @@ void insert_include_functions_sym_table() {
     intParamReadInt.prefixName = NULL;
     intParamReadInt.dataType = TYPE_INT;
     intParamReadInt.next = NULL;
-    insert_FunctionSymTable(global_symtable, "readInt", TYPE_INT_NULLABLE, &intParamReadInt, 1);
+    insert_FunctionSymTable(global_symtable, "readInt", TYPE_INT_NULLABLE, &intParamReadInt, 0);
 
   // ReadDouble
     ListFuncParam doubleParamReadDouble;
@@ -87,9 +87,9 @@ void insert_include_functions_sym_table() {
     doubleParamReadDouble.prefixName = NULL;
     doubleParamReadDouble.dataType = TYPE_DOUBLE;
     doubleParamReadDouble.next = NULL;
-    insert_FunctionSymTable(global_symtable, "readDouble", TYPE_DOUBLE_NULLABLE, &doubleParamReadDouble, 1);
+    insert_FunctionSymTable(global_symtable, "readDouble", TYPE_DOUBLE_NULLABLE, &doubleParamReadDouble, 0);
 
-  
+
   // ReadString
     ListFuncParam stringParamReadString;
     stringParamReadString.name = "String";

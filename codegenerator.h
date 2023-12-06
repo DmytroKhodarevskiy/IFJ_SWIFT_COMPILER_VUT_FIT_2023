@@ -61,6 +61,8 @@ typedef enum {
     GEN_FLOAT2INT,
     GEN_INT2CHAR,
     GEN_STRI2INT,
+    GEN_READ,
+    GEN_CONCAT,
 } gencode;
 
 typedef struct Operand {

@@ -130,7 +130,8 @@ void Parse(FILE *file){
     // main_gen = init_instr_node();
     add_instr(&main_gen, "\n");
 
-    main_gen->name_of_llist = "main";
+    // main_gen->name_of_llist = "main";
+    main_gen->name_of_llist = "global";
     instr_list = init_instr_list_dynamic();
     Data data;
     generate_code(&main_gen, data, GEN_MAIN, 0, UNUSED);
@@ -1356,6 +1357,9 @@ void MB_ASSIGN_EXPR(FILE *file, DataType type, SymData *node_data){ //current to
   }
 
     int error = 0;
+    // fprintf(stderr, "-----------------------------------------\n");
+    // printTree(stack.items[stack.top]);
+    // fprintf(stderr, "-----------------------------------------\n");
     DataType exp_type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
     if (type == TYPE_UNKNOWN){
       exitWithError("Syntax error: expression error\n", ERR_SYNTAX);

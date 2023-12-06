@@ -171,6 +171,10 @@ void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame fr
     SET_FRAME(frame);
     char *type_string;
     type_string = type_to_string(type);
+
+    fprintf(stderr, "type: %d\n", type);
+    fprintf(stderr, "type_string: %s\n", type_string);
+
     if(type == TYPE_UNKNOWN)
         sprintf(string, "PUSHS %s@%s_%d\n", frame_name, id_name, deepness);
     else if(type == TYPE_DOUBLE) {
@@ -668,7 +672,10 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
             // char *id_name_push;
             val = data.op.val;
             id_name_push = data.op.id_name;
-            fprintf(stderr, "hue:( %s )\n", data.op.id_name);
+
+            // fprintf(stderr, "ID NAME TO PUSH: %s\n", id_name_push);
+
+            // fprintf(stderr, "hue:( %s )\n", data.op.id_name);
             type = data.op.type;
             PUSH(head, id_name_push, string, deepness, frame, type, val);
             break;
@@ -873,6 +880,7 @@ void destroy_file() {
 Data init_data() {
   Data data;
   data.func_name = NULL;
+  data.op.type = TYPE_UNKNOWN;
   // data.func_param = NULL;
   data.op.id_name = NULL;
   data.op2.id_name = NULL;

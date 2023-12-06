@@ -1,14 +1,14 @@
 
 var b : Int = 5
-var a : Int = 1-1
+var a : Int = b
 
-if (a==a) {
-    var c : Int? = nil
-    var d : Int = 2
-    var e : Int = 3 +3
-}
-else {
-}
+// if (a==a) {
+    // var c : Int? = nil
+    // var d : Int = 2
+    // var e : Int = 3 +3
+// }
+// else {
+// }
         // var d = 2.456445
         // var c : String
         //c = "Hello_world"

@@ -68,43 +68,8 @@ POPS GF@b_0
 
 # declare a var
 DEFVAR GF@a_0
-PUSHS int@1
-PUSHS int@1
-SUBS
+PUSHS GF@b_0
 POPS GF@a_0
-
-PUSHS unknown@ÀT“ˆìU
-PUSHS unknown@ÀT“ˆìU
-EQS
-
-# if (res) 
-POPS GF@%%res
-JUMPIFNEQ $IF_ELSE_d0 GF@%res bool@true
-# {
-# declare a var
-DEFVAR LF@c_1
-PUSHS nil@nil
-POPS LF@c_1
-
-# declare a var
-DEFVAR LF@d_1
-PUSHS int@2
-POPS LF@d_1
-
-# declare a var
-DEFVAR LF@e_1
-PUSHS int@3
-PUSHS int@3
-ADDS
-POPS LF@e_1
-
-JUMP $IF_END_d0
-# }
-
-# else { 
-LABEL $IF_ELSE_d0
-LABEL $IF_END_d0
-# }
 
 
 # EXIT 

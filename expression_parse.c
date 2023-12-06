@@ -38,12 +38,23 @@ void push_literal(char *val, DataType type){
 void push_variable(char *id_name){
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
+
+    // fprintf(stderr, "=====================================================\n");
+    // printTree(check_symtable);
+    // fprintf(stderr, "=====================================================\n");
+
     Data data = init_data();
     data.op.id_name = id_name;
+    // fprintf(stderr, "id_name: %s\n", id_name);
     int depth = Get_deepness_of_var(table, id_name);
+    fprintf(stderr, "depth: %d\n", depth);
     instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
-    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data,GEN_PUSH,  0, GF);
-    else generate_code(&node_inst, data,GEN_PUSH,  depth, LF);
+
+    fprintf(stderr, "node_inst: %s\n", node_inst->name_of_llist);
+    // print_list_names(instr_llist);
+
+    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data,GEN_PUSH, 0, GF);
+    else generate_code(&node_inst, data, GEN_PUSH, depth, LF);
 }
  void push_binary(int deepness, DataType type)
 {
@@ -402,6 +413,11 @@ int get_index_from_token(Token token) {
 DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** file, instr_node *main_gen_exp, instr_list_dynamic *instr_llist_exp) {
     TokenStack stack;
     table = symStack;
+
+    // fprintf(stderr, "=========================================\n");
+    // printTree(table->items[table->top]);
+    // fprintf(stderr, "=========================================\n");
+
     main_gen_list = main_gen_exp;
     instr_llist = instr_llist_exp;
     Token FuncId;

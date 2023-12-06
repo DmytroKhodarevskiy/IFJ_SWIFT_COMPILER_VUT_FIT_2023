@@ -2,6 +2,7 @@ var a : Int = 6
 // var d = 2.456445
 // var c : String
 //c = "Hello_world"
+//c = "Hello_world"
 
 if (a==a) {
     // var OUTERIF = 5

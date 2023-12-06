@@ -455,6 +455,13 @@ void FUNC_START(instr_node **head, char *func_name, char *string) {
   add_instr(head, string);
   string = "MOVE LF@%%retval nil@nil\n";
   add_instr(head, string);
+  char *instr = create_instr_string("JUMP **%s_declares**\n", func_name);
+  if (instr != NULL) 
+    add_instr(head, instr);
+  instr = create_instr_string("LABEL **%s_declares_return**\n", func_name);
+  if (instr != NULL) 
+    add_instr(head, instr);
+//   string = "JUMP\n";
 }
 
 void CREATEFRAME(instr_node **head, char *string) {
@@ -495,7 +502,7 @@ void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, unsigned
         add_instr(head, instr);
     }
 
-    instr = create_instr_string("MOVE TF@%s int@%s\n# ..., %s,\n", func_param[i].id_name, func_param[i].val, func_param[i].id_name);
+    instr = create_instr_string("MOVE TF@%s_0 int@%s\n# ..., %s,\n", func_param[i].id_name, func_param[i].val, func_param[i].id_name);
     if (instr != NULL) {
         add_instr(head, instr);
     }
@@ -1182,6 +1189,22 @@ int add_new_linked_list(instr_list_dynamic *list, char *name) {
     new_head->instr = NULL;
     new_head->next = NULL;
 
+    new_head->declarations = NULL;
+
+    // char *func_name_dec;   
+    // int length = snprintf(NULL, 0, "LABEL **%s_declares**\n", name) + 1; // +1 for null terminator
+    // int length = snprintf(NULL, 0, " ", func_name) + 1; // +1 for null terminator
+    // func_name_dec = malloc(length); // Allocate memory
+    // if (func_name_dec == NULL) {
+        // Handle memory allocation error
+        // exitWithError("Error: malloc failed\n", ERR_INTERNAL);
+    // }
+    char *func_name_dec = malloc(MAX_LINE_LENGTH * sizeof(char));
+    sprintf(func_name_dec, "\n\nLABEL **%s_declares**\n", name);
+    fprintf(stderr, "func_name_dec: %s\n", func_name_dec);
+    add_instr(&new_head->declarations, func_name_dec);
+    // new_head.
+
     // printf("new_head->name_of_llist: %s\n", new_head->name_of_llist);
 
     // Update the list structure
@@ -1256,6 +1279,7 @@ void pop_all_lists_to_file(instr_list_dynamic *list) {
 
     for (int i = 0; i < list->size; i++) {
         instr_node *current = list->lists[i];
+        instr_node *declares = list->lists[i]->declarations;
         // Check if the list is not empty
         if (current != NULL) {
             // Free the head node's name_of_llist if necessary
@@ -1275,6 +1299,26 @@ void pop_all_lists_to_file(instr_list_dynamic *list) {
             // Free the head node itself
             free(list->lists[i]);
         }
+
+        if (declares != NULL) {
+            // Free the head node's name_of_llist if necessary
+            // free(current->name_of_llist);
+            // Process the rest of the list
+            // declares = declares->next;
+            while (declares != NULL) {
+                if (declares->instr != NULL) {
+                    // fprintf(file, "%s", current->instr); // Write instruction to file
+                    printf("%s", declares->instr); // Write instruction to file
+                    // free(current->instr);
+                }
+                instr_node *tmp = declares;
+                declares = declares->next;
+                free(tmp);
+            }
+            // Free the head node itself
+            // free(list->lists[i]->declarations);
+        }
+
         list->lists[i] = NULL;
     }
 

@@ -54,35 +54,57 @@
 //     } else {}
 // } else {}
 
-var outerCounter = 0
+func GRINFIND () -> Int {
+    // var c: Int = a
+    // if (a > b) {
+    //     c = a
+    // } else {
+    //     c = b
+    // }
+
+    var outerCounter = 0
 var innerCounter = 0
-
-while (outerCounter < 5) {
-    write("Outer Counter:", outerCounter, "\n")
-
     while (innerCounter < 3) {
         write("Inner Counter:", innerCounter, "\n")
 
         // Increment inner loop counter
         innerCounter = 1 + innerCounter
     }
-
-    innerCounter = 0
-    
-    while (innerCounter < 3) {
-        write("Inner Counter:", innerCounter, "\n")
-
-        // Increment inner loop counter
-        innerCounter = 1 + innerCounter
-    }
-
-    // Reset inner loop condition and counter for the next iteration of outer loop
-    // innerLoopCondition = true
-    innerCounter = 0
-
-    // Increment outer loop counter
-    outerCounter = 1 + outerCounter
+    return 1
 }
+
+// GRINFIND(1, 2)
+
+
+// var outerCounter = 0
+// var innerCounter = 0
+
+// while (outerCounter < 5) {
+//     write("Outer Counter:", outerCounter, "\n")
+
+    // while (innerCounter < 3) {
+    //     write("Inner Counter:", innerCounter, "\n")
+
+    //     // Increment inner loop counter
+    //     innerCounter = 1 + innerCounter
+    // }
+
+//     innerCounter = 0
+    
+//     while (innerCounter < 3) {
+//         write("Inner Counter:", innerCounter, "\n")
+
+//         // Increment inner loop counter
+//         innerCounter = 1 + innerCounter
+//     }
+
+//     // Reset inner loop condition and counter for the next iteration of outer loop
+//     // innerLoopCondition = true
+//     innerCounter = 0
+
+//     // Increment outer loop counter
+//     outerCounter = 1 + outerCounter
+// }
 
 // var b : Int = 0
 // var print : String = "ahoj!\n"

@@ -122,7 +122,7 @@ void Parse(FILE *file){
     linenum = 0;
     rewind(file);
     fprintf(stderr, "FIRST PHASE DONE\n");
-    print_SymTable(global_symtable);
+    // print_SymTable(global_symtable);
     // fprintf(stderr, "-------------------------------\n");
     // print_SymTable(global_symtable);
     // fprintf(stderr, "------------------------------------------------------------------------------=---\n");
@@ -801,6 +801,18 @@ void STMT(FILE *file){
               // data.op.id_name
 
               generate_code(&node, data, GEN_FUNC_END, 0, UNUSED);
+              // generate_code(&node->declarations, data, GEN_FUNC_END, 0, UNUSED);
+              // char *func_name_dec;
+              // int length = snprintf(NULL, 0, "JUMP **%s_declares_return**\n", func_name) + 1; // +1 for null terminator
+              // // int length = snprintf(NULL, 0, " ", func_name) + 1; // +1 for null terminator
+              // func_name_dec = malloc(length); // Allocate memory
+              // if (func_name_dec == NULL)
+              //   exitWithError("Error: malloc failed\n", ERR_INTERNAL);
+              char *func_name_dec = malloc(MAX_LINE_LENGTH);
+              if (func_name_dec == NULL)
+                exitWithError("Error: malloc failed\n", ERR_INTERNAL);
+              snprintf(func_name_dec, MAX_LINE_LENGTH, "JUMP **%s_declares_return**\n", func_name);
+              add_instr(&node->declarations, func_name_dec);
 
               current_token = get_token(file); // get }
               if (current_token.token_type != T_RBRACE){
@@ -1052,9 +1064,11 @@ void ARG_WRITE(FILE *file){ //current token is (
 
   current_token = get_token(file); // get param
   DataType actual_argument_type = TYPE_UNKNOWN;
-  SymTable *check_symtable = create_SymTable();
-  check_symtable = s_peek(&stack);
-  instr_node *node_inst = search_by_name_in_list(instr_list, check_symtable->name, main_gen);
+  // SymTable *check_symtable = create_SymTable();
+  // check_symtable = s_peek(&stack);
+  char *Name = s_getFirstFunctionSymData(&stack)->name;
+  // instr_node *node_inst = search_by_name_in_list(instr_list, check_symtable->name, main_gen);
+  instr_node *node_inst = search_by_name_in_list(instr_list, Name, main_gen);
   Data data = init_data();
   if(current_token.token_type == T_TYPE_ID){
     AVLNode *node = s_search_symtack(&stack, current_token.string_value->str);
@@ -1354,7 +1368,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
     int deep = Get_deepness_current(&stack);
     // fprintf(stderr, "DEEEEEEEEEEEEP: %d\n", deep);
 
-    generate_code(&node, data, GEN_CREATE_ID, deep, LF);
+    generate_code(&node->declarations, data, GEN_CREATE_ID, deep, LF);
     }
   }
 

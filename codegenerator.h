@@ -2,6 +2,7 @@
 #include <string.h>
 #include "tokenizer.h"
 #include "symtable.h"
+#include "memory.h"
 #define MAX_LINES 1000
 #define MAX_LINE_LENGTH 256 // Adjust as needed
 
@@ -16,6 +17,7 @@ typedef struct instr_node {
   char *name_of_llist;
   char *instr;
   struct instr_node *next;
+  struct instr_node *declarations;
 } instr_node;
 
 typedef struct {
@@ -47,25 +49,25 @@ typedef enum {
   GEN_CREATEFRAME,
   GEN_POPFRAME,
   GEN_EXIT,
-    GEN_POP_TMP,
+  GEN_POP_TMP,
   GEN_BUILTIN,
-    GEN_PUSH_TMP,
-    GEN_IDIV,
-    GEN_LT,
-    GEN_GT,
-    GEN_EQ,
-    GEN_AND,
-    GEN_OR,
-    GEN_NOT,
-    GEN_INT2FLOAT,
-    GEN_FLOAT2INT,
-    GEN_INT2CHAR,
-    GEN_STRI2INT,
-    GEN_READ,
-    GEN_CONCAT,
-    GEN_WHILE_START,
-    GEN_WHILE_CHECK,
-    GEN_WHILE_END,
+  GEN_PUSH_TMP,
+  GEN_IDIV,
+  GEN_LT,
+  GEN_GT,
+  GEN_EQ,
+  GEN_AND,
+  GEN_OR,
+  GEN_NOT,
+  GEN_INT2FLOAT,
+  GEN_FLOAT2INT,
+  GEN_INT2CHAR,
+  GEN_STRI2INT,
+  GEN_READ,
+  GEN_CONCAT,
+  GEN_WHILE_START,
+  GEN_WHILE_CHECK,
+  GEN_WHILE_END,
 } gencode;
 
 typedef struct Operand {

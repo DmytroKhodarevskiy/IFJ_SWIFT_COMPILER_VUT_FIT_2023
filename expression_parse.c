@@ -31,7 +31,9 @@ int precedence_table[size_table][size_table] = {
 void build_in_function(char *id_name){
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
-    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    char *Name = s_getFirstFunctionSymData(table)->name;
+    instr_node *node_inst = search_by_name_in_list(instr_llist, Name, main_gen_list);
+    // instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
     if(!strcmp(id_name, "readString")) {
         char *string = malloc(sizeof(char) * 256);
         string = "CALL $%%readString\n";
@@ -52,9 +54,11 @@ void push_literal(char *val, DataType type){
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
     Data data = init_data();
+    char *Name = s_getFirstFunctionSymData(table)->name;
     data.op.val = val;
     data.op.type = type;
-    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    // instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    instr_node *node_inst = search_by_name_in_list(instr_llist, Name, main_gen_list);
     if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data,GEN_PUSH,  0, GF);
     else generate_code(&node_inst, data,GEN_PUSH,  0, LF);
 }
@@ -66,19 +70,20 @@ void push_variable(char *id_name){
     // fprintf(stderr, "=====================================================\n");
     // printTree(check_symtable);
     // fprintf(stderr, "=====================================================\n");
-
+    char *Name = s_getFirstFunctionSymData(table)->name;
     Data data = init_data();
     data.op.id_name = id_name;
     int depth = Get_deepness_of_var(table, id_name);
     // fprintf(stderr, "depth: %d\n", depth);
-    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    // instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    instr_node *node_inst = search_by_name_in_list(instr_llist, Name, main_gen_list);
 
     // fprintf(stderr, "node_inst: %s\n", node_inst->name_of_llist);
     // print_list_names(instr_llist);
-    fprintf(stderr, "LINENUM: %d\n", linenum);
-    fprintf(stderr, "=====================================================\n");
-    fprintf(stderr, "check_symtable->name: %s\n", check_symtable->name);
-    fprintf(stderr, "=====================================================\n");
+    // fprintf(stderr, "LINENUM: %d\n", linenum);
+    // fprintf(stderr, "=====================================================\n");
+    // fprintf(stderr, "check_symtable->name: %s\n", check_symtable->name);
+    // fprintf(stderr, "=====================================================\n");
 
     if(depth == 0) generate_code(&node_inst, data,GEN_PUSH, 0, GF);
     else generate_code(&node_inst, data, GEN_PUSH, depth, LF);
@@ -87,7 +92,9 @@ void push_variable(char *id_name){
 {
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
-    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    char *Name = s_getFirstFunctionSymData(table)->name;
+    // instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    instr_node *node_inst = search_by_name_in_list(instr_llist, Name, main_gen_list);
     Data data = init_data();
     generate_code(&node_inst, data, GEN_POP_TMP,  1, UNUSED);
     generate_code(&node_inst, data, GEN_POP_TMP,  2, UNUSED);
@@ -105,7 +112,9 @@ void concat(int deepness, DataType type)
 {
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
-    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    char *Name = s_getFirstFunctionSymData(table)->name;
+    // instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    instr_node *node_inst = search_by_name_in_list(instr_llist, Name, main_gen_list);
     Data data = init_data();
     generate_code(&node_inst, data, GEN_POP_TMP,  1, UNUSED);
     generate_code(&node_inst, data, GEN_POP_TMP,  2, UNUSED);
@@ -136,7 +145,7 @@ void ARG_LIST_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //cur
            current_token->token_type == T_SING_STRING || current_token->token_type == T_INT ||
            (current_token->token_type == T_KEYWORD && strcmp(current_token->string_value->str, "nil") == 0)
            || current_token->token_type == T_EXPONENT_FLOAT || current_token->token_type == T_EXPONENT_INT))) {
-        if (param != NULL) {
+        if (param != NULL && current_token->token_type != T_RPAR) {
             exitWithError("Semantic error: Too few arguments\n", ERR_SEMANT_TYPE);
             // exitWithError("Semantic error: Too few argumentsssssssssssssssscle\n", ERR_SEMANT_TYPE);
         }
@@ -534,10 +543,12 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
     Data data = init_data();
-    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    char* Name = s_getFirstFunctionSymData(table)->name;
+    // instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    instr_node *node_inst = search_by_name_in_list(instr_llist, Name, main_gen_list);
     switch (count) {
         case 1:
-            fprintf(stderr, "token: %s\n", tokens[0].string_value->str);
+            // fprintf(stderr, "token: %s\n", tokens[0].string_value->str);
             if(tokens[0].token_type == T_TYPE_ID){
                 // AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
                 //Print_Sym_stack(table);

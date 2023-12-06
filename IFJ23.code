@@ -2,6 +2,60 @@
 .IFJcode23
 JUMP $$main
 
+# Write function
+LABEL $%write
+PUSHFRAME
+WRITE LF@param
+POPFRAME
+RETURN
+# end of write ---------
+
+# Int2Double function
+LABEL $%int2float
+PUSHFRAME
+DEFVAR LF@%retval
+INT2FLOAT LF@%retval LF@param
+POPFRAME
+RETURN
+# end of int2float ---------
+
+# Double2Int function
+LABEL $%double2int
+PUSHFRAME
+DEFVAR LF@%retval
+FLOAT2INT LF@%retval LF@param
+POPFRAME
+RETURN
+# end of double2int ---------
+
+# Length function
+LABEL $%length
+PUSHFRAME
+DEFVAR LF@%retval
+STRLEN LF@%retval LF@param
+POPFRAME
+RETURN
+# end of length ---------
+
+# Ord function
+LABEL $%ord
+PUSHFRAME
+DEFVAR LF@%retval
+DEFVAR LF@%strlen
+STRLEN LF@%strlen LF@param
+DEFVAR LF@%bool
+EQ LF@%bool LF@strlen int@0
+JUMPIFEQ $%eq_to_zero LF@%bool bool@true
+STR2INT LF@%retval LFparam int@0
+JUMP $%ord_end
+LABEL $%eq_to_zero
+MOVE LF@%retval int@0
+LABEL $%ord_end
+POPFRAME
+RETURN
+# end of ord ---------
+
+
 LABEL $$main
 DEFVAR GF@%%retval_main
 CREATEFRAME
@@ -15,39 +69,41 @@ MOVE GF@a_0 int@6
 
 # if (res) 
 POPS GF@%%%%res
-JUMPIFNEQ $IF_ELSE_d0_c0 GF@%%res bool@true
+JUMPIFNEQ $IF_ELSE_d0 GF@%%res bool@true
 # {
 
 # if (res) 
 POPS GF@%%%%res
-JUMPIFNEQ $IF_ELSE_d1_c0 GF@%%res bool@true
+JUMPIFNEQ $IF_ELSE_d1 GF@%%res bool@true
 # {
-JUMP $IF_END_d1_c1
+JUMP $IF_END_d1
 # }
 
 # else { 
-LABEL $IF_ELSE_d1_c0
-LABEL $IF_END_d1_c1
+LABEL $IF_ELSE_d1
+LABEL $IF_END_d1
 # }
 
 
 # if (res) 
 POPS GF@%%%%res
-JUMPIFNEQ $IF_ELSE_d1_c0 GF@%%res bool@true
+JUMPIFNEQ $IF_ELSE_d1 GF@%%res bool@true
 # {
-JUMP $IF_END_d1_c1
+JUMP $IF_END_d1
 # }
 
 # else { 
-LABEL $IF_ELSE_d1_c0
-LABEL $IF_END_d1_c1
+LABEL $IF_ELSE_d1
+LABEL $IF_END_d1
 # }
 
-JUMP $IF_END_d0_c0
+JUMP $IF_END_d0
 # }
 
 # else { 
-LABEL $IF_ELSE_d0_c0
-LABEL $IF_END_d0_c0
+LABEL $IF_ELSE_d0
+LABEL $IF_END_d0
 # }
 
+# EXIT 
+EXIT int@0

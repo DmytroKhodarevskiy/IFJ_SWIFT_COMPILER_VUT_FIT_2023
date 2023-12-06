@@ -143,6 +143,12 @@ void Parse(FILE *file){
     // generate_file();
     generate_header();
 
+    instr_node *builtin = NULL;
+    generate_code(&builtin, data, GEN_BUILTIN, 0, UNUSED);
+    pop_list_to_file(&builtin);
+
+    generate_code(&main_gen, data, GEN_EXIT, 0, UNUSED);
+
     // fprintf(stderr, "--------------------------------\n");
     print_list_names(instr_list);
     // fprintf(stderr, "--------------------------------\n");
@@ -396,14 +402,16 @@ void STMT(FILE *file){
   if (current_token.token_type == T_KEYWORD &&
       strcmp(str, "if") == 0){
 
+          int current_scope = Get_deepness_current(&stack);
           // Data data;
           // if_while_cnt++;
 
+          if_cnt += current_scope;
+          else_cnt += current_scope;
 
           IF_EXP(file);
           // generate_code(&main_gen, data, GEN_IF_S, 0, UNUSED);
 
-          // if_cnt++;
 
           current_token = get_token(file); // get {
           if (current_token.token_type != T_LBRACE){
@@ -536,8 +544,16 @@ void STMT(FILE *file){
             generate_code(&node, data, GEN_ELSE_IF_END, deep, UNUSED);
           }
 
-          if_cnt--;
-          else_cnt--;
+
+          if_cnt -= current_scope;
+          else_cnt -= current_scope;
+          // int i = stack.top;
+          // while (i != 0) {
+          //   if_cnt--;
+          //   else_cnt--;
+          //   else_cnt--;
+          //   i--;
+          // }
           // if_while_cnt++;
           // if_while_cnt--;
       }
@@ -1420,7 +1436,8 @@ void EXP(FILE *file){
 
   else {
 
-    if_cnt++;
+    // if_cnt++;
+    // else_cnt++;
     Data data;
     data.else_cnt = else_cnt;
     data.if_cnt = if_cnt;

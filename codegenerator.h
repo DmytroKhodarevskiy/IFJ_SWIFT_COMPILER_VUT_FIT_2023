@@ -44,7 +44,9 @@ typedef enum {
   GEN_ELSE_IF_END,
   GEN_PUSHFRAME,
   GEN_CREATEFRAME,
-  GEN_POPFRAME
+  GEN_POPFRAME,
+  GEN_EXIT,
+  GEN_BUILTIN
 } gencode;
 
 typedef struct Operand {

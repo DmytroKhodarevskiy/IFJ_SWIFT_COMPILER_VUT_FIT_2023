@@ -258,7 +258,7 @@ void FUNC_CALL(instr_node **head, char *func_name, Operand *func_param, unsigned
     if (instr != NULL) {
         add_instr(head, instr);
     }
-}
+  }
 
   // sprintf(string, "CALL $%s\n", func_name);
   // add_instr(head, string);
@@ -291,7 +291,8 @@ void IF_CHECK(instr_node **head, char *string, int deepness, int else_cnt) {
   // string = "JUMPIFNEQ $IF_ELSE_%d GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED bool@true\n", deepness;
   // add_instr(head, string);
 
-  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d_c%d GF@%%%%res bool@true\n# {\n", deepness, else_cnt);
+  // char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d_c%d GF@%%%%res bool@true\n# {\n", deepness, else_cnt);
+  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d GF@%%%%res bool@true\n# {\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -301,7 +302,8 @@ void IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
   // string = "JUMP $IF_END\n";
   // add_instr(head, string);
 
-  char *instr = create_instr_string("JUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  // char *instr = create_instr_string("JUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  char *instr = create_instr_string("JUMP $IF_END_d%d\n# }\n\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -311,7 +313,8 @@ void IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
 void ELSE_START(instr_node **head, char *string, int deepness, int else_cnt) {
   // string = "LABEL $IF_ELSE\n";
   // add_instr(head, string);
-  char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
+  // char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
+  char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -321,10 +324,199 @@ void ELSE_IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
   // string = "LABEL $IF_END\n";
   // add_instr(head, string);
 
-  char *instr = create_instr_string("LABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  // char *instr = create_instr_string("LABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  char *instr = create_instr_string("LABEL $IF_END_d%d\n# }\n\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
+}
+
+
+void EXIT(instr_node **head, char *string) {
+  string = "# EXIT \nEXIT int@0\n";
+  add_instr(head, string);
+}
+
+void BUILTIN(instr_node **head, char *string) {
+  //WRITE
+  char *instr = create_instr_string("\n\n# Write function\nLABEL $%%write\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("WRITE LF@param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of write ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+  //INT2DOUBLE
+  instr = create_instr_string("\n# Int2Double function\nLABEL $%%int2float\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("INT2FLOAT LF@%%retval LF@param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of int2float ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+  //DOUBLE2INT
+  instr = create_instr_string("\n# Double2Int function\nLABEL $%%double2int\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("FLOAT2INT LF@%%retval LF@param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of double2int ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+  //LENGTH
+  instr = create_instr_string("\n# Length function\nLABEL $%%length\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("STRLEN LF@%%retval LF@param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of length ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+    //SUBSTR
+  // instr = create_instr_string("\n# Substr function\nLABEL $substr\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("PUSHFRAME\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%retval\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%tmp\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%tmp2\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%tmp3\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("MOVE LF@%%tmp int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("MOVE LF@%%tmp2 int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("MOVE LF@%%tmp3 int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("LT LF@%%tmp3 LF@param2 int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("JUMPIFEQ $substr_end LF@%%tmp3 bool@true\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("LT LF@%%tmp3 LF@param3 int@0\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("JUMPIFEQ $substr_end LF@%%tmp3 bool@true\n");
+
+  // CHR
+  // instr = create_instr_string("\n# Chr function\nLABEL $chr\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("PUSHFRAME\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%retval\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+  // instr = create_instr_string("DEFVAR LF@%%tmp\n");
+  // if (instr != NULL) 
+  //     add_instr(head, instr);
+
+  //ORD
+  instr = create_instr_string("\n# Ord function\nLABEL $%%ord\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%strlen\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("STRLEN LF@%%strlen LF@param\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%bool\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("EQ LF@%%bool LF@strlen int@0\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMPIFEQ $%%eq_to_zero LF@%%bool bool@true\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("STR2INT LF@%%retval LFparam int@0\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMP $%%ord_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%eq_to_zero\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("MOVE LF@%%retval int@0\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%ord_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of ord ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+
+
 }
 
 int generate_code(instr_node **head, Data data, gencode gencode, int deepness, Frame frame) {
@@ -354,6 +546,13 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
     char *val;
     token_type type;
     // Operand func_param[10];
+    case GEN_BUILTIN:
+        BUILTIN(head, string);
+        break;
+
+    case GEN_EXIT:
+        EXIT(head, string);
+        break;
 
     case GEN_CREATEFRAME:
         CREATEFRAME(head, string);

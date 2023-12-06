@@ -9,6 +9,7 @@ instr_node *main_gen_list;
 instr_list_dynamic *instr_llist;
 
 
+
 int precedence_table[size_table][size_table] = {
 
         // +-  */ rel  !   ??  (   )   i   $
@@ -45,15 +46,13 @@ void push_variable(char *id_name){
 
     Data data = init_data();
     data.op.id_name = id_name;
-    // fprintf(stderr, "id_name: %s\n", id_name);
     int depth = Get_deepness_of_var(table, id_name);
-    fprintf(stderr, "depth: %d\n", depth);
     instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
 
     fprintf(stderr, "node_inst: %s\n", node_inst->name_of_llist);
     // print_list_names(instr_llist);
 
-    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data,GEN_PUSH, 0, GF);
+    if(depth == 0) generate_code(&node_inst, data,GEN_PUSH, 0, GF);
     else generate_code(&node_inst, data, GEN_PUSH, depth, LF);
 }
  void push_binary(int deepness, DataType type)

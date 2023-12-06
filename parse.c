@@ -911,7 +911,7 @@ void ARG_WRITE_LIST(FILE *file){ //current token is (
       current_token.token_type == T_MUL_STRING ||
       current_token.token_type == T_EXPONENT_INT ||
       current_token.token_type == T_EXPONENT_FLOAT ||
-      current_token.token_type == T_TYPE_ID)) return;
+      current_token.token_type == T_TYPE_ID)) exitWithError("Syntax error: expected correct type\n", ERR_SYNTAX);
   
   ARG_WRITE(file);
 
@@ -956,7 +956,34 @@ void ARG_WRITE(FILE *file){ //current token is (
   // }
 
   current_token = get_token(file); // get param
-
+  DataType actual_argument_type = TYPE_UNKNOWN;
+  SymTable *check_symtable = create_SymTable();
+  check_symtable = s_peek(&stack);
+  instr_node *node_inst = search_by_name_in_list(instr_list, check_symtable->name, main_gen);
+  Data data = init_data();
+  if(current_token.token_type == T_TYPE_ID){
+    AVLNode *node = s_search_symtack(&stack, current_token.string_value->str);
+    if(peekNextToken(file).token_type == T_COLON){
+      exitWithError("Semantic error: Variable has no prefix\n", ERR_SEMANT_TYPE);
+    }
+    if(node == NULL) {
+      exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
+    }
+    if(node->data.isFunction) {
+      exitWithError("Semantic error: Cannot use function as argument\n", ERR_SEMANT_TYPE);
+    }
+    data.op.id_name = current_token.string_value->str;
+    int depth = Get_deepness_of_var(&stack, current_token.string_value->str);
+    if (depth == 0)
+      generate_code(&node_inst, data, GEN_WRITE, depth, GF);
+    else
+      generate_code(&node_inst, data, GEN_WRITE, depth, LF);
+  }
+  else{
+    data.op.val = current_token.string_value->str;
+    data.op.type = convert_tokenType_to_symType(current_token.token_type);
+    generate_code(&node_inst, data, GEN_WRITE, 0, UNUSED);
+  }
 
   if (s_search_symtack(&stack, current_token.string_value->str) == NULL &&
        current_token.token_type == T_TYPE_ID) {
@@ -1305,27 +1332,33 @@ void MB_ASSIGN_EXPR(FILE *file, DataType type, SymData *node_data){ //current to
 
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(&stack);
-    // print_SymTable(global_symtable);
-    // Print_Sym_stack(&stack);
 
-//    Data data;
-//    if (!strcmp(check_symtable->name, "global")) {
-//      data.op.val = current_token.string_value->str;
-//      data.op.id_name = node_data->name;
-//      data.op.type = current_token.token_type;
-//      generate_code(&main_gen, data, GEN_MOVE, 0, GF);
-//    }
-//    else {
-//      data.op.val = current_token.string_value->str;
-//      data.op.id_name = node_data->name;
-//      data.op.type = current_token.token_type;
-//      instr_node *node = search_by_name_in_list(instr_list, check_symtable->name, main_gen);
-//
-//      int deep = Get_deepness_current(&stack);
-//
-//      generate_code(&node, data, GEN_MOVE, deep, LF);
-//    }
+    SymData *node_func;
+    Data data;
+    instr_node *node;
+    Frame frame;
+    int deep;
+    data.op.id_name = node_data->name;
+    // fprintf(stderr, "stack-top: %d\n", stack.top);
 
+    if (stack.top != 0) {
+      node_func = s_getFirstFunctionSymData(&stack);
+      if (node_func != NULL) {
+        // fprintf(stderr, "nodefunc is not NULL\n");
+        node = search_by_name_in_list(instr_list, node_func->name, main_gen);
+      }
+      else {
+        // fprintf(stderr, "nodefunc is NULL\n");
+        node = main_gen;
+      }
+      deep = Get_deepness_current(&stack);
+      frame = LF;
+    }
+    else {
+      deep = 0;
+      frame = GF;
+      node = main_gen;
+    }
     int error = 0;
     DataType exp_type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
     if (type == TYPE_UNKNOWN){

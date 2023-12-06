@@ -149,9 +149,16 @@ void ASSIGN(instr_node **head, char *id_name, char *string, int deepness, Frame 
 }
 
 // write value of data.op.id_name to stdout
-void WRITE(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
+void WRITE(instr_node **head, char *id_name, char *string, int deepness, Frame frame, DataType type, char *value) {
   SET_FRAME(frame);
-  sprintf(string, "\n# write(...)\nWRITE %s@%s_%d\n", frame_name, id_name, deepness);
+  if(type == TYPE_UNKNOWN)
+    sprintf(string, "\n# write(...)\nWRITE %s@%s_%d\n", frame_name, id_name, deepness);
+  else if(type == TYPE_DOUBLE)
+    sprintf(string, "\n# write(...)\nWRITE %s@%a\n", type_to_string(type), atof(id_name));
+  else if(type == TYPE_NIL)
+    sprintf(string, "\n# write(...)\nWRITE nil@nil\n");
+  else
+    sprintf(string, "\n# write(...)\nWRITE %s@%s\n", type_to_string(type), value);
   add_instr(head, string);
 }
 
@@ -713,8 +720,10 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
     // write value of data.op.id_name
     case GEN_WRITE:
         // char *id_name_write;
+        val = data.op.val;
         id_name_write = data.op.id_name;
-        WRITE(head, id_name_write, string, deepness, frame);
+        type = data.op.type;
+        WRITE(head, id_name_write, string, deepness, frame, type, val);
         break;
     
     // begin expression, clear stack
@@ -811,7 +820,6 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
         func_name = data.func_name;
         FUNC_START(head, func_name, string);
         break;
-
     // generate function end
     case GEN_FUNC_END:
         // char *retval;

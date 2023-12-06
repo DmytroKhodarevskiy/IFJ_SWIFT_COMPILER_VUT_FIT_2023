@@ -1,13 +1,18 @@
 
-var b : Int = 5
-var a : Int = b - 1
+//var b : Int = 5
+//var a : Int = b - 1
+//
+//if (a < b) {
+//    b = 1337
+//}
+//else {
+//    b = 228
+//}
 
-if (a < b) {
-    b = 1337
-}
-else {
-    b = 228
-}
+var a : Int = 5
+var b : Int = 5
+
+write(a, b, 6, 7, 8)
 
 
 //         if (a==a) {

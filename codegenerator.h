@@ -1,21 +1,20 @@
 #include <stdio.h>
 #include <string.h>
 #include "tokenizer.h"
-#include "symtable.h"
 #define MAX_LINES 1000
 #define MAX_LINE_LENGTH 256 // Adjust as needed
 
 typedef enum {
-    GF,
-    LF,
-    TF,
-    UNUSED
+  GF,
+  LF,
+  TF,
+  UNUSED
 } Frame;
 
 typedef struct instr_node {
-    char *name_of_llist;
-    char *instr;
-    struct instr_node *next;
+  char *name_of_llist;
+  char *instr;
+  struct instr_node *next;
 } instr_node;
 
 typedef struct {
@@ -51,9 +50,9 @@ typedef enum {
 } gencode;
 
 typedef struct Operand {
-    char *id_name;
-    char *val;
-    token_type type;
+  char *id_name;
+  char *val;
+  token_type type;
 } Operand;
 
 typedef struct Data {
@@ -69,7 +68,7 @@ typedef struct Data {
 instr_list_dynamic *init_instr_list_dynamic();
 // int add_new_linked_list(instr_list_dynamic *list);
 int add_new_linked_list(instr_list_dynamic *list, char *name);
-instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node);
+instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name);
 void print_list_names(instr_list_dynamic *list);
 void pop_all_lists_to_file(instr_list_dynamic *list);
 
@@ -111,7 +110,7 @@ Operand init_operand();
 instr_node *init_instr_node();
 
 /*
-* deletes the asm file
+* deletes the asm file 
 */
 void destroy_file();
 
@@ -135,3 +134,4 @@ void generate_function(FILE *file, char *func_name);
 * generates the new instrucitons file with header and main
 */
 int generate_file();
+

@@ -102,7 +102,6 @@ void printFuncParamList(ListFuncParam* list);
 
 void destroy_SymTable(SymTable* table);
 
-SymData initSymData();
 
 
-#endif // SYMTABLE_H
+#endif // SYMTABLE_H    

@@ -3,29 +3,29 @@
 
 // void initializeStack(SymStack *stack) {
 void s_initializeStack(SymStack *stack) {
-    stack->top = -1;
-    stack->size = INITIAL_STACK_SIZE;
-    stack->items = (SymTable **)malloc(stack->size * sizeof(SymTable*));
+  stack->top = -1;
+  stack->size = INITIAL_STACK_SIZE;
+  stack->items = (SymTable **)malloc(stack->size * sizeof(SymTable*));
 
-    if (stack->items == NULL) {
-        fprintf(stderr, "Error: Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }
+  if (stack->items == NULL) {
+    fprintf(stderr, "Error: Memory allocation failed\n");
+    exit(EXIT_FAILURE);
+  }
 }
 
 int s_isEmpty(SymStack *stack) {
-    return stack->top == -1;
+  return stack->top == -1;
 }
 
 void s_resizeStack(SymStack *stack) {
-    stack->size *= STACK_GROWTH_FACTOR;
-    stack->items = (SymTable **)realloc(stack->items, stack->size * sizeof(SymTable*));
+  stack->size *= STACK_GROWTH_FACTOR;
+  stack->items = (SymTable **)realloc(stack->items, stack->size * sizeof(SymTable*));
 
-    if (stack->items == NULL) {
-        exitWithError("Memory allocation failed.\n", ERR_INTERNAL);
-        // fprintf(stderr, "Error: Memory allocation failed\n");
-        // exit(EXIT_FAILURE);
-    }
+  if (stack->items == NULL) {
+    exitWithError("Memory allocation failed.\n", ERR_INTERNAL);
+    // fprintf(stderr, "Error: Memory allocation failed\n");
+    // exit(EXIT_FAILURE);
+  }
 }
 
 SymTable *s_peek(SymStack *stack) {
@@ -43,64 +43,64 @@ SymTable *s_peek(SymStack *stack) {
 void s_push(SymStack *stack, SymTable *item) {
 
 
-    if (stack->top == stack->size - 1) {
-        // Stack is full, resize it
-        s_resizeStack(stack);
-    }
+  if (stack->top == stack->size - 1) {
+    // Stack is full, resize it
+    s_resizeStack(stack);
+  }
 
-    stack->items[++stack->top] = item;
+  stack->items[++stack->top] = item;
 
-    // (*stack->items)->name = item->name;
-    // (*stack->items)->root = item->root;
-    // (*stack->items)->next = item->next;
+  // (*stack->items)->name = item->name;
+  // (*stack->items)->root = item->root;
+  // (*stack->items)->next = item->next;
 
-    // Print_Sym_stack(stack);
-    // print_SymTable(&(stack->items[stack->top]));
-    // print_SymTable(stack->items[stack->top]);
+  // Print_Sym_stack(stack);
+  // print_SymTable(&(stack->items[stack->top]));
+  // print_SymTable(stack->items[stack->top]);
 }
 
 SymTable s_pop(SymStack *stack) {
-    SymTable item;
-    if (s_isEmpty(stack)) {
-        fprintf(stderr, "Error: Stack underflow\n");
-        exit(EXIT_FAILURE);
-    }
+  SymTable item;
+  if (s_isEmpty(stack)) {
+    fprintf(stderr, "Error: Stack underflow\n");
+    exit(EXIT_FAILURE);
+  }
 
-    item = *(stack->items[stack->top--]);
-    return item;
+  item = *(stack->items[stack->top--]);
+  return item;
 }
 
 void s_freeStack(SymStack *stack) {
-    free(stack->items);
-    stack->top = -1;
-    stack->size = 0;
+  free(stack->items);
+  stack->top = -1;
+  stack->size = 0;
 }
 
 // SymData s_search_symtack(SymStack *stack, char *key) {
 AVLNode *s_search_symtack(SymStack *stack, char *key) {
-    // SymData data;
-    AVLNode *node;
-    AVLNode *funcnode;
-    SymTable *table;
-    table = create_SymTable();
-    int i;
+  // SymData data;
+  AVLNode *node;
+  AVLNode *funcnode;
+  SymTable *table;
+  table = create_SymTable();
+  int i;
 
 
-    for (i = stack->top; i >= 0; i--) {
+  for (i = stack->top; i >= 0; i--) {
     
 
-        table = stack->items[i];
+    table = stack->items[i];
     
-        char function_name[256];
-        // char *function_name = table->name;
-        strncpy(function_name, table->name, strlen(table->name) + 1);
-        node = search_SymTable(table, key);
+    char function_name[256];
+    // char *function_name = table->name;
+    strncpy(function_name, table->name, strlen(table->name) + 1);
+    node = search_SymTable(table, key);
 
 
-        if (node != NULL) {
-            // data = node->data;
-            return node;
-        }
+    if (node != NULL) {
+      // data = node->data;
+      return node;
+    }
 
     // SymTable *global = create_SymTable();
     SymTable *global;
@@ -111,16 +111,16 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
     }
 
 
-        if (funcnode != NULL) {
-            if (funcnode->data.isFunction) {
+      if (funcnode != NULL) {     
+          if (funcnode->data.isFunction) {
 
-                if (funcnode->data.paramCount != 0)
-                    node = s_search_param_list(&funcnode->data.paramTypes, key);
+            if (funcnode->data.paramCount != 0)
+              node = s_search_param_list(&funcnode->data.paramTypes, key);
 
-                if (node != NULL)
-                    return node;
-            }
-        }
+            if (node != NULL)
+              return node;
+          }
+      }
 
     }
 
@@ -129,15 +129,15 @@ AVLNode *s_search_symtack(SymStack *stack, char *key) {
 }
 
 AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
-    AVLNode *node;
-    // ListFuncParam *param;
-    // int i;
-    if (param_list == NULL) {
-        return NULL;
-    }
+  AVLNode *node;
+  // ListFuncParam *param;
+  // int i;
+  if (param_list == NULL) {
+    return NULL;
+  }
 
-    ListFuncParam* current = param_list;
-    char *parameter = NULL;
+  ListFuncParam* current = param_list;
+  char *parameter = NULL;
 
     while (current != NULL) {
         if (strcmp(current->name, key) == 0) {
@@ -149,8 +149,8 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
     }
 
 
-    if (parameter == NULL)
-        return NULL; // Name not found
+  if (parameter == NULL) 
+      return NULL; // Name not found
 
 
     (*node).data = initSymData();
@@ -178,23 +178,23 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
 
 void Print_Sym_stack(SymStack *stack) {
   
-    int i;
-    SymTable *table;
-    // AVLNode *node;
-    // ListFuncParam *param;
+  int i;
+  SymTable *table;
+  // AVLNode *node;
+  // ListFuncParam *param;
 
-    fprintf(stderr, "[$] ");
+  fprintf(stderr, "[$] ");
 
-    for (i = 0; i <= stack->top; i++) {
-        // table = *(stack->items) + i;
-        table = stack->items[i];
+  for (i = 0; i <= stack->top; i++) {
+    // table = *(stack->items) + i;
+    table = stack->items[i];
 
 
-        fprintf(stderr, "%s ", table->name);
+    fprintf(stderr, "%s ", table->name);
 
-        // node = table->root;
-        // Print_Sym_table(node);
-    }
+    // node = table->root;
+    // Print_Sym_table(node);
+  }
     fprintf(stderr, "\n");
 }
 
@@ -225,16 +225,16 @@ SymData* s_getFirstFunctionSymData(SymStack *stack) {
 }
 
 int Get_deepness_current(SymStack *stack) {
-    int i;
-    SymTable *table;
-    int deepness = -1;
+  int i;
+  SymTable *table;
+  int deepness = -1;
 
-    for (i = stack->top; i >= 0; i--) {
-        table = stack->items[i];
-        deepness++;
-    }
+  for (i = 0; i <= stack->top; i++) {
+    table = stack->items[i];
+    deepness++;
+  }
 
-    return deepness;
+  return deepness;
 }
 
 int Get_deepness_of_var(SymStack *stack, char* id_name) {
@@ -252,6 +252,6 @@ int Get_deepness_of_var(SymStack *stack, char* id_name) {
     deepness--;
   }
 
-    fprintf(stderr, "Error: Variable not found in the stack for deepness...\n");
-    return -1;
+  fprintf(stderr, "Error: Variable not found in the stack for deepness...\n");
+  return -1;
 }

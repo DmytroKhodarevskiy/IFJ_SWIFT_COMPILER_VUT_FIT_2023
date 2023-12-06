@@ -22,9 +22,9 @@
 #include "memory.h"
 
 typedef struct {
-    SymTable **items;
-    int top;
-    int size;
+  SymTable **items;
+  int top;
+  int size;
 } SymStack;
 
 // Function prototypes

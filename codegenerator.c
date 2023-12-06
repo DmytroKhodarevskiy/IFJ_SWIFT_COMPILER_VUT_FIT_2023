@@ -342,15 +342,15 @@ void BUILTIN(instr_node **head, char *string) {
   char *instr = create_instr_string("\n\n# Write function\nLABEL $%%write\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("PUSHFRAME\n");
+  // instr = create_instr_string("PUSHFRAME\n");
+  // if (instr != NULL) 
+      // add_instr(head, instr);
+  instr = create_instr_string("WRITE LF@%%param\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("WRITE LF@param\n");
-  if (instr != NULL) 
-      add_instr(head, instr);
-  instr = create_instr_string("POPFRAME\n");
-  if (instr != NULL) 
-      add_instr(head, instr);
+  // instr = create_instr_string("POPFRAME\n");
+  // if (instr != NULL) 
+      // add_instr(head, instr);
   instr = create_instr_string("RETURN\n# end of write ---------\n");
   if (instr != NULL) 
       add_instr(head, instr);
@@ -365,7 +365,7 @@ void BUILTIN(instr_node **head, char *string) {
   instr = create_instr_string("DEFVAR LF@%%retval\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("INT2FLOAT LF@%%retval LF@param\n");
+  instr = create_instr_string("INT2FLOAT LF@%%retval LF@%%param\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("POPFRAME\n");
@@ -385,7 +385,7 @@ void BUILTIN(instr_node **head, char *string) {
   instr = create_instr_string("DEFVAR LF@%%retval\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("FLOAT2INT LF@%%retval LF@param\n");
+  instr = create_instr_string("FLOAT2INT LF@%%retval LF@%%param\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("POPFRAME\n");
@@ -405,7 +405,7 @@ void BUILTIN(instr_node **head, char *string) {
   instr = create_instr_string("DEFVAR LF@%%retval\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("STRLEN LF@%%retval LF@param\n");
+  instr = create_instr_string("STRLEN LF@%%retval LF@%%param\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("POPFRAME\n");
@@ -481,19 +481,19 @@ void BUILTIN(instr_node **head, char *string) {
   instr = create_instr_string("DEFVAR LF@%%strlen\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("STRLEN LF@%%strlen LF@param\n");
+  instr = create_instr_string("STRLEN LF@%%strlen LF@%%param\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("DEFVAR LF@%%bool\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("EQ LF@%%bool LF@strlen int@0\n");
+  instr = create_instr_string("EQ LF@%%bool LF@%%strlen int@0\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("JUMPIFEQ $%%eq_to_zero LF@%%bool bool@true\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("STR2INT LF@%%retval LFparam int@0\n");
+  instr = create_instr_string("STR2INT LF@%%retval LF%%param int@0\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("JUMP $%%ord_end\n");

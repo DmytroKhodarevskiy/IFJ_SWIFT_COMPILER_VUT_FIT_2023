@@ -4,26 +4,29 @@ JUMP $$main
 
 # Write function
 LABEL $%write
-PUSHFRAME
-WRITE LF@param
-POPFRAME
+WRITE LF@%param
 RETURN
 # end of write ---------
 
+# CREATEFRAME
+# DEFVAR TF@%param
+# MOVE TF@%param int@5
+# CALL %int2float
 # Int2Double function
 LABEL $%int2float
 PUSHFRAME
 DEFVAR LF@%retval
-INT2FLOAT LF@%retval LF@param
+INT2FLOAT LF@%retval LF@%param
 POPFRAME
 RETURN
 # end of int2float ---------
+# MOVE LF@a TF@retval
 
 # Double2Int function
 LABEL $%double2int
 PUSHFRAME
 DEFVAR LF@%retval
-FLOAT2INT LF@%retval LF@param
+FLOAT2INT LF@%retval LF@%param
 POPFRAME
 RETURN
 # end of double2int ---------
@@ -32,7 +35,7 @@ RETURN
 LABEL $%length
 PUSHFRAME
 DEFVAR LF@%retval
-STRLEN LF@%retval LF@param
+STRLEN LF@%retval LF@%param
 POPFRAME
 RETURN
 # end of length ---------
@@ -42,11 +45,11 @@ LABEL $%ord
 PUSHFRAME
 DEFVAR LF@%retval
 DEFVAR LF@%strlen
-STRLEN LF@%strlen LF@param
+STRLEN LF@%strlen LF@%param
 DEFVAR LF@%bool
-EQ LF@%bool LF@strlen int@0
+EQ LF@%bool LF@%strlen int@0
 JUMPIFEQ $%eq_to_zero LF@%bool bool@true
-STR2INT LF@%retval LFparam int@0
+STR2INT LF@%retval LF%param int@0
 JUMP $%ord_end
 LABEL $%eq_to_zero
 MOVE LF@%retval int@0

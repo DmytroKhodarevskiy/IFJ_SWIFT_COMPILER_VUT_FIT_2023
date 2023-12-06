@@ -285,9 +285,9 @@ void MAIN(instr_node **head, char *string) {
     add_instr(head, string);
     string = "DEFVAR GF@%%retval_main\n";
     add_instr(head, string);
-    string = "DEFVAR GF?temp_binary_1\n";
+    string = "DEFVAR GF?temp_1\n";
     add_instr(head, string);
-    string = "DEFVAR GF?temp_binary_2\n";
+    string = "DEFVAR GF?temp_2\n";
     add_instr(head, string);
 }
 
@@ -354,7 +354,12 @@ void FUNC_END(instr_node **head, char* retval, char *string) {
 }
 
 void POP_TMP(instr_node **head, char *string, int deepness) {
-    sprintf(string, "POPS %s?%s_%d\n", "GF", "temp_binary", deepness);
+    sprintf(string, "POPS %s?%s_%d\n", "GF", "temp", deepness);
+    add_instr(head, string);
+}
+
+void PUSH_TMP(instr_node **head, char *string, int deepness) {
+    sprintf(string, "PUSHS %s?%s_%d\n", "GF", "temp", deepness);
     add_instr(head, string);
 }
 
@@ -421,9 +426,11 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
             val = data.op.val;
             id_name_push = data.op.id_name;
             fprintf(stderr, "hue:( %s )\n", data.op.id_name);
-
             type = data.op.type;
             PUSH(head, id_name_push, string, deepness, frame, type, val);
+            break;
+        case GEN_PUSH_TMP:
+            PUSH_TMP(head, string, deepness);
             break;
 
         // add two values from stack (top two) and push result to stack

@@ -35,7 +35,7 @@ void push_literal(char *val, DataType type){
     else generate_code(&node_inst, data,GEN_PUSH,  0, LF);
 }
 
-void push_variable(char *id_name, DataType type){
+void push_variable(char *id_name){
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
     Data data = init_data();
@@ -44,6 +44,17 @@ void push_variable(char *id_name, DataType type){
     instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
     if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data,GEN_PUSH,  0, GF);
     else generate_code(&node_inst, data,GEN_PUSH,  depth, LF);
+}
+ void push_binary(int deepness)
+{
+    SymTable *check_symtable = create_SymTable();
+    check_symtable = s_peek(table);
+    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    Data data = init_data();
+    generate_code(&node_inst, data, GEN_POP_TMP,  1, UNUSED);
+    generate_code(&node_inst, data, GEN_POP_TMP,  2, UNUSED);
+    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data, GEN_PUSH_TMP,  deepness, GF);
+    else generate_code(&node_inst, data, GEN_PUSH_TMP,  deepness, LF);
 }
 
 void FUNC_CALLS_EXP(FILE **file,Token *current_token){ //current token is (// *current_token = get_token(file); // get (
@@ -282,16 +293,11 @@ DataType get_token_type(Token op1, Token op3, int rule_type){
 
             if(op1.token_type == T_KEYWORD && op3.token_type == T_KEYWORD) return TYPE_NIL;
             else if (op1.token_type == T_KEYWORD) {
-                SymTable *check_symtable = create_SymTable();
-                check_symtable = s_peek(table);
-                instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
-                Data data = init_data();
-                generate_code(&node_inst, data, GEN_POP_TMP,  1, UNUSED);
-                generate_code(&node_inst, data, GEN_POP_TMP,  2, UNUSED);
-                generate_code(&node_inst, data, GEN_PUSH,  0, UNUSED);
+                push_binary(1);
                 return convert_tokenType_to_symType(op3.token_type);
             }
             else if (op3.token_type == T_KEYWORD) {
+                push_binary(2);
                 return convert_tokenType_to_symType(op1.token_type);
             }
             else if(op1.token_type != T_KEYWORD && op3.token_type != T_KEYWORD) {
@@ -477,7 +483,7 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                 if(is_nullable(*expression_type)){
                     if(node->data.isNil) *expression_type = TYPE_NIL;
                 }
-                push_variable(tokens[0].string_value->str, *expression_type);
+                push_variable(tokens[0].string_value->str);
                 return 1;
             }
             if(tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || (tokens[0].token_type == T_KEYWORD && strcmp(tokens[0].string_value->str, "nil") == 0) || tokens[0].token_type == T_SING_STRING) {

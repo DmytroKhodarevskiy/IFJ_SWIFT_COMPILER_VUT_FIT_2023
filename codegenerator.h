@@ -49,7 +49,8 @@ typedef enum {
     GEN_FUNC_START, // generate function start, CANT SET FRAME (USE UNUSED)
     GEN_FUNC_END, // generate function end, CANT SET FRAME (USE UNUSED)
     GEN_FUNC_CALL, // generate function call, CANT SET FRAME (USE UNUSED)
-    GEN_POP_TMP
+    GEN_POP_TMP,
+    GEN_PUSH_TMP
 } gencode;
 
 typedef struct Operand {

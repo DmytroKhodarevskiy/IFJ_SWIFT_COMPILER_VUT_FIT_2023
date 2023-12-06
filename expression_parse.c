@@ -27,6 +27,18 @@ int precedence_table[size_table][size_table] = {
 
 };
 
+void generate_covert(Token *token, DataType type){
+    SymTable *check_symtable = create_SymTable();
+    check_symtable = s_peek(table);
+    Data data = init_data();
+    data.op.id_name = token->string_value->str;
+    data.op.val = token->string_value->str;
+    data.op.type = type;
+    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data, GEN_COVERT, 0, GF);
+    else generate_code(&node_inst, data, GEN_PUSH, 0, LF);
+
+}
 
 void build_in_function(char *id_name){
     SymTable *check_symtable = create_SymTable();

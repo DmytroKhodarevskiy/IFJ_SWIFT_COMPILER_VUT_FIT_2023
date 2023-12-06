@@ -68,74 +68,62 @@ PUSHS int@0
 POPS GF@b_0
 CLEARS
 
-# declare a var
-DEFVAR GF@a_0
-PUSHS int@1
-POPS GF@a_0
-CLEARS
-
-PUSHS GF@a_0
 PUSHS GF@b_0
-LTS
+PUSHS GF@b_0
+EQS
 
+CREATEFRAME
+PUSHFRAME
 # if (res) 
 POPS GF@%%res
 JUMPIFNEQ $IF_ELSE_d0_c0 GF@%%res bool@true
 # {
-PUSHS int@1337
-POPS GF@b_0
+# declare a var
+DEFVAR LF@a_1
+PUSHS int@1
+POPS LF@a_1
 CLEARS
 
+POPFRAME
 JUMP $IF_END_d0_c0
 # }
 
 # else { 
+CREATEFRAME
+PUSHFRAME
 LABEL $IF_ELSE_d0_c0
-PUSHS GF@a_0
-PUSHS GF@a_0
-EQS
 
-# if (res) 
-POPS GF@%%res
-JUMPIFNEQ $IF_ELSE_d1_c1 GF@%%res bool@true
-# {
-# declare a var
-DEFVAR LF@a_2
-PUSHS int@1
-POPS LF@a_2
-CLEARS
-
-JUMP $IF_END_d1_c1
-# }
-
-# else { 
-LABEL $IF_ELSE_d1_c1
-LABEL $IF_END_d1_c1
-# }
-
-PUSHS GF@a_0
-PUSHS GF@a_0
-EQS
-
-# if (res) 
-POPS GF@%%res
-JUMPIFNEQ $IF_ELSE_d1_c2 GF@%%res bool@true
-# {
-# declare a var
-DEFVAR LF@a_2
-PUSHS int@10
-POPS LF@a_2
-CLEARS
-
-JUMP $IF_END_d1_c2
-# }
-
-# else { 
-LABEL $IF_ELSE_d1_c2
-LABEL $IF_END_d1_c2
-# }
-
+POPFRAME
 LABEL $IF_END_d0_c0
+# }
+
+PUSHS GF@b_0
+PUSHS GF@b_0
+EQS
+
+CREATEFRAME
+PUSHFRAME
+# if (res) 
+POPS GF@%%res
+JUMPIFNEQ $IF_ELSE_d0_c1 GF@%%res bool@true
+# {
+# declare a var
+DEFVAR LF@a_1
+PUSHS int@1
+POPS LF@a_1
+CLEARS
+
+POPFRAME
+JUMP $IF_END_d0_c1
+# }
+
+# else { 
+CREATEFRAME
+PUSHFRAME
+LABEL $IF_ELSE_d0_c1
+
+POPFRAME
+LABEL $IF_END_d0_c1
 # }
 
 

@@ -13,7 +13,7 @@
 // #include "symtable.h"
 // #include "stack.h"
 #include "codegenerator.h"
-#include "symtable_stack.h"
+
 
 typedef struct {
   token_type left_side;
@@ -109,7 +109,7 @@ int get_index_from_token(Token token);
  * @return DataType of the expression
  */
 // DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file);
-DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** file, instr_node *main_gen_list, instr_list_dynamic *instr_llist);
+DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** file, instr_node *main_gen_exp, instr_list_dynamic *instr_llist_exp);
 
 /**
  * Determines the index of the grammar rule to be applied based on the given tokens.

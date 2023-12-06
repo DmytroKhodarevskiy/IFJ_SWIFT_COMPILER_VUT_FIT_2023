@@ -105,7 +105,7 @@ typedef enum{
 // {
 // 	char *str; /// string ened by '\0' byte
 // 	unsigned int length; /// lenght of string
-//   unsigned int allocSize; /// size of allocated memory  
+//   unsigned int allocSize; /// size of allocated memory
 // } Dynamic_string;
 
 

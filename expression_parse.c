@@ -5,8 +5,8 @@
 // int linenum;
 SymStack *table;
 AVLNode *func_node;
-instr_node *main_gen_exp;
-instr_list_dynamic *instr_llist_exp;
+instr_node *main_gen_list;
+instr_list_dynamic *instr_llist;
 
 
 int precedence_table[size_table][size_table] = {
@@ -134,7 +134,6 @@ bool findNewLineInFile(FILE *file) {
 
     char ch;
     while ((ch = fgetc(file)) != EOF) {
-        
         if (ch == '\n') {
             linenum++;
             // Newline character found
@@ -196,12 +195,12 @@ DataType convert_tokenType_to_symType(token_type type){
 }
 
 void print_stack(TokenStack stack) {
-    fprintf(stderr, "[$]\t");
+    printf("[$]\t");
     for (int i = 0; i <= stack.top; i++) {
-        if(stack.items[i].token_type == T_RD_EDGE) fprintf(stderr, "[RD]\t");
-        else fprintf(stderr, "[%s]\t", stack.items[i].string_value->str);
+        if(stack.items[i].token_type == T_RD_EDGE) printf("[RD]\t");
+        else printf("[%s]\t", stack.items[i].string_value->str);
     }
-    fprintf(stderr,"\n");
+    printf("\n");
 }
 
 
@@ -352,21 +351,19 @@ int get_index_from_token(Token token) {
 
 
 // DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file) {
-DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** file, instr_node *main_gen_list, instr_list_dynamic *instr_llist){
-    fprintf(stderr, "parse_expression==========================================================\n");
+DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** file, instr_node *main_gen_exp, instr_list_dynamic *instr_llist_exp) {
     TokenStack stack;
-    initializeStack(&stack);
-    main_gen_exp = main_gen_list;
-    instr_llist_exp = instr_llist;
     table = symStack;
+    main_gen_list = main_gen_exp;
+    instr_llist = instr_llist_exp;
     Token FuncId;
-    print_stack(stack);
+    initializeStack(&stack);
     DataType expression_type = TYPE_UNKNOWN;
     bool EOL = false;
     int row;
     int column;
     while (true) {
-        // print_stack(stack);
+        //print_stack(stack);
 
         if(EOL) column = 8;
         else column = get_index_from_token(*token);
@@ -374,11 +371,10 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
 
         // printf("row: %d column: %d\n", row, column);
         Action_Letter action_letter = precedence_table[row][column];
-        fprintf(stderr,"Action: %d row: %d column: %d\n", action_letter, row, column);
+        //printf("Action: %d row: %d column: %d\n", action_letter, row, column);
         if (action_letter == S) {
             insert_edge(&stack);
             push(&stack, *token);
-            print_stack(stack);
             // AVLNode *node = search_SymTable(table, token->string_value->str);
             // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
             // printf("token in exotret: %s\n", token->string_value->str);
@@ -393,10 +389,10 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
                     }
                 }
             }
-            
+//            fprintf(stderr, "token: %s\n", token->string_value->str);
             EOL = findNewLineInFile(*file);
             *token = get_token(*file);
-            fprintf(stderr, "t-------------------oken: %s\n", token->string_value->str);
+//            fprintf(stderr, "token: %s  and eol = %d\n", token->string_value->str, EOL);
         }
 
         else if (action_letter == R) {
@@ -439,7 +435,7 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
     Data data = init_data();
-    instr_node *node_inst = search_by_name_in_list(instr_llist_exp, check_symtable->name, main_gen_exp);
+    instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
     switch (count) {
         case 1:
             if(tokens[0].token_type == T_TYPE_ID){
@@ -465,18 +461,19 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
                 if(node->data.isGlobal) generate_code(&node_inst, data,GEN_PUSH,  0, GF);
                 else generate_code(&node_inst, data,GEN_PUSH,  depth, LF);
                 return 1;
-                }
-                if(tokens[0].token_type == T_TYPE_ID || tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || (tokens[0].token_type == T_KEYWORD && strcmp(tokens[0].string_value->str, "nil") == 0) || tokens[0].token_type == T_SING_STRING) {
-                    *expression_type = convert_tokenType_to_symType(tokens[0].token_type);
-                    //print_expression_type(*expression_type);
-
-                    data.op.val = tokens[0].string_value->str;
-                    data.op.type = *expression_type;
-                    instr_node *node_inst = search_by_name_in_list(instr_llist_exp, check_symtable->name, main_gen_exp);
-                    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data,GEN_PUSH,  0, GF);
-                    else generate_code(&node_inst, data,GEN_PUSH,  0, LF);
-                    return 1;
-                }
+            }
+            if(tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || (tokens[0].token_type == T_KEYWORD && strcmp(tokens[0].string_value->str, "nil") == 0) || tokens[0].token_type == T_SING_STRING) {
+                *expression_type = convert_tokenType_to_symType(tokens[0].token_type);
+                //print_expression_type(*expression_type);
+                fprintf(stderr, "check symtable name: %s\n", check_symtable->name);
+                data.op.val = tokens[0].string_value->str;
+                data.op.type = *expression_type;
+                instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+                fprintf(stderr, "tokmbmen: %s\n", data.op.val);
+                if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data,GEN_PUSH,  0, GF);
+                else generate_code(&node_inst, data,GEN_PUSH,  0, LF);
+                return 1;
+            }
             else return -1;
         case 2:
             // E -> E!
@@ -521,6 +518,7 @@ int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expressi
                         // E -> E / E
                     case T_DIVIDE:
                         *expression_type = get_token_type(tokens[0], tokens[2], 1);
+                        generate_code(&node_inst, data, GEN_DIV,  0, UNUSED);
                         return 5;
                         // E -> E < E
                     case T_LESS:

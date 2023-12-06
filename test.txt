@@ -13,8 +13,8 @@ var asdasdasdasdasdasdasdac : Int
 
 func sum () -> Int {
     var asdasdasdasdasdasdasdac : Int
-    var c : Int
-    var ac : Int = 1 - 2
+    var ch : Int
+    var ac : Int = (( 8 * 2 ) +  1 * 1) /10 - 5
     dc = ac
     // var a : Int
     // var b : Int

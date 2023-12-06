@@ -61,6 +61,11 @@ typedef enum {
     GEN_FLOAT2INT,
     GEN_INT2CHAR,
     GEN_STRI2INT,
+    GEN_READ,
+    GEN_CONCAT,
+    GEN_WHILE_START,
+    GEN_WHILE_CHECK,
+    GEN_WHILE_END,
 } gencode;
 
 typedef struct Operand {
@@ -76,6 +81,7 @@ typedef struct Data {
   Operand *func_param;
   unsigned int func_param_count;
   int ifelse_cnt;
+  int while_cnt;
   // int else_cnt;
 } Data;
 

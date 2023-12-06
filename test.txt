@@ -42,18 +42,64 @@
 // var a: Int? = readInt(b) 
 // write(a)
 
-var a : Int = 1
-if (a > 0) {
-    var a: Int = 2
-    if (a > 0) {
-        var b: Int = 3
-        if (a > 0) {
-            var b: Int = 4
-            write(b)
-        } else {}
-    } else {}
-} else {}
+// var a : Int = 1
+// if (a > 0) {
+//     var a: Int = 2
+//     if (a > 0) {
+//         var b: Int = 3
+//         if (a > 0) {
+//             var b: Int = 4
+//             write(b)
+//         } else {}
+//     } else {}
+// } else {}
 
+var outerCounter = 0
+var innerCounter = 0
+
+while (outerCounter < 5) {
+    write("Outer Counter:", outerCounter, "\n")
+
+    while (innerCounter < 3) {
+        write("Inner Counter:", innerCounter, "\n")
+
+        // Increment inner loop counter
+        innerCounter = 1 + innerCounter
+    }
+
+    innerCounter = 0
+    
+    while (innerCounter < 3) {
+        write("Inner Counter:", innerCounter, "\n")
+
+        // Increment inner loop counter
+        innerCounter = 1 + innerCounter
+    }
+
+    // Reset inner loop condition and counter for the next iteration of outer loop
+    // innerLoopCondition = true
+    innerCounter = 0
+
+    // Increment outer loop counter
+    outerCounter = 1 + outerCounter
+}
+
+// var b : Int = 0
+// var print : String = "ahoj!\n"
+
+// while (a >= 0) {
+    // write(b)
+    // b = b + 1	
+    // a = a - 1
+// }
+
+// var a = "ahoj\n"
+// var b = "Dima"
+// var c = "ahoj"
+
+// var d = a + b + c
+
+// write(d)
 // if (1==1) {
 //     var a: Int = 1
 //     write(a)

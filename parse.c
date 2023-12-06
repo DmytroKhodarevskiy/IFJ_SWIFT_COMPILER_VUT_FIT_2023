@@ -31,7 +31,7 @@ void insert_include_functions_sym_table() {
   intParam.prefixName = NULL;
   intParam.dataType = TYPE_INT;
   intParam.next = NULL;
-  insert_FunctionSymTable(global_symtable, " Int2Double", TYPE_DOUBLE, &intParam, 1);
+  insert_FunctionSymTable(global_symtable, "Int2Double", TYPE_DOUBLE, &intParam, 1);
   
    // Double2Int 
    ListFuncParam doubleParam;
@@ -88,7 +88,7 @@ void insert_include_functions_sym_table() {
     doubleParamReadDouble.next = NULL;
     insert_FunctionSymTable(global_symtable, "readDouble", TYPE_DOUBLE_NULLABLE, &doubleParamReadDouble, 0);
 
-  
+
   // ReadString
     ListFuncParam stringParamReadString;
     stringParamReadString.name = "String";
@@ -432,40 +432,21 @@ void STMT(FILE *file){
 
           // if(!strcmp(check_symtable->name, "global")) {
           if(Name == NULL && stack.top == 0) {
-            // data.else_cnt = else_cnt;
-            // data.if_cnt = if_cnt;
-            // data.op.val = current_token.string_value->str;
-            // data.op.type = current_token.token_type;
             generate_code(&main_gen, data, GEN_IF_CHECK, 0, GF);
           }
 
           else {
 
-            // if_cnt++;
-            // else_cnt++;
-            // Data data;
-            // data.else_cnt = else_cnt;
-            // data.if_cnt = if_cnt;
-            // static int ifelse_cnt = 0;
-            // data.ifelse_cnt = ifelse_cnt;
-
             if (Name == NULL && stack.top != 0) {
-
-              // data.op.val = current_token.string_value->str;
-              // data.op.type = current_token.token_type;
               generate_code(&main_gen, data, GEN_IF_CHECK, deep, LF);
             }
             else {
-
-            // instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
               instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
               generate_code(&node, data, GEN_IF_CHECK, deep, UNUSED);
             }
           }
 
           ifelse_cnt++;
-          // generate_code(&main_gen, data, GEN_IF_S, 0, UNUSED);
-
 
           current_token = get_token(file); // get {
           if (current_token.token_type != T_LBRACE){
@@ -483,10 +464,7 @@ void STMT(FILE *file){
             // add_new_linked_list(instr_list, "if");
 
 
-            // s_push(&stack, *local_symtable);            
             s_push(&stack, local_symtable);
-
-            // int deepness = Get_deepness_current(&stack);
 
             STMT_LIST(file);
 
@@ -527,7 +505,6 @@ void STMT(FILE *file){
 
           if (Name == NULL) {
             // fprintf(stderr, "Name is NULL\n");
-            // data.op.val = "if";
             generate_code(&main_gen, data, GEN_IF_END, deep, UNUSED);
             generate_code(&main_gen, data, GEN_ELSE_START, deep, UNUSED);
           }
@@ -545,7 +522,6 @@ void STMT(FILE *file){
 
           current_token = get_token(file); // get else
 
-          // else_cnt++;
 
           if (current_token.token_type == T_KEYWORD &&
               strcmp(current_token.string_value->str, "else") == 0){
@@ -563,9 +539,7 @@ void STMT(FILE *file){
                   local_symtable->name = "else";
                   // s_push(&stack, *local_symtable);     
                   s_push(&stack, local_symtable);     
-                  // Print_Sym_stack(&stack);
                   STMT_LIST(file);
-                  // Print_Sym_stack(&stack);
 
                   s_pop(&stack);
 
@@ -598,18 +572,6 @@ void STMT(FILE *file){
             generate_code(&node, data, GEN_ELSE_IF_END, deep, UNUSED);
           }
 
-
-          // if_cnt -= current_scope;
-          // else_cnt -= current_scope;
-          // int i = stack.top;
-          // while (i != 0) {
-          //   if_cnt--;
-          //   else_cnt--;
-          //   else_cnt--;
-          //   i--;
-          // }
-          // if_while_cnt++;
-          // if_while_cnt--;
       }
 
   else if (current_token.token_type == T_KEYWORD &&
@@ -684,7 +646,45 @@ void STMT(FILE *file){
   else if (current_token.token_type == T_KEYWORD &&
            (strcmp(str, "while") == 0)) { // while
 
+            SymData *Name = s_getFirstFunctionSymData(&stack);
+            int deep = Get_deepness_current(&stack);
+
+            static int while_cnt = 0;
+            Data data;
+            data.while_cnt = while_cnt;
+           
+           if(Name == NULL && stack.top == 0) {
+              generate_code(&main_gen, data, GEN_WHILE_START, 0, GF);
+              }
+
+            else {
+
+              if (Name == NULL && stack.top != 0) {
+                generate_code(&main_gen, data, GEN_WHILE_START, deep, LF);
+              }
+              else {
+                instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
+                generate_code(&node, data, GEN_WHILE_START, deep, UNUSED);
+              }
+            }
+           
            WHILE_EXP(file);
+
+
+            if(Name == NULL && stack.top == 0) {
+              generate_code(&main_gen, data, GEN_WHILE_CHECK, 0, GF);
+              }
+
+            else {
+
+              if (Name == NULL && stack.top != 0) {
+                generate_code(&main_gen, data, GEN_WHILE_CHECK, deep, LF);
+              }
+              else {
+                instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
+                generate_code(&node, data, GEN_WHILE_CHECK, deep, UNUSED);
+              }
+            }
 
            current_token = get_token(file); // get {
 
@@ -713,6 +713,17 @@ void STMT(FILE *file){
            else {
              current_token = get_token(file); // get }
            }
+
+           if (Name == NULL) {
+            // data.op.val = "if";
+              generate_code(&main_gen, data, GEN_WHILE_END, deep, UNUSED);
+            }
+            else {
+              instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
+              generate_code(&node, data, GEN_WHILE_END, deep, UNUSED);
+            }
+
+            while_cnt++;
       }  
 
   else if (current_token.token_type == T_KEYWORD &&
@@ -1429,12 +1440,40 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
     //     generate_code(&node, data, GEN_MOVE, deep, LF);
     //   }
     // }
+    SymData *node_func;
+    Data data;
+    instr_node *node;
+    Frame frame;
+    int deep;
+    data.op.id_name = node_data.name;
+    // fprintf(stderr, "stack-top: %d\n", stack.top);
+
+    if (stack.top != 0) {
+      node_func = s_getFirstFunctionSymData(&stack);
+      if (node_func != NULL) {
+        // fprintf(stderr, "nodefunc is not NULL\n");
+        node = search_by_name_in_list(instr_list, node_func->name, main_gen);
+      }
+      else {
+        // fprintf(stderr, "nodefunc is NULL\n");
+        node = main_gen;
+      }
+      deep = Get_deepness_current(&stack);
+      frame = LF;
+    }
+    else {
+      deep = 0;
+      frame = GF;
+      node = main_gen;
+    }
 
     type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
     if (type == TYPE_UNKNOWN){
       exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
     }
     node_data.dtype = type;
+
+    generate_code(&node, data, GEN_ASSIGN, deep, frame);
   }
 
 

@@ -8,10 +8,6 @@ WRITE LF@%param
 RETURN
 # end of write ---------
 
-# CREATEFRAME
-# DEFVAR TF@%param
-# MOVE TF@%param int@5
-# CALL %int2float
 # Int2Double function
 LABEL $%int2float
 PUSHFRAME
@@ -20,7 +16,6 @@ INT2FLOAT LF@%retval LF@%param
 POPFRAME
 RETURN
 # end of int2float ---------
-# MOVE LF@a TF@retval
 
 # Double2Int function
 LABEL $%double2int
@@ -61,6 +56,8 @@ RETURN
 
 LABEL $$main
 DEFVAR GF@%%retval_main
+DEFVAR GF?temp_1
+DEFVAR GF?temp_2
 CREATEFRAME
 PUSHFRAME
 DEFVAR GF@%%%%res
@@ -69,11 +66,18 @@ DEFVAR GF@%%%%res
 DEFVAR GF@a_0
 # assign
 MOVE GF@a_0 int@6
+PUSHS int@6
+PUSHS unknown@À„eºU
+PUSHS unknown@À„eºU
+EQS
 
 # if (res) 
 POPS GF@%%%%res
 JUMPIFNEQ $IF_ELSE_d0 GF@%%res bool@true
 # {
+PUSHS unknown@À„eºU
+PUSHS unknown@À„eºU
+EQS
 
 # if (res) 
 POPS GF@%%%%res
@@ -87,6 +91,9 @@ LABEL $IF_ELSE_d1
 LABEL $IF_END_d1
 # }
 
+PUSHS unknown@À„eºU
+PUSHS unknown@À„eºU
+EQS
 
 # if (res) 
 POPS GF@%%%%res

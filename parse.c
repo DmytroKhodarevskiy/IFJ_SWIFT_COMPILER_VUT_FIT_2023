@@ -129,6 +129,7 @@ void Parse(FILE *file){
 
     // main_gen = init_instr_node();
     add_instr(&main_gen, "\n");
+
     main_gen->name_of_llist = "main";
     instr_list = init_instr_list_dynamic();
     Data data;
@@ -478,7 +479,7 @@ void STMT(FILE *file){
             generate_code(&main_gen, data, GEN_ELSE_START, deep, UNUSED);
           }
           else {
-            instr_node *node = search_by_name_in_list(instr_list, Name->name);
+            instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
             generate_code(&node, data, GEN_IF_END, deep, UNUSED);
             generate_code(&node, data, GEN_ELSE_START, deep, UNUSED);
           }
@@ -540,7 +541,7 @@ void STMT(FILE *file){
             generate_code(&main_gen, data, GEN_ELSE_IF_END, deep, UNUSED);
           }
           else {
-            instr_node *node = search_by_name_in_list(instr_list, Name->name);
+            instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
             generate_code(&node, data, GEN_ELSE_IF_END, deep, UNUSED);
           }
 
@@ -609,7 +610,7 @@ void STMT(FILE *file){
             else {
               int error = 0;
               current_token = get_token(file); // get exp
-              DataType type = parse_expression(&stack, &current_token, &error, &file);
+              DataType type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
 
               if (type == TYPE_UNKNOWN){
                 //check?
@@ -676,7 +677,7 @@ void STMT(FILE *file){
 
               print_list_names(instr_list);
 
-              instr_node *node = search_by_name_in_list(instr_list, func_name);
+              instr_node *node = search_by_name_in_list(instr_list, func_name, main_gen);
               Data data;
               data.func_name = func_name;
               generate_code(&node, data, GEN_FUNC_START, 0, UNUSED);
@@ -815,7 +816,7 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
       data.op.val = current_token.string_value->str;
       data.op.id_name = node_data->key;
       data.op.type = current_token.token_type;
-      instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
+      instr_node *node = search_by_name_in_list(instr_list, check_symtable->name, main_gen);
 
       int deep = Get_deepness_of_var(&stack, node_data->key);
 
@@ -825,7 +826,7 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
         generate_code(&node, data, GEN_MOVE, deep, LF);
     }
 
-    DataType type = parse_expression(&stack, &current_token, &error, &file);
+    DataType type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
     if (type != TYPE_NIL) {
       node_data->data.isNil = false;
     }
@@ -857,7 +858,7 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
     // current_token = get_token(file); // get (
     // FUNC_CALLS(file);
     int error = 0;
-    parse_expression(&stack, &current_token, &error, &file);
+    parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
     return;
   } 
 
@@ -865,7 +866,7 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
                 //check
     current_token = get_token(file); // get exp
                 int error = 0;
-    parse_expression(&stack, &current_token, &error, &file);
+    parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
     // exitWithError("Syntax error: expected = or (\n", ERR_SYNTAX);
   }
 }
@@ -1203,7 +1204,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
     else {
     data.op.id_name = node_data.name;
     // instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
-    instr_node *node = search_by_name_in_list(instr_list, Name->name);
+    instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
 
     // int deep = Get_deepness_of_var(&stack, node_data.name);
     Print_Sym_stack(&stack);
@@ -1258,7 +1259,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
         data.op.val = current_token.string_value->str;
         data.op.id_name = node_data.name;
         data.op.type = current_token.token_type;
-        instr_node *node = search_by_name_in_list(instr_list, Name->name);
+        instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
         // int deep = Get_deepness_of_var(&stack, node_data.name);
         int deep = Get_deepness_current(&stack);
 
@@ -1266,7 +1267,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
       }
     }
 
-    type = parse_expression(&stack, &current_token, &error, &file);
+    type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
     if (type == TYPE_UNKNOWN){
       exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
     }
@@ -1317,7 +1318,7 @@ void MB_ASSIGN_EXPR(FILE *file, DataType type, SymData *node_data){ //current to
       data.op.val = current_token.string_value->str;
       data.op.id_name = node_data->name;
       data.op.type = current_token.token_type;
-      instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
+      instr_node *node = search_by_name_in_list(instr_list, check_symtable->name, main_gen);
 
       int deep = Get_deepness_current(&stack);
 
@@ -1325,7 +1326,7 @@ void MB_ASSIGN_EXPR(FILE *file, DataType type, SymData *node_data){ //current to
     }
 
     int error = 0;
-    DataType exp_type = parse_expression(&stack, &current_token, &error, &file);
+    DataType exp_type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
     if (type == TYPE_UNKNOWN){
       exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
     }
@@ -1415,7 +1416,7 @@ void EXP(FILE *file){
   current_token = get_token(file);
 
   int error = 0;
-  DataType type = parse_expression(&stack, &current_token, &error, &file);
+  DataType type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
   if (type != TYPE_BOOL) {
     exitWithError("Semantic error: cant use non bool expressions in conditions\n", ERR_SEMANT_TYPE);
   }
@@ -1451,7 +1452,7 @@ void EXP(FILE *file){
     else {
 
     // instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
-      instr_node *node = search_by_name_in_list(instr_list, Name->name);
+      instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
       generate_code(&node, data, GEN_IF_CHECK, deep, UNUSED);
     }
   }

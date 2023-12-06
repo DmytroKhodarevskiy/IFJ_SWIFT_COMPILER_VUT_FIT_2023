@@ -5,12 +5,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+//#include "codegenerator.h"
+#include "symtable_stack.h"
+#include "symtable.h"
 // #include "memory.h"
 // #include "ctype.h"
 // #include "symtable.h"
 // #include "stack.h"
 #include "codegenerator.h"
-#include "symtable_stack.h"
+
 
 typedef struct {
   token_type left_side;
@@ -106,7 +109,7 @@ int get_index_from_token(Token token);
  * @return DataType of the expression
  */
 // DataType parse_expression(SymTable *table, Token *token, int *error, FILE** file);
-DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** file);
+DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** file, instr_node *main_gen_exp, instr_list_dynamic *instr_llist_exp);
 
 /**
  * Determines the index of the grammar rule to be applied based on the given tokens.
@@ -116,7 +119,7 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
  * @return The index of the grammar rule; -1 if no rule matches.
  */
 // int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expression_type);
-int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expression_type);
+int get_rule_index(Token tokens[], int count, DataType *expression_type);
 
 /**
  * Applies a grammar rule to the token stack based on the rule index.
@@ -134,7 +137,7 @@ void perform_rule(int rule_index, TokenStack *stack, DataType *expression_type);
  * @return 0 if the reduction is successful; -1 if an error occurs or no rule applies.
  */
 // int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type);
-int perform_reduce(SymStack *table, TokenStack *stack, int count, DataType *expression_type);
+int perform_reduce(TokenStack *stack, int count, DataType *expression_type);
 
 //Functions for parsing expressions with functions as operands
 

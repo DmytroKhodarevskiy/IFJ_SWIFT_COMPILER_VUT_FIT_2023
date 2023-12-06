@@ -162,10 +162,28 @@ void BEGIN_EXPR(instr_node **head, char *string) {
 }
 
 // push value of data.op.id_name to stack
-void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
-  SET_FRAME(frame);
-  sprintf(string, "PUSHS %s@%s_%d\n", frame_name, id_name, deepness);
-  add_instr(head, string);
+// void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
+//   SET_FRAME(frame);
+//   sprintf(string, "PUSHS %s@%s_%d\n", frame_name, id_name, deepness);
+//   add_instr(head, string);
+// }
+void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame frame, DataType type, char *value) {
+    SET_FRAME(frame);
+    char *type_string;
+    type_string = type_to_string(type);
+    if(type == TYPE_UNKNOWN)
+        sprintf(string, "PUSHS %s@%s_%d\n", frame_name, id_name, deepness);
+    else if(type == TYPE_DOUBLE) {
+        float val = atof(value);
+        sprintf(string, "PUSHS %s@%a\n", type_string, val);
+    }
+    else if(type == TYPE_NIL)
+        sprintf(string, "PUSHS nil@nil\n");
+    else{
+        sprintf(string, "PUSHS %s@%s\n", type_string, value);
+    }
+
+    add_instr(head, string);
 }
 
 // add two values from stack (top two) and push result to stack
@@ -192,6 +210,60 @@ void DIV(instr_node **head, char *string) {
   add_instr(head, string);
 }
 
+void IDIV(instr_node **head, char *string) {
+    string = "IDIVS\n";
+    add_instr(head, string);
+}
+
+void LT(instr_node **head, char *string) {
+    string = "LTS\n";
+    add_instr(head, string);
+}
+
+void GT(instr_node **head, char *string) {
+    string = "GTS\n";
+    add_instr(head, string);
+}
+
+void EQ(instr_node **head, char *string) {
+    string = "EQS\n";
+    add_instr(head, string);
+}
+ void AND(instr_node **head, char *string) {
+    string = "ANDS\n";
+    add_instr(head, string);
+}
+
+void OR(instr_node **head, char *string) {
+    string = "ORS\n";
+    add_instr(head, string);
+}
+
+void NOT(instr_node **head, char *string) {
+    string = "NOTS\n";
+    add_instr(head, string);
+}
+
+void INT2FLOAT(instr_node **head, char *string) {
+    string = "INT2FLOATS\n";
+    add_instr(head, string);
+}
+
+void FLOAT2INT(instr_node **head, char *string) {
+    string = "FLOAT2INTS\n";
+    add_instr(head, string);
+}
+
+void INT2CHAR(instr_node **head, char *string) {
+    string = "INT2CHARS\n";
+    add_instr(head, string);
+}
+
+void STRI2INT(instr_node **head, char *string) {
+    string = "STRI2INTS\n";
+    add_instr(head, string);
+}
+
 void MAIN(instr_node **head, char *string) {
   string = "\n";
   add_instr(head, string);
@@ -199,6 +271,10 @@ void MAIN(instr_node **head, char *string) {
   add_instr(head, string);
   string = "DEFVAR GF@%%retval_main\n";
   add_instr(head, string);
+    string = "DEFVAR GF?temp_1\n";
+    add_instr(head, string);
+    string = "DEFVAR GF?temp_2\n";
+    add_instr(head, string);
   string = "CREATEFRAME\n";
   add_instr(head, string);
   string = "PUSHFRAME\n";
@@ -275,6 +351,16 @@ void FUNC_END(instr_node **head, char* retval, char *string) {
   add_instr(head, string);
   string = "RETURN\n# }\n";
   add_instr(head, string);
+}
+
+void POP_TMP(instr_node **head, char *string, int deepness) {
+    sprintf(string, "POPS %s?%s_%d\n", "GF", "temp", deepness);
+    add_instr(head, string);
+}
+
+void PUSH_TMP(instr_node **head, char *string, int deepness) {
+    sprintf(string, "PUSHS %s?%s_%d\n", "GF", "temp", deepness);
+    add_instr(head, string);
 }
 
 //CALL ONCE IN MAIN
@@ -577,6 +663,19 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
     case GEN_ELSE_START:
         ELSE_START(head, string, deepness, else_cnt);
         break;
+        // push value of data.op.id_name to stack
+        case GEN_PUSH:
+            // char *id_name_push;
+            val = data.op.val;
+            id_name_push = data.op.id_name;
+            fprintf(stderr, "hue:( %s )\n", data.op.id_name);
+            type = data.op.type;
+            PUSH(head, id_name_push, string, deepness, frame, type, val);
+            break;
+
+        case GEN_PUSH_TMP:
+            PUSH_TMP(head, string, deepness);
+            break;
 
     case GEN_ELSE_IF_END:
         ELSE_IF_END(head, string, deepness, if_cnt);
@@ -617,11 +716,11 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
         break;
     
     // push value of data.op.id_name to stack
-    case GEN_PUSH:
-        // char *id_name_push;
-        id_name_push = data.op.id_name;
-        PUSH(head, id_name_push, string, deepness, frame);
-        break;
+    // case GEN_PUSH:
+    //     // char *id_name_push;
+    //     id_name_push = data.op.id_name;
+    //     PUSH(head, id_name_push, string, deepness, frame);
+    //     break;
     
     // add two values from stack (top two) and push result to stack
     case GEN_ADD:
@@ -638,15 +737,66 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
         MUL(head, string);
         break;
 
+        case GEN_IDIV:
+            IDIV(head, string);
+            break;
+
+        case GEN_LT:
+            LT(head, string);
+            break;
+
+        case GEN_GT:
+            GT(head, string);
+            break;
+
+        case GEN_EQ:
+            EQ(head, string);
+            break;
+
+        case GEN_AND:
+            AND(head, string);
+            break;
+
+        case GEN_OR:
+            OR(head, string);
+            break;
+
+        case GEN_NOT:
+            NOT(head, string);
+            break;
+
+        case GEN_INT2FLOAT:
+            INT2FLOAT(head, string);
+            break;
+
+        case GEN_FLOAT2INT:
+            FLOAT2INT(head, string);
+            break;
+
+        case GEN_INT2CHAR:
+            INT2CHAR(head, string);
+            break;
+
+        case GEN_STRI2INT:
+            STRI2INT(head, string);
+            break;
+
+        case GEN_POP_TMP:
+            POP_TMP(head, string, deepness);
+            break;
+        // generate main function
+        case GEN_MAIN:
+            MAIN(head, string);
+            break;
     // divide two values from stack (top two) and push result to stack
     case GEN_DIV:
         DIV(head, string);
         break;
 
     // generate main function
-    case GEN_MAIN:
-        MAIN(head, string);
-        break;
+    // case GEN_MAIN:
+    //     MAIN(head, string);
+    //     break;
 
     // generate function start
     case GEN_FUNC_START:
@@ -799,8 +949,37 @@ int add_new_linked_list(instr_list_dynamic *list, char *name) {
     return 0; // Success
 }
 
+char *type_to_string(DataType type) {
+       switch (type) {
+           case TYPE_INT:
+               return "int";
+           case TYPE_DOUBLE:
+               return "float";
+           case TYPE_STRING:
+               return "string";
+           case TYPE_NIL:
+               return "nil";
+           case TYPE_INT_NULLABLE:
+               return "int";
+           case TYPE_DOUBLE_NULLABLE:
+               return "float";
+           case TYPE_STRING_NULLABLE:
+               return "string";
+           case TYPE_VOID:
+               return "void";
+           case FUNC:
+               return "func";
+           case TYPE_UNKNOWN:
+               return "unknown";
+           case TYPE_BOOL:
+               return "bool";
+           default:
+               return "unknown";
+       }
+}
+
 // Function to search the linked list in instr_list_dynamic by the name of the linked list
-instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name) {
+instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node) {
     if (list == NULL || name == NULL) {
         return NULL; // Handle NULL pointers
     }
@@ -817,7 +996,8 @@ instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name) {
 
         }
     }
-    return NULL; // List with the given name not found
+    return main_node; // List with the given name not found
+    // return NULL; // List with the given name not found
 }
 
 void pop_all_lists_to_file(instr_list_dynamic *list) {

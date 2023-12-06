@@ -18,6 +18,7 @@
 // }
 // return result!
 // }
+// }
 // pokracovani hlavniho tela programu
 if let inp {
 if (inp < 0) { // Pokracovani hlavniho tela programu

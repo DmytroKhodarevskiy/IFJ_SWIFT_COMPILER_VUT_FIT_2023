@@ -38,42 +38,33 @@
 
 // // Uncomment the following line if you want to change the value of 'a'
 // // a = 67 + 1 + a
+// var b: Int = 0
+// var a: Int? = readInt(b) 
+// write(a)
 
-var b : Int = 0
-var a : Int = 1
+// var a : Int = 1
+// if (a > 0) {
+//     var a: Int = 2
+//     if (a > 0) {
+//         var b: Int = 3
+//         if (a > 0) {
+//             var b: Int = 4
+//             write(b)
+//         } else {}
+//     } else {}
+// } else {}
 
-if (b > 0) {
+
+
+if (b == b) {
     var a: Int = 1
 } else {
-    // var a: Int = 2
-    if (a == a) {
-        // b = 2023
-        var a: Int = 1
-    } else {
-        // b = 1153
-    }
-
-    if (a == a) {
-        // b = 2023
-        a = 10
-    } else {
-        // b = 1153
-    }
 }
 
-
-
-// if (b == b) {
-//     var a: Int = 1
-// } else {
-//     // b = 1153
-// }
-
-// if (a > 5555) {
-//     b = 2023
-// } else {
-//     b = 777
-// }
+if (a > 5555) {
+    var a: Int = 1
+} else {
+}
 
 // To test the output, you can print 'b'
 // print(b)

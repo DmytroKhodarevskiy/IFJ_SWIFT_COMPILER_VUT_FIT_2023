@@ -13,3 +13,23 @@ MOVE LF@%retval int@0
 LABEL $%ord_end
 POPFRAME
 RETURN
+
+LABEL %%readString
+CREATEFRAME
+PUSHFRAME
+# DEFVAR LF@%retval
+DEFVAR LF@%%string_tmp
+DEFVAR LF@%%bool
+DEFVAR LF@%%strlen
+READ LF@%%string_tmp string 
+STRLEN LF@%%strlen LF@%%string_tmp
+EQ LF@%%bool LF@%%strlen int@0
+JUMPIFEQ $%%eq_to_zero LF@%%bool bool@true
+PUSHS LF@%%string_tmp
+JUMP %%readString_end
+LABEL %%eq_to_zero
+PUSHS nil@nil
+# JUMP $%%readString_end
+LABEL $%%readString_end
+POPFRAME
+RETURN

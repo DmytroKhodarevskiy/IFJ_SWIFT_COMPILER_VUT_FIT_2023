@@ -443,7 +443,7 @@ void ELSE_IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
 
 
 void EXIT(instr_node **head, char *string) {
-  string = "\n# EXIT \nEXIT int@0\n";
+  string = "\n# EXIT \nPOPFRAME\nEXIT int@0\n";
   add_instr(head, string);
 }
 
@@ -452,15 +452,9 @@ void BUILTIN(instr_node **head, char *string) {
   char *instr = create_instr_string("\n\n# Write function\nLABEL $%%write\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  // instr = create_instr_string("PUSHFRAME\n");
-  // if (instr != NULL) 
-      // add_instr(head, instr);
   instr = create_instr_string("WRITE LF@%%param\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  // instr = create_instr_string("POPFRAME\n");
-  // if (instr != NULL) 
-      // add_instr(head, instr);
   instr = create_instr_string("RETURN\n# end of write ---------\n");
   if (instr != NULL) 
       add_instr(head, instr);
@@ -522,6 +516,62 @@ void BUILTIN(instr_node **head, char *string) {
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("RETURN\n# end of length ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+  //READSTRING
+  instr = create_instr_string("\n# ReadString function\nLABEL $%%readString\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("CREATEFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%string_tmp\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%bool\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%len\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("READ LF@%%string_tmp string\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("STRLEN LF@%%len LF@%%string_tmp\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("EQ LF@%%bool LF@%%len int@0\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMPIFEQ $%%eq_to_zero_readstring LF@%%bool bool@true\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("MOVE LF@%%retval LF@%%string_tmp\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMP $%%readString_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%eq_to_zero_readstring\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("MOVE LF@%%retval nil@nil\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%readString_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of readString ---------\n");
   if (instr != NULL) 
       add_instr(head, instr);
 

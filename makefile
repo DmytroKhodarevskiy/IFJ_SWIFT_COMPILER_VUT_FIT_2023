@@ -35,6 +35,7 @@ clean:
 # Run the program with an output file
 run: $(OUTPUT)
 	./$(OUTPUT) < test.txt > IFJ23.code
+	./ic23int IFJ23.code
 
 valgrind: $(OUTPUT)
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(OUTPUT) test.txt

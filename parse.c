@@ -67,9 +67,7 @@ void insert_include_functions_sym_table() {
    intParamChr.prefixName = NULL;
    intParamChr.dataType = TYPE_INT;
    intParamChr.next = NULL;
-
    insert_FunctionSymTable(global_symtable, "chr", TYPE_STRING, &intParamChr, 1);
-
 
    // ReadInt 
     ListFuncParam intParamReadInt;
@@ -78,7 +76,7 @@ void insert_include_functions_sym_table() {
     intParamReadInt.prefixName = NULL;
     intParamReadInt.dataType = TYPE_INT;
     intParamReadInt.next = NULL;
-    insert_FunctionSymTable(global_symtable, "readInt", TYPE_INT_NULLABLE, &intParamReadInt, 1);
+    insert_FunctionSymTable(global_symtable, "readInt", TYPE_INT_NULLABLE, &intParamReadInt, 0);
 
   // ReadDouble
     ListFuncParam doubleParamReadDouble;
@@ -87,7 +85,7 @@ void insert_include_functions_sym_table() {
     doubleParamReadDouble.prefixName = NULL;
     doubleParamReadDouble.dataType = TYPE_DOUBLE;
     doubleParamReadDouble.next = NULL;
-    insert_FunctionSymTable(global_symtable, "readDouble", TYPE_DOUBLE_NULLABLE, &doubleParamReadDouble, 1);
+    insert_FunctionSymTable(global_symtable, "readDouble", TYPE_DOUBLE_NULLABLE, &doubleParamReadDouble, 0);
 
   
   // ReadString
@@ -97,7 +95,7 @@ void insert_include_functions_sym_table() {
     stringParamReadString.prefixName = NULL;
     stringParamReadString.dataType = TYPE_STRING;
     stringParamReadString.next = NULL;
-    insert_FunctionSymTable(global_symtable, "readString", TYPE_STRING_NULLABLE, &stringParamReadString, 1);
+    insert_FunctionSymTable(global_symtable, "readString", TYPE_STRING_NULLABLE, &stringParamReadString, 0);
 
   //substr addParamToList
   ListFuncParam* paramaterListSubStr = NULL;
@@ -123,6 +121,7 @@ void Parse(FILE *file){
     linenum = 0;
     rewind(file);
     fprintf(stderr, "FIRST PHASE DONE\n");
+    print_SymTable(global_symtable);
     // fprintf(stderr, "-------------------------------\n");
     // print_SymTable(global_symtable);
     // fprintf(stderr, "------------------------------------------------------------------------------=---\n");

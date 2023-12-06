@@ -83,7 +83,9 @@ void FUNC_CALLS_EXP(FILE **file,Token *current_token){ //current token is (// *c
         exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
     }
     ListFuncParam* param = &func_node->data.paramTypes;
-    ARG_LIST_EXP(file, current_token, param);
+
+    if (func_node->data.paramCount != 0)
+        ARG_LIST_EXP(file, current_token, param);
 
     *current_token = get_token(*file); // get )
     if (current_token->token_type != T_RPAR){
@@ -101,6 +103,7 @@ void ARG_LIST_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //cur
            || current_token->token_type == T_EXPONENT_FLOAT || current_token->token_type == T_EXPONENT_INT))) {
         if (param != NULL) {
             exitWithError("Semantic error: Too few arguments\n", ERR_SEMANT_TYPE);
+            // exitWithError("Semantic error: Too few argumentsssssssssssssssscle\n", ERR_SEMANT_TYPE);
         }
         return;
     }
@@ -119,6 +122,7 @@ void ARG_LIST_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //cur
     }
     else {
         // *current_token = get_token(file); // get )
+
         if(param != NULL) {
             exitWithError("Semantic error: Too few arguments\n", ERR_SEMANT_TYPE);
         }
@@ -329,7 +333,7 @@ DataType get_token_type(Token op1, Token op3, int rule_type){
                     exitWithError("Semantic error: Cannot use ?? operations on different types\n", ERR_SEMANT_TYPE);
                 }
                 else {
-                    push_binary(1, TYPE_UNKNOWN);
+                    push_binary(2, TYPE_UNKNOWN);
                     return convert_tokenType_to_symType(op1.token_type);
                 }
             }

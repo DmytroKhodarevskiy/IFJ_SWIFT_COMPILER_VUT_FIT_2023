@@ -477,6 +477,7 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
     instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
     switch (count) {
         case 1:
+            fprintf(stderr, "token: %s\n", tokens[0].string_value->str);
             if(tokens[0].token_type == T_TYPE_ID){
                 // AVLNode *node = search_SymTable(table, tokens[0].string_value->str);
                 //Print_Sym_stack(table);

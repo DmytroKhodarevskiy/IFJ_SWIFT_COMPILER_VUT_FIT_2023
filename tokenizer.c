@@ -188,11 +188,12 @@ Token get_token(FILE *file){
         appendToDynamicString(token_string, symbol);
         copyString(token.string_value->str, token_string->str);
 
-        Token check_slash = peekNextToken(file);
-        if (check_slash.token_type == T_DIVIDE) {
-          exitWithError("ERROR: Invalid token after '*/'", ERR_LEX);
-        }
-
+//        char next_symbol = (char) fgetc(file);
+//        if (!strcmp(token_string->str, "/")) {
+//          exitWithError("ERROR: Invalid token after '*/'", ERR_LEX);
+//        } else {
+//          ungetc(next_symbol, file);
+//        }
         return token;
 
       } else if (symbol == '=') {

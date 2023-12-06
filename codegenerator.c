@@ -271,9 +271,9 @@ void MAIN(instr_node **head, char *string) {
   add_instr(head, string);
   string = "DEFVAR GF@%%retval_main\n";
   add_instr(head, string);
-    string = "DEFVAR GF?temp_1\n";
+    string = "DEFVAR GF@?temp_1\n";
     add_instr(head, string);
-    string = "DEFVAR GF?temp_2\n";
+    string = "DEFVAR GF@?temp_2\n";
     add_instr(head, string);
   string = "CREATEFRAME\n";
   add_instr(head, string);
@@ -354,12 +354,12 @@ void FUNC_END(instr_node **head, char* retval, char *string) {
 }
 
 void POP_TMP(instr_node **head, char *string, int deepness) {
-    sprintf(string, "POPS %s?%s_%d\n", "GF", "temp", deepness);
+    sprintf(string, "POPS %s@?%s_%d\n", "GF", "temp", deepness);
     add_instr(head, string);
 }
 
 void PUSH_TMP(instr_node **head, char *string, int deepness) {
-    sprintf(string, "PUSHS %s?%s_%d\n", "GF", "temp", deepness);
+    sprintf(string, "PUSHS %s@?%s_%d\n", "GF", "temp", deepness);
     add_instr(head, string);
 }
 

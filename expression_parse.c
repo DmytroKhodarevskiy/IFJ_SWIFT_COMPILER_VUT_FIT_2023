@@ -47,13 +47,17 @@ void push_variable(char *id_name){
     data.op.id_name = id_name;
     // fprintf(stderr, "id_name: %s\n", id_name);
     int depth = Get_deepness_of_var(table, id_name);
-    fprintf(stderr, "depth: %d\n", depth);
+    // fprintf(stderr, "depth: %d\n", depth);
     instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
 
-    fprintf(stderr, "node_inst: %s\n", node_inst->name_of_llist);
+    // fprintf(stderr, "node_inst: %s\n", node_inst->name_of_llist);
     // print_list_names(instr_llist);
+    fprintf(stderr, "LINENUM: %d\n", linenum);
+    fprintf(stderr, "=====================================================\n");
+    fprintf(stderr, "check_symtable->name: %s\n", check_symtable->name);
+    fprintf(stderr, "=====================================================\n");
 
-    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data,GEN_PUSH, 0, GF);
+    if(depth == 0) generate_code(&node_inst, data,GEN_PUSH, 0, GF);
     else generate_code(&node_inst, data, GEN_PUSH, depth, LF);
 }
  void push_binary(int deepness, DataType type)

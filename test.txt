@@ -1,44 +1,69 @@
 
-var b : Int = 5
-var a : Int = b - 1
+var b: Int = 0 // You need to initialize 'b' before using it
+var a: Int = 1
 
-if (a < b) {
+// Uncomment the following line if you want to change the value of 'a'
+// a = 67 + 1 + a
+
+if ( a < b) {
     b = 1337
+} else {
+    // var a: Int = 2
+    if (a == a) {
+        // b = 2023
+        var a: Int = 1
+    } else {
+        // b = 1153
+    }
+
+    if (a == a) {
+        // b = 2023
+        var a: Int = 10
+    } else {
+        // b = 1153
+    }
 }
-else {
-    b = 228
-}
+
+// if (a > 5555) {
+//     b = 2023
+// } else {
+//     b = 777
+// }
+
+// To test the output, you can print 'b'
+// print(b)
+
   
 
-//         if (a==a) {
-//     // var OUTERIF = 5
+// if (a==a) {
+//     var OUTERIF = 5
 //     // var c : Int? = nil
 
-//     // if (a==a) {
-//     //     // var INNERIF = 5
-//     //     // var c : Int? = nil
-//     //     // return a // 5 - 2 = 3
-//     // }
-//     // else {
-//     //     // var INNERELSE = 5
-//     //     // var c : Int? = nil
-//     //     // return a // 5 - 2 = 3
-//     // }
+//     if (a==a) {
+//         var INNERIF = 5
+//         // var c : Int? = nil
+//         // return a // 5 - 2 = 3
+//     }
+//     else {
+//         var INNERELSE = 5
+//         // var c : Int? = nil
+//         // return a // 5 - 2 = 3
+//     }
 
-//     // if (a==a) {
-//     //     // var INNERIF = 5
-//     //     // var c : Int? = nil
-//     //     // return a // 5 - 2 = 3
-//     // }
-//     // else {
-//     //     // var INNERELSE = 5
-//     //     // var c : Int? = nil
-//     //     // return a // 5 - 2 = 3
-//     // }
+//     if (a==a) {
+//         var INNERIF = 5
+//         // var c : Int? = nil
+//         // return a // 5 - 2 = 3
+//     }
+//     else {
+//         var INNERELSE = 5
+//         // var c : Int? = nil
+//         // return a // 5 - 2 = 3
+//     }
 
 // }
 // else {
-//     // var OUTERELSE = 5
+//     var OUTERELSE = 5
 //     // var c : Int? = nil
 //     // return a // 5 - 2 = 3
 // }

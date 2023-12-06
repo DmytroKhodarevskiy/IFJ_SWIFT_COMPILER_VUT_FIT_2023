@@ -64,15 +64,15 @@ DEFVAR GF@%%res
 
 # declare a var
 DEFVAR GF@b_0
-PUSHS int@5
+PUSHS int@0
 POPS GF@b_0
+CLEARS
 
 # declare a var
 DEFVAR GF@a_0
-PUSHS GF@b_0
 PUSHS int@1
-SUBS
 POPS GF@a_0
+CLEARS
 
 PUSHS GF@a_0
 PUSHS GF@b_0
@@ -80,22 +80,64 @@ LTS
 
 # if (res) 
 POPS GF@%%res
-JUMPIFNEQ $IF_ELSE_d0 GF@%%res bool@true
+JUMPIFNEQ $IF_ELSE_d0_c0 GF@%%res bool@true
 # {
-# assign
-MOVE GF@b_0 int@1337
 PUSHS int@1337
-JUMP $IF_END_d0
+POPS GF@b_0
+CLEARS
+
+JUMP $IF_END_d0_c0
 # }
 
 # else { 
-LABEL $IF_ELSE_d0
-# assign
-MOVE GF@b_0 int@228
-PUSHS int@228
-LABEL $IF_END_d0
+LABEL $IF_ELSE_d0_c0
+PUSHS GF@a_0
+PUSHS GF@a_0
+EQS
+
+# if (res) 
+POPS GF@%%res
+JUMPIFNEQ $IF_ELSE_d1_c1 GF@%%res bool@true
+# {
+# declare a var
+DEFVAR LF@a_2
+PUSHS int@1
+POPS LF@a_2
+CLEARS
+
+JUMP $IF_END_d1_c1
 # }
 
-WRITE GF@b_0
+# else { 
+LABEL $IF_ELSE_d1_c1
+LABEL $IF_END_d1_c1
+# }
+
+PUSHS GF@a_0
+PUSHS GF@a_0
+EQS
+
+# if (res) 
+POPS GF@%%res
+JUMPIFNEQ $IF_ELSE_d1_c2 GF@%%res bool@true
+# {
+# declare a var
+DEFVAR LF@a_2
+PUSHS int@10
+POPS LF@a_2
+CLEARS
+
+JUMP $IF_END_d1_c2
+# }
+
+# else { 
+LABEL $IF_ELSE_d1_c2
+LABEL $IF_END_d1_c2
+# }
+
+LABEL $IF_END_d0_c0
+# }
+
+
 # EXIT 
 EXIT int@0

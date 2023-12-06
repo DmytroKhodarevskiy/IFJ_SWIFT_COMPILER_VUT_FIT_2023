@@ -193,6 +193,8 @@ void PUSH(instr_node **head, char *id_name, char *string, int deepness, Frame fr
         float val = atof(value);
         sprintf(string, "PUSHS %s@%a\n", type_string, val);
     }
+    else if(type == TYPE_NIL)
+        sprintf(string, "PUSHS nil@nil\n");
     else{
         sprintf(string, "PUSHS %s@%s\n", type_string, value);
     }

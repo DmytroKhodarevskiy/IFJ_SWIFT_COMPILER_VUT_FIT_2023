@@ -1,116 +1,37 @@
-//var a : Int = 4
-//var d = 2.456445
-//var c : String
-//c = "Hello word"
+var a : Int = 6 
+        // var d = 2.456445
+        // var c : String
+        //c = "Hello_world"
 
-// c = 2
-// 273473#283838
+        if (a==a) {
+    // var OUTERIF = 5
+    // var c : Int? = nil
 
-var ac : Int? = 5 ?? nil
-//var dc : Double
-//var ddc : Int
-//var asdasdasdasdasdasdasdac : Int
-//
-//func sum () -> Int {
-//    var asdasdasdasdasdasdasdac : Int
-//    var ch : Int
-//    var ac : Int = (( 8 * 2 ) +  1 * 1) / (10 - 5)
-//    dc = 5.5
-//    // var a : Int
-//    // var b : Int
-//    // var c : Int
-//    // var c : Int
-//    return 5
-//}
-//
-//func Grinfind () -> String? {
-//    var Freestyle : String
-//    Freestyle = "Ye ya mmm ee vipil proteinchik, e e mi poshli smotret kinchik"
-//    var krony : Int
-//    krony = 0
-//    // var a : Int
-//    // var b : Int
-//    // var c : Int
-//    // var c : Int
-//    return 8
-//}
+    if (a==a) {
+        // var INNERIF = 5
+        // var c : Int? = nil
+        // return a // 5 - 2 = 3
+    }
+    else {
+        // var INNERELSE = 5
+        // var c : Int? = nil
+        // return a // 5 - 2 = 3
+    }
 
+    if (a==a) {
+        // var INNERIF = 5
+        // var c : Int? = nil
+        // return a // 5 - 2 = 3
+    }
+    else {
+        // var INNERELSE = 5
+        // var c : Int? = nil
+        // return a // 5 - 2 = 3
+    }
 
-
-// var a =21312321312e
-// 00113
-// let cho = 10A
-// var d : Int? = nil
-// c = 2
-// d = 2
-// var x = c ?? d!
-    // a // 2
-    // a // 2
-    // return d!
-//if (c != c) {
-//// //var d : Int? = nil
-//// c = 2
-//// //d = 2
-//// //var x = c ?? d!
-//}
-//else {
-//    var d : Int = c
-//}
-
-// func a () -> Int? {
-//     var d : Int? = nil
-//     c = 2
-//     d = 2
-//     var x = c ?? d!
- 
-//     return 5
-// }
-
-// sum2(d, on : c)
-
-// func sum2 (_ a: Int, on b: Int) -> Int {
-
-//     let a : Int
-
-//     var c : Int
-//     var d : Int? = nil
-//     c = 2
-//     d = 2
-//     // a // 2
-//     // a // 2
-//     return d!
-// //     var c : Int
-// // var d : Int
-// // c = 2
-// // d = 3
-//     // a // 2
-//     // a = 3
-//     // a = 4
-//     // var b = 5
-//     // var a = 3
-//     // if (a == a) {
-//     //     // return b
-//     //     var a = 5
-//     //     var c : Int? = nil
-//     //     // return a // 5 - 2 = 3
-//     // }
-//     // else {
-//     //     return b - a // 2 - 4 = -2
-//     // }
-//     // // return
-    
-//     // while (a == a) {
-//     //     var a = 5
-//     //     var c : Int = a
-//         // return var a = 5
-//     // }
-//     // // var a = 2
-//     // // return a
-//     // return a
-//     return  a
-// }
-// // return
-
-// var t = sum2(with: 4, on: 4)
-// sum2(with: 2, on: 4)
-// sum2(with: 2, on: "awdwad")
+}
+else {
+    // var OUTERELSE = 5
+    // var c : Int? = nil
+    // return a // 5 - 2 = 3
+}

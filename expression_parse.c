@@ -45,7 +45,7 @@ void push_variable(char *id_name){
     if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data,GEN_PUSH,  0, GF);
     else generate_code(&node_inst, data,GEN_PUSH,  depth, LF);
 }
- void push_binary(int deepness)
+ void push_binary(int deepness, DataType type)
 {
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
@@ -53,8 +53,14 @@ void push_variable(char *id_name){
     Data data = init_data();
     generate_code(&node_inst, data, GEN_POP_TMP,  1, UNUSED);
     generate_code(&node_inst, data, GEN_POP_TMP,  2, UNUSED);
-    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data, GEN_PUSH_TMP,  deepness, GF);
-    else generate_code(&node_inst, data, GEN_PUSH_TMP,  deepness, LF);
+    if (type == TYPE_NIL) {
+        data.op.type = TYPE_NIL;
+        generate_code(&node_inst, data, GEN_PUSH, 0, UNUSED);
+    }
+    else {
+        if (!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data, GEN_PUSH_TMP, deepness, GF);
+        else generate_code(&node_inst, data, GEN_PUSH_TMP, deepness, LF);
+    }
 }
 
 void FUNC_CALLS_EXP(FILE **file,Token *current_token){ //current token is (// *current_token = get_token(file); // get (
@@ -291,13 +297,16 @@ DataType get_token_type(Token op1, Token op3, int rule_type){
             return TYPE_BOOL;
         case 3:
 
-            if(op1.token_type == T_KEYWORD && op3.token_type == T_KEYWORD) return TYPE_NIL;
+            if(op1.token_type == T_KEYWORD && op3.token_type == T_KEYWORD){
+                push_binary(0, TYPE_NIL);
+                return TYPE_NIL;
+            }
             else if (op1.token_type == T_KEYWORD) {
-                push_binary(1);
+                push_binary(1, TYPE_UNKNOWN);
                 return convert_tokenType_to_symType(op3.token_type);
             }
             else if (op3.token_type == T_KEYWORD) {
-                push_binary(2);
+                push_binary(2, TYPE_UNKNOWN);
                 return convert_tokenType_to_symType(op1.token_type);
             }
             else if(op1.token_type != T_KEYWORD && op3.token_type != T_KEYWORD) {
@@ -305,6 +314,7 @@ DataType get_token_type(Token op1, Token op3, int rule_type){
                     exitWithError("Semantic error: Cannot use ?? operations on different types\n", ERR_SEMANT_TYPE);
                 }
                 else {
+                    push_binary(1, TYPE_UNKNOWN);
                     return convert_tokenType_to_symType(op1.token_type);
                 }
             }

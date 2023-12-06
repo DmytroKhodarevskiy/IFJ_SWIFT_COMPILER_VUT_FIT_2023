@@ -44,7 +44,7 @@ STRLEN LF@%strlen LF@%param
 DEFVAR LF@%bool
 EQ LF@%bool LF@%strlen int@0
 JUMPIFEQ $%eq_to_zero LF@%bool bool@true
-STR2INT LF@%retval LF%param int@0
+STRI2INT LF@%retval LF@%param int@0
 JUMP $%ord_end
 LABEL $%eq_to_zero
 MOVE LF@%retval int@0
@@ -56,56 +56,47 @@ RETURN
 
 LABEL $$main
 DEFVAR GF@%%retval_main
-DEFVAR GF?temp_1
-DEFVAR GF?temp_2
+DEFVAR GF@?temp_1
+DEFVAR GF@?temp_2
 CREATEFRAME
 PUSHFRAME
-DEFVAR GF@%%%%res
+DEFVAR GF@%%res
+# declare a var
+DEFVAR GF@b_0
+PUSHS int@5
+POPS GF@b_0
 
 # declare a var
 DEFVAR GF@a_0
-# assign
-MOVE GF@a_0 int@6
-PUSHS int@6
-PUSHS unknown@À„eºU
-PUSHS unknown@À„eºU
+PUSHS int@1
+PUSHS int@1
+SUBS
+POPS GF@a_0
+
+PUSHS unknown@ÀT“ˆìU
+PUSHS unknown@ÀT“ˆìU
 EQS
 
 # if (res) 
-POPS GF@%%%%res
-JUMPIFNEQ $IF_ELSE_d0 GF@%%res bool@true
+POPS GF@%%res
+JUMPIFNEQ $IF_ELSE_d0 GF@%res bool@true
 # {
-PUSHS unknown@À„eºU
-PUSHS unknown@À„eºU
-EQS
+# declare a var
+DEFVAR LF@c_1
+PUSHS nil@nil
+POPS LF@c_1
 
-# if (res) 
-POPS GF@%%%%res
-JUMPIFNEQ $IF_ELSE_d1 GF@%%res bool@true
-# {
-JUMP $IF_END_d1
-# }
+# declare a var
+DEFVAR LF@d_1
+PUSHS int@2
+POPS LF@d_1
 
-# else { 
-LABEL $IF_ELSE_d1
-LABEL $IF_END_d1
-# }
-
-PUSHS unknown@À„eºU
-PUSHS unknown@À„eºU
-EQS
-
-# if (res) 
-POPS GF@%%%%res
-JUMPIFNEQ $IF_ELSE_d1 GF@%%res bool@true
-# {
-JUMP $IF_END_d1
-# }
-
-# else { 
-LABEL $IF_ELSE_d1
-LABEL $IF_END_d1
-# }
+# declare a var
+DEFVAR LF@e_1
+PUSHS int@3
+PUSHS int@3
+ADDS
+POPS LF@e_1
 
 JUMP $IF_END_d0
 # }
@@ -114,6 +105,7 @@ JUMP $IF_END_d0
 LABEL $IF_ELSE_d0
 LABEL $IF_END_d0
 # }
+
 
 # EXIT 
 EXIT int@0

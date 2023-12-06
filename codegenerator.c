@@ -113,7 +113,7 @@ void add_instr(instr_node **head, char *instr) {
 // define global id, id_name must be in data.op.id_name
 void CREATE_ID(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
   SET_FRAME(frame);
-  sprintf(string, "\n# declare a var\nDEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
+  sprintf(string, "# declare a var\nDEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
   add_instr(head, string);
 }
 
@@ -144,7 +144,7 @@ void MOVE(instr_node **head, char *id_name, char *value, char *string, int deepn
 // assign value from the stack to data.op.id_name
 void ASSIGN(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
   SET_FRAME(frame);
-  sprintf(string, "POPS %s@%s\n", frame_name, id_name);
+  sprintf(string, "POPS %s@%s_%d\n\n", frame_name, id_name, deepness);
   add_instr(head, string);
 }
 
@@ -271,9 +271,9 @@ void MAIN(instr_node **head, char *string) {
   add_instr(head, string);
   string = "DEFVAR GF@%%retval_main\n";
   add_instr(head, string);
-    string = "DEFVAR GF?temp_1\n";
+    string = "DEFVAR GF@?temp_1\n";
     add_instr(head, string);
-    string = "DEFVAR GF?temp_2\n";
+    string = "DEFVAR GF@?temp_2\n";
     add_instr(head, string);
   string = "CREATEFRAME\n";
   add_instr(head, string);
@@ -365,20 +365,20 @@ void PUSH_TMP(instr_node **head, char *string, int deepness) {
 
 //CALL ONCE IN MAIN
 void IF_START(instr_node **head, char *string, int deepness) {
-  string = "DEFVAR GF@%%%%res\n";
+  string = "DEFVAR GF@%%res\n";
   add_instr(head, string);
 }
 
 
 // ADD INDEX + SYMTABLE NAME TO LABEL
 void IF_CHECK(instr_node **head, char *string, int deepness, int else_cnt) {
-  string = "\n# if (res) \nPOPS GF@%%%%res\n";
+  string = "\n# if (res) \nPOPS GF@%%res\n";
   add_instr(head, string);
   // string = "JUMPIFNEQ $IF_ELSE_%d GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED bool@true\n", deepness;
   // add_instr(head, string);
 
   // char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d_c%d GF@%%%%res bool@true\n# {\n", deepness, else_cnt);
-  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d GF@%%%%res bool@true\n# {\n", deepness);
+  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d GF@%%res bool@true\n# {\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -419,7 +419,7 @@ void ELSE_IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
 
 
 void EXIT(instr_node **head, char *string) {
-  string = "# EXIT \nEXIT int@0\n";
+  string = "\n# EXIT \nEXIT int@0\n";
   add_instr(head, string);
 }
 
@@ -579,7 +579,7 @@ void BUILTIN(instr_node **head, char *string) {
   instr = create_instr_string("JUMPIFEQ $%%eq_to_zero LF@%%bool bool@true\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("STR2INT LF@%%retval LF%%param int@0\n");
+  instr = create_instr_string("STRI2INT LF@%%retval LF@%%param int@0\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("JUMP $%%ord_end\n");
@@ -617,8 +617,8 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
   int if_cnt = data.if_cnt;
   int else_cnt = data.else_cnt;
 
-  fprintf(stderr, "if_cnt: %d\n", if_cnt);
-  fprintf(stderr, "else_cnt: %d\n", else_cnt);
+  // fprintf(stderr, "if_cnt: %d\n", if_cnt);
+  // fprintf(stderr, "else_cnt: %d\n", else_cnt);
 
   switch (gencode) {
 

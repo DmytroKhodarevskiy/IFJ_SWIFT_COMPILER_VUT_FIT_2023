@@ -5,17 +5,17 @@
 
 // c = 2
 // 273473#283838
-var c : Int
-var ac : Int
-var dc : Int
-var ddc : Int
-var asdasdasdasdasdasdasdac : Int
+
+var ac : Int? = nil ?? 5
+                                              var dc : Double
+                                                      var ddc : Int
+                                              var asdasdasdasdasdasdasdac : Int
 
 func sum () -> Int {
     var asdasdasdasdasdasdasdac : Int
     var ch : Int
-    var ac : Int = (( 8 * 2 ) +  1 * 1) /10 - 5
-    dc = ac
+    var ac : Int = (( 8 * 2 ) +  1 * 1) / (10 - 5)
+    dc = 5.5
     // var a : Int
     // var b : Int
     // var c : Int
@@ -23,17 +23,17 @@ func sum () -> Int {
     return 5
 }
 
-//func Grinfind () -> String? {
-//    var Freestyle : String
-//    Freestyle = "Ye ya mmm ee vipil proteinchik, e e mi poshli smotret kinchik"
-//    var krony : Int
-//    krony = 0
-//    // var a : Int
-//    // var b : Int
-//    // var c : Int
-//    // var c : Int
-//    return 8
-//}
+func Grinfind () -> String? {
+    var Freestyle : String
+    Freestyle = "Ye ya mmm ee vipil proteinchik, e e mi poshli smotret kinchik"
+    var krony : Int
+    krony = 0
+    // var a : Int
+    // var b : Int
+    // var c : Int
+    // var c : Int
+    return 8
+}
 
 
 
@@ -47,16 +47,15 @@ func sum () -> Int {
     // a // 2
     // a // 2
     // return d!
-//     if (c == c) {
-
-// var d : Int? = nil
-// c = 2
-// d = 2
-// var x = c ?? d!
-//     }
-//     else {
-//         var d : Int? = nil
-//     }
+//if (c != c) {
+//// //var d : Int? = nil
+//// c = 2
+//// //d = 2
+//// //var x = c ?? d!
+//}
+//else {
+//    var d : Int = c
+//}
 
 // func a () -> Int? {
 //     var d : Int? = nil

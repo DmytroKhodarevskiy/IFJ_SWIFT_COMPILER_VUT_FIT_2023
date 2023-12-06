@@ -29,6 +29,17 @@ typedef enum {
     GEN_SUB, // subtract two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
     GEN_MUL, // multiply two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
     GEN_DIV, // divide two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_IDIV,
+    GEN_LT, // compare two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_GT, // compare two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_EQ, // compare two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_AND, // compare two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_OR, // compare two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_NOT, // compare two values from stack (top two) and push result to stack, CANT SET FRAME (USE UNUSED)
+    GEN_INT2FLOAT, // convert int to float, CANT SET FRAME (USE UNUSED)
+    GEN_FLOAT2INT, // convert float to int, CANT SET FRAME (USE UNUSED)
+    GEN_INT2CHAR, // convert int to char, CANT SET FRAME (USE UNUSED)
+    GEN_STRI2INT, // convert string to int, CANT SET FRAME (USE UNUSED)
     GEN_BEGIN_EXPR, // begin expression, clear stack, CANT SET FRAME (USE UNUSED)
     GEN_PUSH, // push to stack, YOU CAN SET FRAME
     GEN_ASSIGN, // assign value from the stack to data.op1.id_name, YOU CAN SET FRAME
@@ -37,7 +48,8 @@ typedef enum {
     GEN_MAIN, // generate main function, CANT SET FRAME (USE UNUSED)
     GEN_FUNC_START, // generate function start, CANT SET FRAME (USE UNUSED)
     GEN_FUNC_END, // generate function end, CANT SET FRAME (USE UNUSED)
-    GEN_FUNC_CALL // generate function call, CANT SET FRAME (USE UNUSED)
+    GEN_FUNC_CALL, // generate function call, CANT SET FRAME (USE UNUSED)
+    GEN_POP_TMP
 } gencode;
 
 typedef struct Operand {

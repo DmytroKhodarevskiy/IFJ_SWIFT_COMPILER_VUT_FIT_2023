@@ -224,12 +224,70 @@ void DIV(instr_node **head, char *string) {
     add_instr(head, string);
 }
 
+void IDIV(instr_node **head, char *string) {
+    string = "IDIVS\n";
+    add_instr(head, string);
+}
+
+void LT(instr_node **head, char *string) {
+    string = "LTS\n";
+    add_instr(head, string);
+}
+
+void GT(instr_node **head, char *string) {
+    string = "GTS\n";
+    add_instr(head, string);
+}
+
+void EQ(instr_node **head, char *string) {
+    string = "EQS\n";
+    add_instr(head, string);
+}
+ void AND(instr_node **head, char *string) {
+    string = "ANDS\n";
+    add_instr(head, string);
+}
+
+void OR(instr_node **head, char *string) {
+    string = "ORS\n";
+    add_instr(head, string);
+}
+
+void NOT(instr_node **head, char *string) {
+    string = "NOTS\n";
+    add_instr(head, string);
+}
+
+void INT2FLOAT(instr_node **head, char *string) {
+    string = "INT2FLOATS\n";
+    add_instr(head, string);
+}
+
+void FLOAT2INT(instr_node **head, char *string) {
+    string = "FLOAT2INTS\n";
+    add_instr(head, string);
+}
+
+void INT2CHAR(instr_node **head, char *string) {
+    string = "INT2CHARS\n";
+    add_instr(head, string);
+}
+
+void STRI2INT(instr_node **head, char *string) {
+    string = "STRI2INTS\n";
+    add_instr(head, string);
+}
+
 void MAIN(instr_node **head, char *string) {
     string = "\n";
     add_instr(head, string);
     string = "LABEL $$main\n";
     add_instr(head, string);
     string = "DEFVAR GF@%%retval_main\n";
+    add_instr(head, string);
+    string = "DEFVAR GF?temp_binary_1\n";
+    add_instr(head, string);
+    string = "DEFVAR GF?temp_binary_2\n";
     add_instr(head, string);
 }
 
@@ -292,6 +350,11 @@ void FUNC_END(instr_node **head, char* retval, char *string) {
     string = "POPFRAME\n";
     add_instr(head, string);
     string = "RETURN\n\n";
+    add_instr(head, string);
+}
+
+void POP_TMP(instr_node **head, char *string, int deepness) {
+    sprintf(string, "POPS %s?%s_%d\n", "GF", "temp_binary", deepness);
     add_instr(head, string);
 }
 
@@ -383,6 +446,53 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
             DIV(head, string);
             break;
 
+        case GEN_IDIV:
+            IDIV(head, string);
+            break;
+
+        case GEN_LT:
+            LT(head, string);
+            break;
+
+        case GEN_GT:
+            GT(head, string);
+            break;
+
+        case GEN_EQ:
+            EQ(head, string);
+            break;
+
+        case GEN_AND:
+            AND(head, string);
+            break;
+
+        case GEN_OR:
+            OR(head, string);
+            break;
+
+        case GEN_NOT:
+            NOT(head, string);
+            break;
+
+        case GEN_INT2FLOAT:
+            INT2FLOAT(head, string);
+            break;
+
+        case GEN_FLOAT2INT:
+            FLOAT2INT(head, string);
+            break;
+
+        case GEN_INT2CHAR:
+            INT2CHAR(head, string);
+            break;
+
+        case GEN_STRI2INT:
+            STRI2INT(head, string);
+            break;
+
+        case GEN_POP_TMP:
+            POP_TMP(head, string, deepness);
+            break;
         // generate main function
         case GEN_MAIN:
             MAIN(head, string);

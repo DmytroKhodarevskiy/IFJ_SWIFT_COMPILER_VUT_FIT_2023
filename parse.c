@@ -32,11 +32,12 @@ void Parse(FILE *file){
 
     // main_gen = init_instr_node();
     add_instr(&main_gen, "\n");
+
     main_gen->name_of_llist = "main";
     instr_list = init_instr_list_dynamic();
     Data data;
     generate_code(&main_gen, data, GEN_MAIN, 0, UNUSED);
-
+    char str_temp[100];
     PHASE_SECOND(file);
 
     // generate_file();

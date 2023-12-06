@@ -119,7 +119,7 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
  * @return The index of the grammar rule; -1 if no rule matches.
  */
 // int get_rule_index(SymTable *table,Token tokens[], int count, DataType *expression_type);
-int get_rule_index(SymStack *table,Token tokens[], int count, DataType *expression_type);
+int get_rule_index(Token tokens[], int count, DataType *expression_type);
 
 /**
  * Applies a grammar rule to the token stack based on the rule index.
@@ -137,7 +137,7 @@ void perform_rule(int rule_index, TokenStack *stack, DataType *expression_type);
  * @return 0 if the reduction is successful; -1 if an error occurs or no rule applies.
  */
 // int perform_reduce(SymTable *table,TokenStack *stack, int count, DataType *expression_type);
-int perform_reduce(SymStack *table, TokenStack *stack, int count, DataType *expression_type);
+int perform_reduce(TokenStack *stack, int count, DataType *expression_type);
 
 //Functions for parsing expressions with functions as operands
 

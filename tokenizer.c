@@ -306,7 +306,6 @@ Token get_token(FILE *file){
                     copyString(token.string_value->str, token_string->str);
                     return token;
                 } else {
-                    ungetc(symbol, file);
                     token.token_type = T_MINUS;
                     copyString(token.string_value->str, token_string->str);
                     return token;

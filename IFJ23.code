@@ -26,6 +26,13 @@ POPFRAME
 RETURN
 # end of double2int ---------
 
+# LABEL %read_string
+# DEFVAR GF@%string
+# DEFVAR GF@%
+# READ GF@%string string
+# STRLEN GF@%retval GF@%string
+# EQ GF@%bool GF@%retval int@0
+
 # Length function
 LABEL $%length
 PUSHFRAME
@@ -68,9 +75,15 @@ PUSHS int@0
 POPS GF@b_0
 CLEARS
 
+# declare a var
+DEFVAR GF@a_0
+PUSHS int@1
+POPS GF@a_0
+CLEARS
+
 PUSHS GF@b_0
-PUSHS GF@b_0
-EQS
+PUSHS int@0
+GTS
 
 CREATEFRAME
 PUSHFRAME
@@ -92,40 +105,74 @@ JUMP $IF_END_d0_c0
 CREATEFRAME
 PUSHFRAME
 LABEL $IF_ELSE_d0_c0
-
-POPFRAME
-LABEL $IF_END_d0_c0
-# }
-
-PUSHS GF@b_0
-PUSHS GF@b_0
+PUSHS GF@a_0
+PUSHS GF@a_0
 EQS
 
 CREATEFRAME
 PUSHFRAME
 # if (res) 
 POPS GF@%%res
-JUMPIFNEQ $IF_ELSE_d0_c1 GF@%%res bool@true
+JUMPIFNEQ $IF_ELSE_d1_c1 GF@%%res bool@true
 # {
 # declare a var
-DEFVAR LF@a_1
+DEFVAR LF@a_2
 PUSHS int@1
-POPS LF@a_1
+POPS LF@a_2
 CLEARS
 
 POPFRAME
-JUMP $IF_END_d0_c1
+JUMP $IF_END_d1_c1
 # }
 
 # else { 
 CREATEFRAME
 PUSHFRAME
-LABEL $IF_ELSE_d0_c1
+LABEL $IF_ELSE_d1_c1
 
 POPFRAME
-LABEL $IF_END_d0_c1
+LABEL $IF_END_d1_c1
 # }
 
+PUSHS GF@a_0
+PUSHS GF@a_0
+EQS
+
+CREATEFRAME
+PUSHFRAME
+# if (res) 
+POPS GF@%%res
+JUMPIFNEQ $IF_ELSE_d1_c2 GF@%%res bool@true
+# {
+PUSHS int@10
+POPS GF@a_0
+CLEARS
+
+POPFRAME
+JUMP $IF_END_d1_c2
+# }
+
+# else { 
+CREATEFRAME
+PUSHFRAME
+LABEL $IF_ELSE_d1_c2
+
+POPFRAME
+LABEL $IF_END_d1_c2
+# }
+
+
+POPFRAME
+LABEL $IF_END_d0_c0
+# }
+
+
+# write(...)
+READ GF@a_0 int
+WRITE GF@a_0
+
+# write(...)
+WRITE string@"/033"
 
 # EXIT 
 EXIT int@0

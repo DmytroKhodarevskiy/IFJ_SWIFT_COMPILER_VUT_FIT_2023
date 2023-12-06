@@ -243,14 +243,9 @@ int Get_deepness_of_var(SymStack *stack, char* id_name) {
   // int deepness = 0;
   int deepness = stack->top;
 
-  // fprintf(stderr, "id_name deeeeeeeeeeeep: %s\n", id_name);
-
   // for (i = 0; i <= stack->top; i++) {
   for (i = stack->top; i >= 0; i--) {
     table = stack->items[i];
-    // fprintf(stderr, "=====================================\n");
-    // printTree(table);
-    // fprintf(stderr, "=====================================\n");
     if (search_SymTable(table, id_name) != NULL) {
       return deepness;
     }

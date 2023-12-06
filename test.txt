@@ -20,16 +20,16 @@
 // }
 // }
 // pokracovani hlavniho tela programu
-if let inp {
-if (inp < 0) { // Pokracovani hlavniho tela programu
-write("Faktorial nelze spocitat!")
-} else {
-let vysl = factorial(inp)
-// write("Vysledek je: ", vysl)
-}
-} else {
-// write("Chyba pri nacitani celeho cisla!")
-}
+// if let inp {
+// if (inp < 0) { // Pokracovani hlavniho tela programu
+// write("Faktorial nelze spocitat!")
+// } else {
+// let vysl = factorial(inp)
+// // write("Vysledek je: ", vysl)
+// }
+// } else {
+// // write("Chyba pri nacitani celeho cisla!")
+// }
 
 
 
@@ -39,24 +39,29 @@ let vysl = factorial(inp)
 // // Uncomment the following line if you want to change the value of 'a'
 // // a = 67 + 1 + a
 
-// if (b > 0) {
-//     var a: Int = 1
-// } else {
-//     // var a: Int = 2
-//     if (a == a) {
-//         // b = 2023
-//         var a: Int = 1
-//     } else {
-//         // b = 1153
-//     }
+var b : Int = 0
+var a : Int = 1
 
-//     if (a == a) {
-//         // b = 2023
-//         var a: Int = 10
-//     } else {
-//         // b = 1153
-//     }
-// }
+if (b > 0) {
+    var a: Int = 1
+} else {
+    // var a: Int = 2
+    if (a == a) {
+        // b = 2023
+        var a: Int = 1
+    } else {
+        // b = 1153
+    }
+
+    if (a == a) {
+        // b = 2023
+        a = 10
+    } else {
+        // b = 1153
+    }
+}
+
+
 
 // if (b == b) {
 //     var a: Int = 1

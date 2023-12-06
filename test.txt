@@ -4,23 +4,34 @@ var a : Int = 6
 //c = "Hello_world"
 
 if (a==a) {
-    var OUTERIF = 5
+    // var OUTERIF = 5
     // var c : Int? = nil
 
     if (a==a) {
-        var INNERIF = 5
+        // var INNERIF = 5
         // var c : Int? = nil
         // return a // 5 - 2 = 3
     }
     else {
-        var INNERELSE = 5
+        // var INNERELSE = 5
+        // var c : Int? = nil
+        // return a // 5 - 2 = 3
+    }
+
+    if (a==a) {
+        // var INNERIF = 5
+        // var c : Int? = nil
+        // return a // 5 - 2 = 3
+    }
+    else {
+        // var INNERELSE = 5
         // var c : Int? = nil
         // return a // 5 - 2 = 3
     }
 
 }
 else {
-    var OUTERELSE = 5
+    // var OUTERELSE = 5
     // var c : Int? = nil
     // return a // 5 - 2 = 3
 }

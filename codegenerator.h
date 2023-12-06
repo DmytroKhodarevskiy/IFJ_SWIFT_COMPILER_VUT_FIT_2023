@@ -59,6 +59,8 @@ typedef struct Data {
   char *func_name;
   Operand *func_param;
   unsigned int func_param_count;
+  int if_cnt;
+  int else_cnt;
 } Data;
 
 instr_list_dynamic *init_instr_list_dynamic();

@@ -14,7 +14,8 @@ instr_list_dynamic *instr_list = NULL;
 Token current_token;
 int PHASE = 1;
 
-int if_while_cnt = 0;
+int if_cnt = 0;
+int else_cnt = 0;
 
 
 
@@ -122,14 +123,10 @@ void Parse(FILE *file){
     linenum = 0;
     rewind(file);
     fprintf(stderr, "FIRST PHASE DONE\n");
-    fprintf(stderr, "-------------------------------\n");
-    print_SymTable(global_symtable);
-    fprintf(stderr, "------------------------------------------------------------------------------=---\n");
-
+    // fprintf(stderr, "-------------------------------\n");
     // print_SymTable(global_symtable);
-    // print_SymTable(&(stack.items[stack.top]));
-    // print_SymTable(stack.items[stack.top]);
-    
+    // fprintf(stderr, "------------------------------------------------------------------------------=---\n");
+
     // main_gen = init_instr_node();
     add_instr(&main_gen, "\n");
     main_gen->name_of_llist = "main";
@@ -146,14 +143,12 @@ void Parse(FILE *file){
     // generate_file();
     generate_header();
 
-    fprintf(stderr, "--------------------------------\n");
+    // fprintf(stderr, "--------------------------------\n");
     print_list_names(instr_list);
-    fprintf(stderr, "--------------------------------\n");
+    // fprintf(stderr, "--------------------------------\n");
     pop_all_lists_to_file(instr_list);
 
     pop_list_to_file(&main_gen);
-    // print_SymTable(global_symtable);
-    // print_SymTable(stack.items[1]);
 }
 
 void PHASE_SECOND(FILE *file) {
@@ -173,7 +168,7 @@ void PHASE_FIRST(FILE *file){
     FILL_TREES(file, &stack);
 
     // print_SymTable(global_symtable);
-    printTree(global_symtable);
+    // printTree(global_symtable);
 
 }
 
@@ -402,9 +397,13 @@ void STMT(FILE *file){
       strcmp(str, "if") == 0){
 
           // Data data;
+          // if_while_cnt++;
+
 
           IF_EXP(file);
           // generate_code(&main_gen, data, GEN_IF_S, 0, UNUSED);
+
+          // if_cnt++;
 
           current_token = get_token(file); // get {
           if (current_token.token_type != T_LBRACE){
@@ -448,6 +447,12 @@ void STMT(FILE *file){
           }
 
           Data data;
+          data.if_cnt = if_cnt;
+          data.else_cnt = else_cnt;
+
+          // fprintf(stderr, "if_while_cnt: %d\n", if_while_cnt);
+
+          // fprintf(stderr, "StACKTOP: %d\n", stack.top);
 
           // SymTable *check_symtable = create_SymTable();
 
@@ -456,10 +461,10 @@ void STMT(FILE *file){
             // check_symtable = s_peek(&stack);
           int deep = Get_deepness_current(&stack);
           // if (!strcmp(check_symtable->name, "global")) {
-          fprintf(stderr, "StACKTOP: %d\n", stack.top);
+          // fprintf(stderr, "StACKTOP: %d\n", stack.top);
 
           if (Name == NULL) {
-            fprintf(stderr, "Name is NULL\n");
+            // fprintf(stderr, "Name is NULL\n");
             // data.op.val = "if";
             generate_code(&main_gen, data, GEN_IF_END, deep, UNUSED);
             generate_code(&main_gen, data, GEN_ELSE_START, deep, UNUSED);
@@ -477,6 +482,8 @@ void STMT(FILE *file){
 
 
           current_token = get_token(file); // get else
+
+          else_cnt++;
 
           if (current_token.token_type == T_KEYWORD &&
               strcmp(current_token.string_value->str, "else") == 0){
@@ -529,6 +536,10 @@ void STMT(FILE *file){
             generate_code(&node, data, GEN_ELSE_IF_END, deep, UNUSED);
           }
 
+          if_cnt--;
+          else_cnt--;
+          // if_while_cnt++;
+          // if_while_cnt--;
       }
 
   else if (current_token.token_type == T_KEYWORD &&
@@ -536,9 +547,9 @@ void STMT(FILE *file){
             (strcmp(str, "var") == 0))) {  // let or var
           // get_token(file); // get let
 
-          fprintf(stderr, "LET OR VAR ----------------------------------------\n");
+          // fprintf(stderr, "LET OR VAR ----------------------------------------\n");
           Print_Sym_stack(&stack);
-          fprintf(stderr, "LET OR VAR ----------------------------------------\n");
+          // fprintf(stderr, "LET OR VAR ----------------------------------------\n");
 
           bool changeable = (strcmp(str, "var") == 0) ? true : false;
 
@@ -701,7 +712,6 @@ void STMT(FILE *file){
                 exitWithError("Semantic error: function doesn't have return\n", ERR_SEMANT_RETURN);
               }
 
-              // print_SymTable(stack.items[1]);
 
 
               s_pop(&stack);
@@ -1160,7 +1170,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
   SymData *Name = s_getFirstFunctionSymData(&stack);
 
   // if (!strcmp(check_symtable->name, "global")) {
-    fprintf(stderr, "STACKTOP: %d\n", stack.top);
+    // fprintf(stderr, "STACKTOP: %d\n", stack.top);
 
   // if (Name == NULL)  {
   if (Name == NULL && stack.top == 0)  {
@@ -1182,7 +1192,7 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
     // int deep = Get_deepness_of_var(&stack, node_data.name);
     Print_Sym_stack(&stack);
     int deep = Get_deepness_current(&stack);
-    fprintf(stderr, "DEEEEEEEEEEEEP: %d\n", deep);
+    // fprintf(stderr, "DEEEEEEEEEEEEP: %d\n", deep);
 
     generate_code(&node, data, GEN_CREATE_ID, deep, LF);
     }
@@ -1401,6 +1411,8 @@ void EXP(FILE *file){
   // if(!strcmp(check_symtable->name, "global")) {
   if(Name == NULL && stack.top == 0) {
     Data data;
+    data.else_cnt = else_cnt;
+    data.if_cnt = if_cnt;
     // data.op.val = current_token.string_value->str;
     // data.op.type = current_token.token_type;
     generate_code(&main_gen, data, GEN_IF_CHECK, 0, GF);
@@ -1408,14 +1420,18 @@ void EXP(FILE *file){
 
   else {
 
+    if_cnt++;
+    Data data;
+    data.else_cnt = else_cnt;
+    data.if_cnt = if_cnt;
+
     if (Name == NULL && stack.top != 0) {
-      Data data;
+
       // data.op.val = current_token.string_value->str;
       // data.op.type = current_token.token_type;
       generate_code(&main_gen, data, GEN_IF_CHECK, deep, LF);
     }
     else {
-      Data data;
 
     // instr_node *node = search_by_name_in_list(instr_list, check_symtable->name);
       instr_node *node = search_by_name_in_list(instr_list, Name->name);
@@ -1424,11 +1440,11 @@ void EXP(FILE *file){
   }
 }
 
-void Transfer_LFvars(instr_node *node, Data data, int deepness, int frame) {
-  if (frame == GF) {
-    generate_code(&main_gen, data, GEN_MOVE, deepness, GF);
-  }
-  else {
-    generate_code(&node, data, GEN_MOVE, deepness, LF);
-  }
-}
+// void Transfer_LFvars(instr_node *node, Data data, int deepness, int frame) {
+//   if (frame == GF) {
+//     generate_code(&main_gen, data, GEN_MOVE, deepness, GF);
+//   }
+//   else {
+//     generate_code(&node, data, GEN_MOVE, deepness, LF);
+//   }
+// }

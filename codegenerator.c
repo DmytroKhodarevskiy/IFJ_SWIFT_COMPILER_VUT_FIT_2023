@@ -285,43 +285,43 @@ void IF_START(instr_node **head, char *string, int deepness) {
 
 
 // ADD INDEX + SYMTABLE NAME TO LABEL
-void IF_CHECK(instr_node **head, char *string, int deepness) {
+void IF_CHECK(instr_node **head, char *string, int deepness, int else_cnt) {
   string = "\n# if (res) \nPOPS GF@%%%%res\n";
   add_instr(head, string);
   // string = "JUMPIFNEQ $IF_ELSE_%d GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED bool@true\n", deepness;
   // add_instr(head, string);
 
-  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_%d GF@%%%%res bool@true\n# {\n", deepness);
+  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d_c%d GF@%%%%res bool@true\n# {\n", deepness, else_cnt);
   if (instr != NULL) {
       add_instr(head, instr);
   }
 }
 
-void IF_END(instr_node **head, char *string, int deepness) {
+void IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
   // string = "JUMP $IF_END\n";
   // add_instr(head, string);
 
-  char *instr = create_instr_string("JUMP $IF_END_%d\n# }\n\n", deepness);
+  char *instr = create_instr_string("JUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
   if (instr != NULL) {
       add_instr(head, instr);
   }
 }
 
 // ADD INDEX + SYMTABLE NAME TO LABEL
-void ELSE_START(instr_node **head, char *string, int deepness) {
+void ELSE_START(instr_node **head, char *string, int deepness, int else_cnt) {
   // string = "LABEL $IF_ELSE\n";
   // add_instr(head, string);
-  char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_%d\n", deepness);
+  char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
   if (instr != NULL) {
       add_instr(head, instr);
   }
 }
 
-void ELSE_IF_END(instr_node **head, char *string, int deepness) {
+void ELSE_IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
   // string = "LABEL $IF_END\n";
   // add_instr(head, string);
 
-  char *instr = create_instr_string("LABEL $IF_END_%d\n# }\n\n", deepness);
+  char *instr = create_instr_string("LABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -334,6 +334,13 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
       // Handle memory allocation error
       return EXIT_FAILURE;
   }
+
+  // int if_while_cnt = data.int_while_cnt;
+  int if_cnt = data.if_cnt;
+  int else_cnt = data.else_cnt;
+
+  fprintf(stderr, "if_cnt: %d\n", if_cnt);
+  fprintf(stderr, "else_cnt: %d\n", else_cnt);
 
   switch (gencode) {
 
@@ -361,19 +368,19 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
         break;
 
     case GEN_IF_CHECK:
-        IF_CHECK(head, string, deepness);
+        IF_CHECK(head, string, deepness, else_cnt);
         break;
 
     case GEN_IF_END:
-        IF_END(head, string, deepness);
+        IF_END(head, string, deepness, if_cnt);
         break;
 
     case GEN_ELSE_START:
-        ELSE_START(head, string, deepness);
+        ELSE_START(head, string, deepness, else_cnt);
         break;
 
     case GEN_ELSE_IF_END:
-        ELSE_IF_END(head, string, deepness);
+        ELSE_IF_END(head, string, deepness, if_cnt);
         break;
 
     // define data.op.id_name to global

@@ -13,3 +13,57 @@ MOVE LF@%retval int@0
 LABEL $%ord_end
 POPFRAME
 RETURN
+
+LABEL %%readString
+CREATEFRAME
+PUSHFRAME
+# DEFVAR LF@%retval
+DEFVAR LF@%%string_tmp
+DEFVAR LF@%%bool
+DEFVAR LF@%%strlen
+READ LF@%%string_tmp string 
+STRLEN LF@%%strlen LF@%%string_tmp
+EQ LF@%%bool LF@%%strlen int@0
+JUMPIFEQ $%%eq_to_zero LF@%%bool bool@true
+PUSHS LF@%%string_tmp
+JUMP %%readString_end
+LABEL %%eq_to_zero
+PUSHS nil@nil
+# JUMP $%%readString_end
+LABEL $%%readString_end
+POPFRAME
+RETURN
+
+
+DEFVAR GF@**is_defined_a_1
+MOVE GF@**is_defined_a_1 bool@false
+JUMPIFEQ $**is_defined_a_1 GF@**is_defined_a_1 bool@true
+DEFVAR LF@%%a_1
+MOVE GF@**is_defined_a_1 bool@true
+LABEL $**is_defined_a_1
+
+
+JUMP $def_1
+LABEL $def_1
+DEFVAR LF@a_0
+JUMP $def_2
+#
+#
+#
+LABEL $def_2
+DEFVAR LF@a_1
+JUMP $def_1
+
+# At the start of your program
+JUMP declared_a
+LABEL init_a
+DEFVAR LF@a_1
+LABEL declared_a
+
+# ... rest of your program ...
+
+# When you need to declare 'a'
+JUMP init_a
+# (The program will jump to 'init_a', declare 'a', then continue at 'declared_a')
+
+# ... more code ...

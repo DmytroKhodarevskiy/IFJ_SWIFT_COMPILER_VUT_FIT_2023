@@ -52,14 +52,20 @@
 
 #define  MUL_Escape_sequence_STATE 134
 #define  check_mul_com 135
-// int linenum = 0;
-// linenum = 0;
+
 
 int multicom_cnt = 0;
 
 Token lookaheadToken;
 bool hasPeeked = false;
 
+
+/**
+ * @brief
+ * Support Function for the tokenizer, which compares the given word with the keywords.
+ * @param word
+ * @return int
+ */
 int isKeyword(const char* word) {
     
     if (strcmp(word, "func") == 0) {
@@ -99,11 +105,14 @@ int isKeyword(const char* word) {
 
 void copyString(char *destination, char *source) {
   strcpy(destination, source);
-    // if (source != NULL)
-  // free(source);
 }
 
-
+/**
+ * @brief 
+ * A function that returns the next token from the input file.
+ * But it doesn't change the position of the file pointer.
+ * @return The next token from the input file.
+ */
 Token peekNextToken(FILE *file) {
     if (!hasPeeked) {
         lookaheadToken = get_token(file);
@@ -112,6 +121,15 @@ Token peekNextToken(FILE *file) {
     return lookaheadToken;
 }
 
+/**
+ * @brief 
+ * A Token structure with default values.
+ * The initialized Token is set with T_T as the grammar token type,
+ * T_EMPTY as the token type, 0 as integer value, 0.0 as double value,
+ * and a dynamically allocated empty string as the string value.
+ *
+ * @return The initialized Token structure.
+ */
 
 Token init_token(){
   Token token;
@@ -125,6 +143,13 @@ Token init_token(){
   return token;
 }
 
+
+
+/**
+ * @brief 
+ * A function that returns the next token from the input file.
+ * @return The next token from the input file.
+ */
 Token get_token(FILE *file){
 
     if (hasPeeked) {
@@ -187,14 +212,6 @@ Token get_token(FILE *file){
         token.token_type = T_MULTIPLY;
         appendToDynamicString(token_string, symbol);
         copyString(token.string_value->str, token_string->str);
-
-        // char what;
-        // // if (!strcmp((char)(fgetc(file)), "/")) {
-        // if (what = fgetc(file) == '/') {
-        //   printf("what: %c\n", what);
-        //   exitWithError("ERROR: Invalid token after '*/'", ERR_LEX);
-        // }
-        // ungetc(symbol, file);
 
         return token;
 
@@ -294,8 +311,6 @@ Token get_token(FILE *file){
                 
                 } else {
                   exitWithError("ERROR: Invalid token", ERR_LEX);
-                    // token.token_type = T_ERR;
-                    // return token;
                 }
                 break;
             
@@ -306,6 +321,7 @@ Token get_token(FILE *file){
                     copyString(token.string_value->str, token_string->str);
                     return token;
                 } else {
+                    ungetc(symbol, file);
                     token.token_type = T_MINUS;
                     copyString(token.string_value->str, token_string->str);
                     return token;
@@ -320,8 +336,6 @@ Token get_token(FILE *file){
         return token;
       } else {
         exitWithError("ERROR: Invalid token after '_'", ERR_LEX);
-        // token.token_type = T_ERR;
-        // return token;
       }
       break;
 
@@ -334,8 +348,6 @@ Token get_token(FILE *file){
         state = Escape_sequence_STATE;
       } else if (symbol == '\n' || symbol == EOF) {
         exitWithError("ERROR: Invalid token after '\"'", ERR_LEX);
-        // token.token_type = T_ERR;
-        // return token;
       } else {
         appendToDynamicString(token_string, symbol);
         state = Reading_String_STATE;
@@ -363,8 +375,6 @@ Token get_token(FILE *file){
         state = Escape_char_err_check_STATE;
       } else {
         exitWithError("ERROR: Invalid token after '\\'", ERR_LEX);
-        // token.token_type = T_ERR;
-        // return token;
       }
       break;
 
@@ -377,8 +387,7 @@ Token get_token(FILE *file){
       } else if (symbol == '\n' || symbol == EOF) {
 
         exitWithError("ERROR: Invalid token after '\"'", ERR_LEX);
-        // token.token_type = T_ERR;
-        // return token;
+
       } else {
         appendToDynamicString(token_string, symbol);
         state = Reading_String_STATE;
@@ -392,8 +401,6 @@ Token get_token(FILE *file){
       } else {
 
         exitWithError("ERROR: Invalid token after '\\u'", ERR_LEX);
-        // token.token_type = T_ERR;
-        // return token;
       }
       break;
 
@@ -407,8 +414,6 @@ Token get_token(FILE *file){
       } else {
 
         exitWithError("ERROR: Invalid token after '\\u'", ERR_LEX);
-        // token.token_type = T_ERR;
-        // return token;
       }
       break;
 
@@ -429,9 +434,6 @@ Token get_token(FILE *file){
      
       if (symbol == EOF) {
         exitWithError("ERROR: Invalid token after '\"\"'", ERR_LEX);
-
-        // token.token_type = T_ERR;
-        // return token;
       }
 
       if (symbol == '\r') {
@@ -519,8 +521,6 @@ Token get_token(FILE *file){
       } else if (symbol == EOF) {
         exitWithError("ERROR: Invalid token after '\"\"'", ERR_LEX);
 
-        // token.token_type = T_ERR;
-        // return token;
       } else {
         appendToDynamicString(token_string, symbol);
         state = Multi_line_FINALLY_STATE;
@@ -537,13 +537,9 @@ Token get_token(FILE *file){
       } else if (symbol == EOF) {
         exitWithError("ERROR: Invalid token after '\"\"'", ERR_LEX);
 
-        // token.token_type = T_ERR;
-        // return token;
       } else {
         exitWithError("ERROR: Invalid token after '\"\"'", ERR_LEX);
 
-        // token.token_type = T_ERR;
-        // return token;
       }
 
 
@@ -557,8 +553,6 @@ Token get_token(FILE *file){
         ungetc(symbol, file);
 
         exitWithError("ERROR: Invalid token after '?'", ERR_LEX);
-        // token.token_type = T_ERR;
-        // return token;
       }
       break;
 
@@ -580,17 +574,11 @@ Token get_token(FILE *file){
 
     case Checking_Comment_STATE:
       if (symbol == '/') {
-        // ungetc(symbol, file);
         deleteLastCharacter(token_string);
-        // deleteLastCharacter(token_string);
-        // token.string_value->str = NULL;
-        // token_string->str = NULL;
-        // appendToDynamicString(token_string, symbol);
         state = Single_Line_Comment_STATE;
       } else if (symbol == '*') {
 
         multicom_cnt++;
-        // appendToDynamicString(token_string, symbol);
         state = Multi_Line_Comment_STATE;
       } else {
         ungetc(symbol, file);
@@ -605,18 +593,8 @@ Token get_token(FILE *file){
       if (symbol == '\n' || symbol == EOF ) {
         linenum++;
         token.token_type = T_SING_COMMENT;
-        // printf("TOKEN STRING STRING before: %s\n", token.string_value->str);
-        // copyString(token.string_value->str, token_string->str);
-        // printf("TOKEN STRING STRING after: %s\n", token.string_value->str);
-        // return token;
-        // dynamic_string_free(token_string->str);
-        // token_string->str = NULL;
-        // token.string_value->str = NULL;
         state = START;
-        // continue;
       } else {
-        // ungetc(symbol, file);
-        // appendToDynamicString(token_string, symbol);
         state = Single_Line_Comment_STATE;
       }
       break;
@@ -625,7 +603,6 @@ case Multi_Line_Comment_STATE:
     if (symbol == '*') {
         state = Checking_end_of_Multi_Line_Comment_STATE;
     } else if (symbol == '/') {
-        // Handle nested comment: /* /*
         multicom_cnt++;
         state = Multi_Line_Comment_STATE;
     } else if (symbol == EOF) {
@@ -692,38 +669,6 @@ case Checking_end_of_Multi_Line_Comment_STATE:
       }
       break;
 
-
-      // case Reading_Number_STATE:
-      //     if (isdigit(symbol)) {
-      //         appendToDynamicString(token_string, symbol);
-      //         state = Reading_Number_STATE;
-      //     } else if (symbol == '.') {
-      //         appendToDynamicString(token_string, symbol);
-      //         state = Reading_Number_STATE;
-      //     } else if (!isdigit(symbol)) {
-      //         if (symbol == 'e' || symbol == 'E'){
-      //             appendToDynamicString(token_string, symbol);
-      //             state = Checking_Exponential;
-      //         } else {
-      //             token.token_type = T_ERR;
-      //             return token;
-      //         }
-      //     } else {
-
-      //         ungetc(symbol, file);
-      //         if(strchr(token_string->str, '.') != NULL) {
-      //             token.token_type = T_DOUBLE;
-      //             token.double_value = atof(token_string->str);
-      //         } else {
-      //             token.token_type = T_INT;
-      //             token.int_value = atoi(token_string->str);
-      //         }
-
-      //         token.int_value = atoi(token_string->str);
-      //         copyString(token.string_value->str, token_string->str);
-      //         return token;
-      //     }
-      //     break;
 
     case Reading_Number_STATE:
    
@@ -856,8 +801,6 @@ case Checking_end_of_Multi_Line_Comment_STATE:
         return token;
       } else {
         exitWithError("ERROR: Invalid token after EOF", ERR_LEX);
-        // token.token_type = T_ERR;
-        // return token;
       }
       break;
     }

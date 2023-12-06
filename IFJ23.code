@@ -35,6 +35,27 @@ POPFRAME
 RETURN
 # end of length ---------
 
+# ReadString function
+LABEL $%readString
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@%retval
+DEFVAR LF@%string_tmp
+DEFVAR LF@%bool
+DEFVAR LF@%len
+READ LF@%string_tmp string
+STRLEN LF@%len LF@%string_tmp
+EQ LF@%bool LF@%len int@0
+JUMPIFEQ $%eq_to_zero_readstring LF@%bool bool@true
+MOVE LF@%retval LF@%string_tmp
+JUMP $%readString_end
+LABEL $%eq_to_zero_readstring
+MOVE LF@%retval nil@nil
+LABEL $%readString_end
+POPFRAME
+RETURN
+# end of readString ---------
+
 # Ord function
 LABEL $%ord
 PUSHFRAME
@@ -60,42 +81,87 @@ DEFVAR GF@?temp_1
 DEFVAR GF@?temp_2
 CREATEFRAME
 PUSHFRAME
+JUMP **main_declares**
+LABEL **main_declares_return**
 DEFVAR GF@%%res
 
-# declare a var
-DEFVAR GF@b_0
-PUSHS int@5
-POPS GF@b_0
-
-# declare a var
 DEFVAR GF@a_0
-PUSHS GF@b_0
 PUSHS int@1
-SUBS
 POPS GF@a_0
+CLEARS
 
 PUSHS GF@a_0
-PUSHS GF@b_0
-LTS
-
+PUSHS int@0
+GTS
 # if (res) 
 POPS GF@%%res
-JUMPIFNEQ $IF_ELSE_d0 GF@%%res bool@true
+JUMPIFNEQ $IF_ELSE_d0_c0 GF@%%res bool@true
 # {
-# assign
-MOVE GF@b_0 int@1337
-PUSHS int@1337
-JUMP $IF_END_d0
+PUSHS int@2
+POPS LF@a_1
+CLEARS
+
+PUSHS LF@a_1
+PUSHS int@0
+GTS
+# if (res) 
+POPS GF@%%res
+JUMPIFNEQ $IF_ELSE_d1_c1 GF@%%res bool@true
+# {
+PUSHS int@3
+POPS LF@b_2
+CLEARS
+
+PUSHS LF@a_1
+PUSHS int@0
+GTS
+# if (res) 
+POPS GF@%%res
+JUMPIFNEQ $IF_ELSE_d2_c2 GF@%%res bool@true
+# {
+PUSHS int@4
+POPS LF@b_3
+CLEARS
+
+
+# write(...)
+WRITE LF@b_3
+JUMP $IF_END_d2_c2
 # }
 
 # else { 
-LABEL $IF_ELSE_d0
-# assign
-MOVE GF@b_0 int@228
-PUSHS int@228
-LABEL $IF_END_d0
+LABEL $IF_ELSE_d2_c2
+
+LABEL $IF_END_d2_c2
 # }
 
-WRITE GF@b_0
+JUMP $IF_END_d1_c1
+# }
+
+# else { 
+LABEL $IF_ELSE_d1_c1
+
+LABEL $IF_END_d1_c1
+# }
+
+JUMP $IF_END_d0_c0
+# }
+
+# else { 
+LABEL $IF_ELSE_d0_c0
+
+LABEL $IF_END_d0_c0
+# }
+
+LABEL **main**
+
 # EXIT 
+POPFRAME
 EXIT int@0
+
+
+LABEL **main_declares**
+DEFVAR LF@a_1
+DEFVAR LF@b_2
+DEFVAR LF@b_3
+JUMP **main_declares_return**

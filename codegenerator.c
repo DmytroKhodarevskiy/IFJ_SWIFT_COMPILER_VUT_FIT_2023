@@ -207,7 +207,8 @@ void add_instr(instr_node **head, char *instr) {
 // define global id, id_name must be in data.op.id_name
 void CREATE_ID(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
   SET_FRAME(frame);
-  sprintf(string, "# declare a var\nDEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
+  // sprintf(string, "# declare a var\nDEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
+  sprintf(string, "DEFVAR %s@%s_%d\n", frame_name, id_name, deepness);
   add_instr(head, string);
 }
 
@@ -238,8 +239,13 @@ void MOVE(instr_node **head, char *id_name, char *value, char *string, int deepn
 // assign value from the stack to data.op.id_name
 void ASSIGN(instr_node **head, char *id_name, char *string, int deepness, Frame frame) {
   SET_FRAME(frame);
-  sprintf(string, "POPS %s@%s_%d\n\n", frame_name, id_name, deepness);
+  sprintf(string, "POPS %s@%s_%d\n", frame_name, id_name, deepness);
   add_instr(head, string);
+
+  char *instr = create_instr_string("CLEARS\n\n");
+  if (instr != NULL) {
+      add_instr(head, instr);
+  }
 }
 
 // write value of data.op.id_name to stdout
@@ -346,7 +352,8 @@ void EQ(instr_node **head, char *string) {
     string = "EQS\n";
     add_instr(head, string);
 }
- void AND(instr_node **head, char *string) {
+
+void AND(instr_node **head, char *string) {
     string = "ANDS\n";
     add_instr(head, string);
 }
@@ -399,6 +406,10 @@ void MAIN(instr_node **head, char *string) {
   string = "CREATEFRAME\n";
   add_instr(head, string);
   string = "PUSHFRAME\n";
+  add_instr(head, string);
+  string = "JUMP **main_declares**\n";
+  add_instr(head, string);
+  string = "LABEL **main_declares_return**\n";
   add_instr(head, string);
 }
 
@@ -493,13 +504,20 @@ void IF_START(instr_node **head, char *string, int deepness) {
 
 // ADD INDEX + SYMTABLE NAME TO LABEL
 void IF_CHECK(instr_node **head, char *string, int deepness, int else_cnt) {
-  string = "\n# if (res) \nPOPS GF@%%res\n";
+
+  // string = "\nCREATEFRAME\n";
+  // add_instr(head, string);
+
+  // string = "PUSHFRAME\n";
+  // add_instr(head, string);
+  // string = "\n# if (res) \nPOPS GF@%%res\n";
+  string = "# if (res) \nPOPS GF@%%res\n";
   add_instr(head, string);
   // string = "JUMPIFNEQ $IF_ELSE_%d GF@RETURN_VALUE_THAT_WILL_NEVER_BE_DECLARED bool@true\n", deepness;
   // add_instr(head, string);
 
-  // char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d_c%d GF@%%%%res bool@true\n# {\n", deepness, else_cnt);
-  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d GF@%%%%res bool@true\n# {\n", deepness);
+  char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d_c%d GF@%%%%res bool@true\n# {\n", deepness, else_cnt);
+  // char *instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d GF@%%%%res bool@true\n# {\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -509,8 +527,9 @@ void IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
   // string = "JUMP $IF_END\n";
   // add_instr(head, string);
 
-  // char *instr = create_instr_string("JUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
-  char *instr = create_instr_string("JUMP $IF_END_d%d\n# }\n\n", deepness);
+  char *instr = create_instr_string("JUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  // char *instr = create_instr_string("POPFRAME\nJUMP $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  // char *instr = create_instr_string("JUMP $IF_END_d%d\n# }\n\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -520,8 +539,9 @@ void IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
 void ELSE_START(instr_node **head, char *string, int deepness, int else_cnt) {
   // string = "LABEL $IF_ELSE\n";
   // add_instr(head, string);
-  // char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
-  char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d\n", deepness);
+  char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
+  // char *instr = create_instr_string("# else { \nCREATEFRAME\nPUSHFRAME\nLABEL $IF_ELSE_d%d_c%d\n", deepness, else_cnt);
+  // char *instr = create_instr_string("# else { \nLABEL $IF_ELSE_d%d\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -531,8 +551,9 @@ void ELSE_IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
   // string = "LABEL $IF_END\n";
   // add_instr(head, string);
 
-  // char *instr = create_instr_string("LABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
-  char *instr = create_instr_string("LABEL $IF_END_d%d\n# }\n\n", deepness);
+  char *instr = create_instr_string("\nLABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  // char *instr = create_instr_string("\nPOPFRAME\nLABEL $IF_END_d%d_c%d\n# }\n\n", deepness, if_cnt);
+  // char *instr = create_instr_string("LABEL $IF_END_d%d\n# }\n\n", deepness);
   if (instr != NULL) {
       add_instr(head, instr);
   }
@@ -540,7 +561,7 @@ void ELSE_IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
 
 
 void EXIT(instr_node **head, char *string) {
-  string = "\n# EXIT \nEXIT int@0\n";
+  string = "\n# EXIT \nPOPFRAME\nEXIT int@0\n\n\n";
   add_instr(head, string);
 }
 
@@ -549,15 +570,9 @@ void BUILTIN(instr_node **head, char *string) {
   char *instr = create_instr_string("\n\n# Write function\nLABEL $%%write\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  // instr = create_instr_string("PUSHFRAME\n");
-  // if (instr != NULL) 
-      // add_instr(head, instr);
   instr = create_instr_string("WRITE LF@%%param\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  // instr = create_instr_string("POPFRAME\n");
-  // if (instr != NULL) 
-      // add_instr(head, instr);
   instr = create_instr_string("RETURN\n# end of write ---------\n");
   if (instr != NULL) 
       add_instr(head, instr);
@@ -619,6 +634,62 @@ void BUILTIN(instr_node **head, char *string) {
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("RETURN\n# end of length ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+  //READSTRING
+  instr = create_instr_string("\n# ReadString function\nLABEL $%%readString\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("CREATEFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%string_tmp\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%bool\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%len\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("READ LF@%%string_tmp string\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("STRLEN LF@%%len LF@%%string_tmp\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("EQ LF@%%bool LF@%%len int@0\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMPIFEQ $%%eq_to_zero_readstring LF@%%bool bool@true\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("MOVE LF@%%retval LF@%%string_tmp\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMP $%%readString_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%eq_to_zero_readstring\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("MOVE LF@%%retval nil@nil\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%readString_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of readString ---------\n");
   if (instr != NULL) 
       add_instr(head, instr);
 
@@ -735,8 +806,9 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
   }
 
   // int if_while_cnt = data.int_while_cnt;
-  int if_cnt = data.if_cnt;
-  int else_cnt = data.else_cnt;
+  // int if_cnt = data.if_cnt;
+  // int else_cnt = data.else_cnt;
+  int ifelse_cnt = data.ifelse_cnt;
 
   // fprintf(stderr, "if_cnt: %d\n", if_cnt);
   // fprintf(stderr, "else_cnt: %d\n", else_cnt);
@@ -774,35 +846,30 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
         break;
 
     case GEN_IF_CHECK:
-        IF_CHECK(head, string, deepness, else_cnt);
+        IF_CHECK(head, string, deepness, ifelse_cnt);
         break;
 
     case GEN_IF_END:
-        IF_END(head, string, deepness, if_cnt);
+        IF_END(head, string, deepness, ifelse_cnt);
         break;
 
     case GEN_ELSE_START:
-        ELSE_START(head, string, deepness, else_cnt);
+        ELSE_START(head, string, deepness, ifelse_cnt);
         break;
         // push value of data.op.id_name to stack
-        case GEN_PUSH:
-            // char *id_name_push;
-            val = data.op.val;
-            id_name_push = data.op.id_name;
+    case GEN_PUSH:
+        val = data.op.val;
+        id_name_push = data.op.id_name;
+        type = data.op.type;
+        PUSH(head, id_name_push, string, deepness, frame, type, val);
+        break;
 
-            // fprintf(stderr, "ID NAME TO PUSH: %s\n", id_name_push);
-
-            // fprintf(stderr, "hue:( %s )\n", data.op.id_name);
-            type = data.op.type;
-            PUSH(head, id_name_push, string, deepness, frame, type, val);
-            break;
-
-        case GEN_PUSH_TMP:
-            PUSH_TMP(head, string, deepness);
-            break;
+    case GEN_PUSH_TMP:
+        PUSH_TMP(head, string, deepness);
+        break;
 
     case GEN_ELSE_IF_END:
-        ELSE_IF_END(head, string, deepness, if_cnt);
+        ELSE_IF_END(head, string, deepness, ifelse_cnt);
         break;
 
     case GEN_CONCAT:
@@ -1193,4 +1260,17 @@ void print_list_names(instr_list_dynamic *list) {
         }
         */
     }
+}
+
+bool is_substr_in_list(instr_node *head, const char *substr) {
+    instr_node *current = head;
+
+    while (current != NULL) {
+        if (strstr(current->instr, substr) != NULL) {
+            return true;  // Found the substring
+        }
+        current = current->next;
+    }
+
+    return false;  // Substring not found
 }

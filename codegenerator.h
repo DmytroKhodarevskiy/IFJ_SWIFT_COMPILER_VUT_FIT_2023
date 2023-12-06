@@ -77,8 +77,8 @@ typedef struct Data {
   char *func_name;
   Operand *func_param;
   unsigned int func_param_count;
-  int if_cnt;
-  int else_cnt;
+  int ifelse_cnt;
+  // int else_cnt;
 } Data;
 
 instr_list_dynamic *init_instr_list_dynamic();
@@ -88,6 +88,8 @@ instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, i
 void print_list_names(instr_list_dynamic *list);
 void pop_all_lists_to_file(instr_list_dynamic *list);
 char *type_to_string(DataType type);
+// bool is_instr_in_list(instr_node *head, const char *instr);
+bool is_substr_in_list(instr_node *head, const char *substr);
 
 /*
 * Creates an assembly file.

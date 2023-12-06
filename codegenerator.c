@@ -296,6 +296,10 @@ void MAIN(instr_node **head, char *string) {
   add_instr(head, string);
   string = "PUSHFRAME\n";
   add_instr(head, string);
+  string = "JUMP **main_declares**\n";
+  add_instr(head, string);
+  string = "LABEL **main_declares_return**\n";
+  add_instr(head, string);
 }
 
 void FUNC_START(instr_node **head, char *func_name, char *string) {
@@ -446,7 +450,7 @@ void ELSE_IF_END(instr_node **head, char *string, int deepness, int if_cnt) {
 
 
 void EXIT(instr_node **head, char *string) {
-  string = "\n# EXIT \nPOPFRAME\nEXIT int@0\n";
+  string = "\n# EXIT \nPOPFRAME\nEXIT int@0\n\n\n";
   add_instr(head, string);
 }
 
@@ -1141,4 +1145,17 @@ void print_list_names(instr_list_dynamic *list) {
         }
         */
     }
+}
+
+bool is_substr_in_list(instr_node *head, const char *substr) {
+    instr_node *current = head;
+
+    while (current != NULL) {
+        if (strstr(current->instr, substr) != NULL) {
+            return true;  // Found the substring
+        }
+        current = current->next;
+    }
+
+    return false;  // Substring not found
 }

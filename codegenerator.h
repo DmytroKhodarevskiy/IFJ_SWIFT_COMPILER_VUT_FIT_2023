@@ -86,6 +86,8 @@ instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, i
 void print_list_names(instr_list_dynamic *list);
 void pop_all_lists_to_file(instr_list_dynamic *list);
 char *type_to_string(DataType type);
+// bool is_instr_in_list(instr_node *head, const char *instr);
+bool is_substr_in_list(instr_node *head, const char *substr);
 
 /*
 * Creates an assembly file.

@@ -9,6 +9,7 @@ SymStack stack;
 bool WasReturn = false;
 
 instr_node *main_gen = NULL;
+instr_node *declares = NULL;
 instr_list_dynamic *instr_list = NULL;
 
 Token current_token;
@@ -129,6 +130,8 @@ void Parse(FILE *file){
     // main_gen = init_instr_node();
     add_instr(&main_gen, "\n");
 
+    add_instr(&declares, "LABEL **main_declares**\n");
+
     // main_gen->name_of_llist = "main";
     main_gen->name_of_llist = "global";
     instr_list = init_instr_list_dynamic();
@@ -141,8 +144,14 @@ void Parse(FILE *file){
 
     PHASE_SECOND(file);
 
+
+    add_instr(&declares, "JUMP **main_declares_return**\n");
+    add_instr(&main_gen, "LABEL **main**\n");
+
     // generate_file();
     generate_header();
+
+
 
     instr_node *builtin = NULL;
     generate_code(&builtin, data, GEN_BUILTIN, 0, UNUSED);
@@ -151,11 +160,13 @@ void Parse(FILE *file){
     generate_code(&main_gen, data, GEN_EXIT, 0, UNUSED);
 
     // fprintf(stderr, "--------------------------------\n");
-    print_list_names(instr_list);
+    // print_list_names(instr_list);
     // fprintf(stderr, "--------------------------------\n");
     pop_all_lists_to_file(instr_list);
 
     pop_list_to_file(&main_gen);
+
+    pop_list_to_file(&declares);
 }
 
 void PHASE_SECOND(FILE *file) {
@@ -1294,13 +1305,33 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
   if (Name == NULL && stack.top == 0)  {
     data.op.id_name = node_data.name;
     generate_code(&main_gen, data, GEN_CREATE_ID, 0, GF);
+    // generate_code(&declares, data, GEN_CREATE_ID, 0, GF);
   }
   else {
 
     if (Name == NULL && stack.top != 0) {
       int deepness = Get_deepness_current(&stack);
       data.op.id_name = node_data.name;
-      generate_code(&main_gen, data, GEN_CREATE_ID, deepness, LF);
+      // generate_code(&main_gen, data, GEN_CREATE_ID, deepness, LF);
+      bool is_declared;
+      char *id_name_dec;
+      int length = snprintf(NULL, 0, "%s_%d", node_data.name, deepness) + 1; // +1 for null terminator
+      id_name_dec = malloc(length); // Allocate memory
+
+      if (id_name_dec != NULL) {
+        sprintf(id_name_dec, "%s_%d", node_data.name, deepness);
+        is_declared = is_substr_in_list(declares, id_name_dec);
+
+        // Use 'is_declared' as needed
+
+        free(id_name_dec); // Don't forget to free the allocated memory
+      } else {
+        // Handle memory allocation error
+        exitWithError("Memory allocation error\n", ERR_INTERNAL);
+      }
+
+      if (!is_declared) 
+        generate_code(&declares, data, GEN_CREATE_ID, deepness, LF);
     }
     else {
     data.op.id_name = node_data.name;

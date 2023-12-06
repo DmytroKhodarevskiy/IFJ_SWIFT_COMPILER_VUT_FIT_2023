@@ -112,7 +112,7 @@ AVLNode* search_SymTable(SymTable* table, char* key) {
 
         if (compareResult == 0) {
             // if (current->data.isDefined == false) {
-                // return NULL;
+            // return NULL;
             // }
             return current;
         } else if (compareResult > 0) {
@@ -155,14 +155,14 @@ AVLNode* create_AVLNode(char* key, SymData data) {
 SymData initSymData() {
     SymData node;
     // if (node == NULL) {
-        // return NULL; // Memory allocation failed
+    // return NULL; // Memory allocation failed
     // }
 
     // Allocate memory for the name and copy the initialName into it
     // node->name = malloc(strlen(initialName) + 1); // +1 for null terminator
     // if (node->name == NULL) {
-        // free(node); // Don't forget to free the node if name allocation fails
-        // return NULL;
+    // free(node); // Don't forget to free the node if name allocation fails
+    // return NULL;
     // }
     // strcpy(node->name, initialName);
 
@@ -394,37 +394,37 @@ void insert_FunctionSymTable(SymTable* table, char* key, DataType returnType, Li
  * @return The head of the updated parameter list.
  */
 ListFuncParam* addParamToList(ListFuncParam* list, char* paramName, DataType dataType, ParamPrefix prefix, char* prefixName) {
-  ListFuncParam* newParam = (ListFuncParam*)malloc(sizeof(ListFuncParam));
-  if (newParam == NULL) {
-    // Handle memory allocation failure
-    return NULL;
-  }
-
-  // Allocate memory for the parameter name and copy it
-  newParam->name = (char*)malloc(strlen(paramName) + 1); // +1 for null terminator
-  if (newParam->name == NULL) {
-    // Handle memory allocation failure
-    free(newParam);
-    return NULL;
-  }
-  strcpy(newParam->name, paramName);
-
-  newParam->prefixName = prefixName;
-  newParam->prefix = prefix;
-  newParam->dataType = dataType;
-  newParam->next = NULL;
-
-  // Append to the list
-  if (list == NULL) {
-    return newParam;
-  } else {
-    ListFuncParam* current = list;
-    while (current->next != NULL) {
-      current = current->next;
+    ListFuncParam* newParam = (ListFuncParam*)malloc(sizeof(ListFuncParam));
+    if (newParam == NULL) {
+        // Handle memory allocation failure
+        return NULL;
     }
-    current->next = newParam;
-    return list;
-  }
+
+    // Allocate memory for the parameter name and copy it
+    newParam->name = (char*)malloc(strlen(paramName) + 1); // +1 for null terminator
+    if (newParam->name == NULL) {
+        // Handle memory allocation failure
+        free(newParam);
+        return NULL;
+    }
+    strcpy(newParam->name, paramName);
+
+    newParam->prefixName = prefixName;
+    newParam->prefix = prefix;
+    newParam->dataType = dataType;
+    newParam->next = NULL;
+
+    // Append to the list
+    if (list == NULL) {
+        return newParam;
+    } else {
+        ListFuncParam* current = list;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newParam;
+        return list;
+    }
 }
 
 
@@ -514,18 +514,18 @@ void print_SymData(SymData* data) {
     if (!data) return;
 
     fprintf(stderr, "Name: %s, DataType: %d, isDefined: %d, canbeChanged: %d, isGlobal: %d, isFunction: %d IsNil: %d\n",
-           data->name, data->dtype, data->isDefined, data->canbeChanged, data->isGlobal, data->isFunction, data->isNil);
+            data->name, data->dtype, data->isDefined, data->canbeChanged, data->isGlobal, data->isFunction, data->isNil);
 
     if (data->isFunction) {
 
         
         fprintf(stderr, ", ReturnType: %d, ParamCount: %d\n", data->returnType, data->paramCount);
         ListFuncParam* param = &data->paramTypes;
-            if (data->paramCount != 0) {
-                while (param) {
-                    if (param != NULL)
+        if (data->paramCount != 0) {
+            while (param) {
+                if (param != NULL)
                     fprintf(stderr, "Param: %s, DataType: %d , Prefixes: %d\n", param->name, param->dataType, param->prefix);
-                    if (param != NULL)
+                if (param != NULL)
                     param = param->next;
             }
         }

@@ -16,85 +16,85 @@
 
 
 typedef enum{
-  //Double, else, func, if, Int, let, nil, return, String,
-  //var, while
+    //Double, else, func, if, Int, let, nil, return, String,
+    //var, while
 
-  K_DOUBLE,
-  K_ELSE,
-  K_FUNC,
-  K_IF,
-  K_INT,
-  K_LET,
-  K_NIL,
-  K_RETURN,
-  K_STRING,
-  K_VAR,
-  K_WHILE,
-  K_DOUBLE_WITHQ,
-  K_STRING_WITHQ,
-  K_INT_WITHQ,
+    K_DOUBLE,
+    K_ELSE,
+    K_FUNC,
+    K_IF,
+    K_INT,
+    K_LET,
+    K_NIL,
+    K_RETURN,
+    K_STRING,
+    K_VAR,
+    K_WHILE,
+    K_DOUBLE_WITHQ,
+    K_STRING_WITHQ,
+    K_INT_WITHQ,
 
 } keyword;
 
 typedef enum{
 
-  T_LPAR, // (
-  T_RPAR, // )
-  T_LBRACE, // {
-  T_RBRACE, // }
+    T_LPAR, // (
+    T_RPAR, // )
+    T_LBRACE, // {
+    T_RBRACE, // }
 
-  T_PLUS, // +
-  T_MINUS, // -
-  T_MULTIPLY, // *
-  T_DIVIDE, // / 
+    T_PLUS, // +
+    T_MINUS, // -
+    T_MULTIPLY, // *
+    T_DIVIDE, // /
 
-  T_MUL_COMMENT, // /* */
-  T_SING_COMMENT, // //
+    T_MUL_COMMENT, // /* */
+    T_SING_COMMENT, // //
 
-  T_MUL_STRING, // """ """
-  T_SING_STRING, // ' '  " "
+    T_MUL_STRING, // """ """
+    T_SING_STRING, // ' '  " "
 
-  T_TYPE_ID, // VARIABLE
-  T_ERR, // ERROR
-  T_INT, // INTEGER
-  T_DOUBLE, // DOUBLE
-  T_FLOAT, // FLOAT
-  T_STRING, // STRING
-  T_EXPONENT_INT, // EXPONENT INTEGER
-  T_EXPONENT_FLOAT, // EXPONENT FLOAT
+    T_TYPE_ID, // VARIABLE
+    T_ERR, // ERROR
+    T_INT, // INTEGER
+    T_DOUBLE, // DOUBLE
+    T_FLOAT, // FLOAT
+    T_STRING, // STRING
+    T_EXPONENT_INT, // EXPONENT INTEGER
+    T_EXPONENT_FLOAT, // EXPONENT FLOAT
 
-  T_SEMICOLON, // ;
-  T_COMMA, // ,
-  T_COLON, // :
+    T_SEMICOLON, // ;
+    T_COMMA, // ,
+    T_COLON, // :
 
-  T_LESS, // <
-  T_GREATER, // >
-  T_LESS_EQUAL, // <=
-  T_GREATER_EQUAL, // >=
-  T_NOT_EQUAL, // !=
-  T_ASSIGN, // =
-  T_EQUAL, // ==
-  T_ARROW, // ->
+    T_LESS, // <
+    T_GREATER, // >
+    T_LESS_EQUAL, // <=
+    T_GREATER_EQUAL, // >=
+    T_NOT_EQUAL, // !=
+    T_ASSIGN, // =
+    T_EQUAL, // ==
+    T_ARROW, // ->
 
 
 
-  T_NOTNIL, // !
-  T_BINARY_OP, // ??
+    T_NOTNIL, // !
+    T_BINARY_OP, // ??
 
-  T_EOF, // END OF FILE
-  T_EOL, // END OF LINE
+    T_EOF, // END OF FILE
+    T_EOL, // END OF LINE
 
-  T_KEYWORD, // KEYWORD
+    T_KEYWORD, // KEYWORD
 
-  T_EMPTY, // EMPTY
+    T_EMPTY, // EMPTY
 
-  T_UNDERSCORE_ID, // ( _ = ...)
-  T_RD_EDGE, // edge of right side of rule
-  T_NT, // ( <non-terminal> = ...)
+    T_UNDERSCORE_ID, // ( _ = ...)
+    T_RD_EDGE, // edge of right side of rule
+    T_NT, // ( <non-terminal> = ...)
 
-  T_DOLLAR, // $
+    T_DOLLAR, // $
 
-  T_T
+    T_T
 
 } token_type;
 
@@ -105,22 +105,22 @@ typedef enum{
 // {
 // 	char *str; /// string ened by '\0' byte
 // 	unsigned int length; /// lenght of string
-//   unsigned int allocSize; /// size of allocated memory  
+//   unsigned int allocSize; /// size of allocated memory
 // } Dynamic_string;
 
 
 
 typedef struct {
 
-  token_type grammar_token_type;
-  token_type token_type;
-  keyword keyword_type;
+    token_type grammar_token_type;
+    token_type token_type;
+    keyword keyword_type;
 
-  int line_number;
+    int line_number;
 
-  Dynamic_string *string_value;
-  int int_value;
-  double double_value;
+    Dynamic_string *string_value;
+    int int_value;
+    double double_value;
 
 } Token;
 

@@ -35,7 +35,7 @@ void generate_covert(Token *token, DataType type){
     data.op.val = token->string_value->str;
     data.op.type = type;
     instr_node *node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
-    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data, GEN_COVERT, 0, GF);
+    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data, GEN_PUSH, 0, GF);
     else generate_code(&node_inst, data, GEN_PUSH, 0, LF);
 
 }

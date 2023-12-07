@@ -41,8 +41,6 @@ void generate_convert(Token *token, DataType *type){
     else generate_code(&node_inst, data, GEN_PUSH, 0, LF);
     if(int_to_double) generate_code(&node_inst, data, GEN_INT2FLOAT, 0, UNUSED);
     else if(double_to_int) generate_code(&node_inst, data, GEN_FLOAT2INT, 0, UNUSED);
-    int_to_double = false;
-    double_to_int = false;
     return;
 }
 
@@ -222,9 +220,13 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
         data.op.id_name = current_token->string_value->str;
         data.func_param.id_name = param->name;
         int depth = Get_deepness_of_var(table, current_token->string_value->str);
-        if(!str_len || !int_to_double || !double_to_int){
+        if(!(str_len || int_to_double || double_to_int)){
             if(node->data.isGlobal) generate_code(&main_gen_list, data, GEN_MOVE, 0, GF);
             else generate_code(&main_gen_list, data, GEN_MOVE, depth, LF);
+        }
+        if(str_len) {
+            generate_code(&main_gen_list, data, GEN_PUSH, 0, UNUSED);
+            generate_code(&main_gen_list, init_data(), GEN_STRLEN, 0, UNUSED);
         }
     }
     else
@@ -237,17 +239,17 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
         data.op.val = current_token->string_value->str;
         data.op.type = actual_argument_type;
         data.func_param.id_name = param->name;
-        if(!str_len || !int_to_double || !double_to_int){
+        if(!(str_len || int_to_double || double_to_int)){
             generate_code(&main_gen_list, data, GEN_MOVE, 0, UNUSED);
         }
-        generate_code(&main_gen_list, data, GEN_MOVE, 0, UNUSED);
+        if(str_len) {
+            generate_code(&main_gen_list, data, GEN_PUSH, 0, UNUSED);
+            generate_code(&main_gen_list, init_data(), GEN_STRLEN, 0, UNUSED);
+        }
     }
 
     generate_convert(current_token, &param->dataType);
-    if(str_len) {
-        generate_code(&main_gen_list, init_data(), GEN_STRLEN, 0, UNUSED);
-        str_len = false;
-    }
+
 }
 
 void PREFIX_EXP(FILE **file, Token *current_token, ListFuncParam *param){ //current token is (
@@ -534,12 +536,21 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
                         build_in_function(token->string_value->str);
                         FuncId = *token;
                         EOL = findNewLineInFile(*file);
-                        generate_code(&main_gen_exp, init_data(), GEN_CREATEFRAME, 0, UNUSED);
+                        if(!(str_len || int_to_double || double_to_int)) generate_code(&main_gen_exp, init_data(), GEN_CREATEFRAME, 0, UNUSED);
                         *token = get_token(*file);
                         FUNC_CALLS_EXP(file, token);
                         Data data = init_data();
                         data.func_name = FuncId.string_value->str;
-                        if(!str_len || !int_to_double || !double_to_int) generate_code(&main_gen_exp, data, GEN_CALL, 0, UNUSED);
+                        fprintf(stderr, "str_len: %d\n", str_len);
+                        fprintf(stderr, "int_to_double: %d\n", int_to_double);
+                        fprintf(stderr, "double_to_int: %d\n", double_to_int);
+                        if(!(str_len || int_to_double || double_to_int)) {
+                            generate_code(&main_gen_exp, data, GEN_CALL, 0, UNUSED);
+                        }
+                        int_to_double = false;
+                        double_to_int = false;
+                        str_len = false;
+
                     }
                 }
             }
@@ -657,7 +668,11 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                         // E -> E / E
                     case T_DIVIDE:
                         *expression_type = get_token_type(tokens[0], tokens[2], 1);
-                        generate_code(&node_inst, data, GEN_DIV,  0, UNUSED);
+                        if(*expression_type == TYPE_INT) generate_code(&node_inst, data, GEN_IDIV,  0, UNUSED);
+                        else {
+
+                            generate_code(&node_inst, data, GEN_DIV,  0, UNUSED);
+                        }
                         return 5;
                         // E -> E < E
                     case T_LESS:

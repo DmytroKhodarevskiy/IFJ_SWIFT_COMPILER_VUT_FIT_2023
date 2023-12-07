@@ -1,4 +1,5 @@
-var a = length("Hello")
+var a: String? = "Hello"
+let d = a
 
 
 

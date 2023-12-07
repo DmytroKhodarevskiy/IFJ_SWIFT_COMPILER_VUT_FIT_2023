@@ -77,6 +77,7 @@ func GRINFIND () -> Int {
 var a = 1
 
 // GRINFIND(1, 2)
+// GRINFIND(1, 2)
 
 
 // var outerCounter = 0

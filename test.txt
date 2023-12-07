@@ -2,6 +2,30 @@
 // var a = length("Hello")
 // write(a)
 
+write("Zadejte cislo pro vypocet faktorialu\n")
+// let a : Int? = readInt()!
+let a : Int = readInt()
+// if let a {
+
+
+
+
+// if (a < 0) {write("Faktorial nelze spocitat\n")
+// } else {
+// var a = Int2Double(a)
+
+// var vysl : Double = 1
+
+// while (a > 0.0) {
+// vysl = vysl * a
+// a = a - 1
+// }
+// write("Vysledek je: ", vysl, "\n")
+// }
+// } else {
+// write("Chyba pri nacitani celeho cisla!\n")
+// }
+
 
 // var b: Int = 0 // You need to initialize 'b' before using it
 // // var a: Int = 1
@@ -45,21 +69,21 @@
 //     return a / b
 // }
 
-var str1 = "Toto je nejaky text v programu jazyka IFJ23"
-let str2 = str1 + ", ktery jeste trochu obohatime"
-write(str1, "\n", str2, "\n")
-let i = length(str1)
-write("Pozice retezce \"text\" v str2: ", i, "\n")
-write("Zadejte serazenou posloupnost vsech malych pismen a-h, ")
-let newInput = readString()!
-if (5 == 5) {
-str1 = newInput
-while (str1 != "abcdefgh") {
-write("Spatne zadana posloupnost, zkuste znovu:\n")
-let tmp = readString()!
-str1 = tmp ?? ""
-}
-} else {}
+// var str1 = "Toto je nejaky text v programu jazyka IFJ23"
+// let str2 = str1 + ", ktery jeste trochu obohatime"
+// write(str1, "\n", str2, "\n")
+// let i = length(str1)
+// write("Pozice retezce \"text\" v str2: ", i, "\n")
+// write("Zadejte serazenou posloupnost vsech malych pismen a-h, ")
+// let newInput = readString()!
+// if (5 == 5) {
+// str1 = newInput
+// while (str1 != "abcdefgh") {
+// write("Spatne zadana posloupnost, zkuste znovu:\n")
+// let tmp = readString()!
+// str1 = tmp ?? ""
+// }
+// } else {}
 
 // var a = 1
 

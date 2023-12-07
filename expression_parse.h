@@ -66,7 +66,7 @@ token_type convert_symType_to_tokenType(DataType type);
  * @param rule_type The type of the rule to be applied.
  * @return The token type of the result of the operation.
  */
-DataType get_token_type(Token op1, Token op3, int rule_type);
+DataType get_token_type(Token op1, Token op3, int rule_type, instr_node *node_inst);
 
 /**
  * Finds the last terminal token in the stack.

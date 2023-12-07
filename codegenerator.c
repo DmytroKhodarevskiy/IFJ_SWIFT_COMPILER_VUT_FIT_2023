@@ -547,6 +547,24 @@ void STRLEN(instr_node **head, char *string) {
   add_instr(head, string);
 }
 
+void IF_LET(instr_node **head, char *string, char *id_name, int deepness, Frame frame) {
+  SET_FRAME(frame);
+  string = "\nPUSHS nil@nil\n";
+  add_instr(head, string);
+  char *instr = create_instr_string("PUSHS %s@%s_%d\n", frame_name, id_name, deepness);
+  if (instr != NULL)
+      add_instr(head, instr);
+//   instr = create_instr_string("JUMPIFNEQ $IF_ELSE_d%d_c%d GF@%%%%res bool@true\n# {\n", deepness, 0);
+//   if (instr != NULL)
+    //   add_instr(head, instr);
+  instr = create_instr_string("EQS\n", deepness, 0);
+  if (instr != NULL)
+      add_instr(head, instr);
+  instr = create_instr_string("NOTS\n\n", deepness, 0);
+  if (instr != NULL)
+      add_instr(head, instr);
+}
+
 void BUILTIN(instr_node **head, char *string) {
   //WRITE
   char *instr = create_instr_string("\n\n# Write function\nLABEL $%%write\n");
@@ -675,8 +693,8 @@ void BUILTIN(instr_node **head, char *string) {
   if (instr != NULL) 
       add_instr(head, instr);
 
-
-      instr = create_instr_string("\n# ReadInt function\nLABEL $%%%%readInt\n");
+    //READINT
+  instr = create_instr_string("\n# ReadInt function\nLABEL $%%%%readInt\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("CREATEFRAME\n");
@@ -700,25 +718,26 @@ void BUILTIN(instr_node **head, char *string) {
   instr = create_instr_string("READ LF@%%int_tmp int\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("STRLEN LF@%%len LF@%%int_tmp\n");
-  if (instr != NULL) 
-      add_instr(head, instr);
-  instr = create_instr_string("EQ LF@%%bool LF@%%len int@0\n");
+//   instr = create_instr_string("STRLEN LF@%%len LF@%%int_tmp\n");
+//   if (instr != NULL) 
+    //   add_instr(head, instr);
+//   instr = create_instr_string("EQ LF@%%bool LF@%%len int@0\n");
+  instr = create_instr_string("EQ LF@%%bool LF@%%int_tmp nil@nil\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("JUMPIFEQ $%%eq_to_zero_readInt LF@%%bool bool@true\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("MOVE LF@%%retval LF@%%int_tmp\n");
+  instr = create_instr_string("PUSHS LF@%%int_tmp\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("JUMP $%%readInt_end\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("LABEL $%%eq_to_zero_readint\n");
+  instr = create_instr_string("LABEL $%%eq_to_zero_readInt\n");
   if (instr != NULL) 
       add_instr(head, instr);
-  instr = create_instr_string("MOVE LF@%%retval nil@nil\n");
+  instr = create_instr_string("PUSHS nil@nil\n");
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("LABEL $%%readInt_end\n");
@@ -728,6 +747,59 @@ void BUILTIN(instr_node **head, char *string) {
   if (instr != NULL) 
       add_instr(head, instr);
   instr = create_instr_string("RETURN\n# end of readInt ---------\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+
+      //READDOUBLE
+  instr = create_instr_string("\n# ReadDouble function\nLABEL $%%%%readDouble\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("CREATEFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%retval\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%double_tmp\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%bool\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("DEFVAR LF@%%len\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("READ LF@%%double_tmp float\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("EQ LF@%%bool LF@%%double_tmp nil@nil\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMPIFEQ $%%eq_to_zero_readDouble LF@%%bool bool@true\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHS LF@%%double_tmp\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("JUMP $%%readDouble_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%eq_to_zero_readDouble\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("PUSHS nil@nil\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("LABEL $%%readDouble_end\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("POPFRAME\n");
+  if (instr != NULL) 
+      add_instr(head, instr);
+  instr = create_instr_string("RETURN\n# end of readDouble ---------\n");
   if (instr != NULL) 
       add_instr(head, instr);
 
@@ -858,6 +930,10 @@ int generate_code(instr_node **head, Data data, gencode gencode, int deepness, F
     char *val;
     char *param;
     token_type type;
+
+    case GEN_IF_LET:
+        IF_LET(head, string, data.op.id_name, deepness, frame);
+        break;
 
     case GEN_WHILE_END:
         WHILE_END(head, string, deepness, while_cnt);

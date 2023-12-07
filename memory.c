@@ -146,27 +146,3 @@ void exitWithError(char* masssage, int ErrCode) {
     // free_all();
     exit(ErrCode);
 }
-
-// int printDebugMessage(const char* messsage, ...) {
-//     #ifdef DEBUG_MSG
-//     va_list args;
-//     va_start(args, messsage);
-//     int ret = vfprintf(stderr, messsage, args);
-//     va_end(args);
-//     return ret;
-//     #else
-//     return 0;
-//     #endif
-// }
-
-// int printDebugMessage2(const char* messsage, ...) {
-//     #ifdef DEBUG_MSG
-//     va_list args;
-//     va_start(args, messsage);
-//     int ret = vfprintf(stderr, messsage, args);
-//     va_end(args);
-//     return ret;
-//     #else
-//     return 0;
-//     #endif
-// }

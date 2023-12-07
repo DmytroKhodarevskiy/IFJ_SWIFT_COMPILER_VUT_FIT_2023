@@ -71,6 +71,7 @@ typedef enum {
     GEN_CALL,
     GEN_RETURN,
     GEN_STRLEN,
+    GEN_IF_LET,
 } gencode;
 
 typedef struct Operand {

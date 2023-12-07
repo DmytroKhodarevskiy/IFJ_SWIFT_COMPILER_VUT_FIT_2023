@@ -7,6 +7,8 @@
 SymTable *global_symtable;
 SymStack stack;
 bool WasReturn = false;
+bool Was_if_let = false;
+AVLNode *node_if_let = NULL;
 
 instr_node *main_gen = NULL;
 instr_node *declares = NULL;
@@ -129,7 +131,6 @@ void Parse(FILE *file){
 
 
     add_instr(&declares, "JUMP **main_declares_return**\n");
-    add_instr(&main_gen, "LABEL **main**\n");
 
     generate_header();
 
@@ -478,6 +479,24 @@ void STMT(FILE *file){
           else {
             instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
             generate_code(&node, data, GEN_ELSE_IF_END, deep, UNUSED);
+          }
+
+          if (Was_if_let) {
+            Was_if_let = false;
+            DataType type = node_if_let->data.dtype;
+            switch (type) {
+              case TYPE_INT:
+                node_if_let->data.dtype = TYPE_INT_NULLABLE;
+                break;
+              case TYPE_DOUBLE:
+                node_if_let->data.dtype = TYPE_DOUBLE_NULLABLE;
+                break;
+              case TYPE_STRING:
+                node_if_let->data.dtype = TYPE_STRING_NULLABLE;
+                break;
+              default:
+                break;
+            }
           }
 
       }
@@ -1198,7 +1217,8 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
     TYPE(file, &type);
     if (type == TYPE_DOUBLE_NULLABLE || type == TYPE_INT_NULLABLE || type == TYPE_STRING_NULLABLE){
       //check
-      node_data.isNil = true;
+      // node_data.isNil = true;
+      node_data.isNil = false;
     }
     MB_ASSIGN_EXPR(file, type, &node_data);
     node_data.dtype = type;
@@ -1303,16 +1323,21 @@ void MB_ASSIGN_EXPR(FILE *file, DataType type, SymData *node_data){ //current to
     }
 
   int error = 0;
+
+  fprintf(stderr, "currenttoken: %s\n", current_token.string_value->str);
+
   DataType exp_type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
   if (type == TYPE_UNKNOWN){
     exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
   }
 
+  fprintf(stderr, "currenttoken: %s\n", current_token.string_value->str);
   is_compatible(type, exp_type) ? 0 : exitWithError("Semantic error: type mismatch\n", ERR_SEMANT_TYPE);
   
   generate_code(&node, data, GEN_ASSIGN, deep, frame);
   
   if (exp_type == TYPE_NIL) {
+    fprintf(stderr, "IS NIL\n");
     node_data->isNil = true;
   }
 
@@ -1361,12 +1386,79 @@ void IF_EXP(FILE *file) { //current token is if
       strcmp(current_token.string_value->str, "let") == 0)        {
       current_token = get_token(file); // get let
 
+      Was_if_let = true;
 
       current_token = get_token(file); // get id
       if (current_token.token_type != T_TYPE_ID){
                 //check
         exitWithError("Syntax error: expected id on let\n", ERR_SYNTAX);
       }
+
+      bool is_nil = false;
+      AVLNode *var = s_search_symtack(&stack, current_token.string_value->str);
+
+      fprintf(stderr, "VAR: %s\n", var->data.name);
+      fprintf(stderr, "VAR IS FUNCTION: %d\n", var->data.isFunction);
+      fprintf(stderr, "VAR IS NIL: %d\n", var->data.isNil);
+      fprintf(stderr, "VAR IS DEFINED: %d\n", var->data.isDefined);
+      fprintf(stderr, "VAR CAN BE CHANGED: %d\n", var->data.canbeChanged);
+      fprintf(stderr, "VAR IS GLOBAL: %d\n", var->data.isGlobal);
+
+
+      node_if_let = var;
+      if (var == NULL) {
+        //check
+        exitWithError("Semantic error: variable not declared\n", ERR_SEMANT_UNDF_VALUE); 
+      }
+
+      else {
+        if (var->data.isFunction) {
+          //check
+          exitWithError("Semantic error: variable is function\n", ERR_SEMANT_TYPE); 
+        }
+
+        if (var->data.isNil) {
+          is_nil = true;
+        }
+        else {
+
+          DataType type = var->data.dtype;
+          fprintf(stderr, "TYPE BEFORE: %d\n", type);
+          switch (type) {
+            case TYPE_INT_NULLABLE:
+              var->data.dtype = TYPE_INT;
+              break;
+            case TYPE_DOUBLE_NULLABLE:
+              var->data.dtype = TYPE_DOUBLE;
+              break;
+            case TYPE_STRING_NULLABLE:
+              var->data.dtype = TYPE_STRING;
+              break;
+            default:
+              break;
+          }
+          fprintf(stderr, "TYPE AFTER: %d\n", var->data.dtype);
+        }
+      }
+
+      SymData *Name = s_getFirstFunctionSymData(&stack);
+      Data data;
+      if (Name == NULL && stack.top == 0) {
+        data.op.id_name = current_token.string_value->str;
+        generate_code(&main_gen, data, GEN_IF_LET, 0, GF);
+        //check
+      }
+
+      else {
+        if (Name == NULL && stack.top != 0) {
+          generate_code(&main_gen, data, GEN_IF_LET, Get_deepness_current(&stack), LF);
+        }
+        else {
+          instr_node *node = search_by_name_in_list(instr_list, Name->name, main_gen);
+          generate_code(&node, data, GEN_IF_LET, Get_deepness_current(&stack), LF);
+        }
+      }
+
 
   }
 

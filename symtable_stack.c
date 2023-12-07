@@ -206,11 +206,11 @@ SymData* s_getFirstFunctionSymData(SymStack *stack) {
 
     // Iterate through the stack from top to bottom
     for (int i = stack->top; i >= 0; i--) {
+
         SymTable *currentTable = stack->items[i];
         if (currentTable == NULL) {
             continue; // Skip if the current symbol table is NULL
         }
-
         // Check in the global symbol table if the current symbol table represents a function
         SymTable *globalTable = stack->items[0];
         AVLNode *node = search_SymTable(globalTable, currentTable->name);

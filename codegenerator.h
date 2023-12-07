@@ -66,6 +66,9 @@ typedef enum {
     GEN_WHILE_START,
     GEN_WHILE_CHECK,
     GEN_WHILE_END,
+    GEN_CALL,
+    GEN_RETURN,
+    GEN_STRLEN,
 } gencode;
 
 typedef struct Operand {
@@ -78,7 +81,7 @@ typedef struct Data {
   Operand op;
   Operand op2;
   char *func_name;
-  Operand *func_param;
+  Operand func_param;
   unsigned int func_param_count;
   int ifelse_cnt;
   int while_cnt;

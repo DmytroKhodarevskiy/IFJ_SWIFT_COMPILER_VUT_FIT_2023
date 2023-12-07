@@ -122,7 +122,7 @@ void Parse(FILE *file){
     linenum = 0;
     rewind(file);
     fprintf(stderr, "FIRST PHASE DONE\n");
-    print_SymTable(global_symtable);
+    //print_SymTable(global_symtable);
     // fprintf(stderr, "-------------------------------\n");
     // print_SymTable(global_symtable);
     // fprintf(stderr, "------------------------------------------------------------------------------=---\n");

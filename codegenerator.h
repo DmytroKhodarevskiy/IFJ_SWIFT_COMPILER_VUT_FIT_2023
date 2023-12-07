@@ -90,7 +90,8 @@ typedef struct Data {
 instr_list_dynamic *init_instr_list_dynamic();
 // int add_new_linked_list(instr_list_dynamic *list);
 int add_new_linked_list(instr_list_dynamic *list, char *name);
-instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node);
+// instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node);
+instr_node *search_by_name_in_list(instr_list_dynamic *list, char *name, instr_node *main_node);
 void print_list_names(instr_list_dynamic *list);
 void pop_all_lists_to_file(instr_list_dynamic *list);
 char *type_to_string(DataType type);

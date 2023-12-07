@@ -1119,9 +1119,9 @@ char *type_to_string(DataType type) {
 }
 
 // Function to search the linked list in instr_list_dynamic by the name of the linked list
-instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node) {
+instr_node *search_by_name_in_list(instr_list_dynamic *list, char *name, instr_node *main_node) {
     if (list == NULL || name == NULL) {
-        return NULL; // Handle NULL pointers
+        return main_node; // Handle NULL pointers
     }
 
     // Iterate over the array of list heads

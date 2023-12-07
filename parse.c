@@ -348,6 +348,8 @@ void STMT_LIST(FILE *file){
   
   if (current_token.token_type == T_EOF || current_token.token_type == T_RBRACE) return;
 
+  // fprintf(stderr, "LINENUM: %d\n", linenum);
+
   STMT(file);
   STMT_LIST(file);
 }
@@ -635,7 +637,7 @@ void STMT(FILE *file){
 
               add_new_linked_list(instr_list, func_name);
 
-              print_list_names(instr_list);
+              // print_list_names(instr_list);
 
               instr_node *node = search_by_name_in_list(instr_list, func_name, main_gen);
               Data data;
@@ -646,7 +648,7 @@ void STMT(FILE *file){
 
               strncpy(local_symtable->name, current_token.string_value->str, 255);
               local_symtable->name[255] = '\0';  // Ensure null-termination
-              // Print_Sym_stack(&stack);
+              s_push(&stack, local_symtable);
 
               current_token = get_token(file); // get (
               if (current_token.token_type != T_LPAR){
@@ -1126,6 +1128,8 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
 
   node_data.canbeChanged = changeable;
 
+  fprintf(stderr, "CURRENT TOKEN: %s\n", current_token.string_value->str);
+
   node_data.name = current_token.string_value->str;
 
   SymTable *check_symtable = create_SymTable();
@@ -1219,11 +1223,19 @@ void MB_STMT_LET_VAR(FILE *file, bool changeable){ //current token is id
       node = main_gen;
     }
 
+    if (main_gen == NULL)
+      fprintf(stderr, "STACK IS NULL\n");
+    if (instr_list == NULL)
+      fprintf(stderr, "INSTR LIST IS NULL\n");
+
+    fprintf(stderr, "linenum on exp: %d\n", linenum);
+
     type = parse_expression(&stack, &current_token, &error, &file, main_gen, instr_list);
     if (type == TYPE_UNKNOWN){
       exitWithError("Syntax error: expression error\n", ERR_SYNTAX);
     }
     node_data.dtype = type;
+    fprintf(stderr, "linenum after exp: %d\n", linenum);
 
     generate_code(&node, data, GEN_ASSIGN, deep, frame);
   }

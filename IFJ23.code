@@ -144,6 +144,11 @@ JUMP **main_declares**
 LABEL **main_declares_return**
 DEFVAR GF@%%res
 
+DEFVAR GF@a_0
+PUSHS int@1
+POPS GF@a_0
+CLEARS
+
 LABEL **main**
 
 # EXIT 

@@ -193,19 +193,19 @@ DataType get_type(char *str) {
 bool is_compatible(DataType assignType, DataType variableType) {
   switch (assignType) {
     case TYPE_INT:
-      return variableType == TYPE_INT;
+      return variableType == TYPE_INT || variableType == TYPE_INT_NULLABLE;
     case TYPE_DOUBLE:
-      return variableType == TYPE_DOUBLE ||  variableType == TYPE_INT;
+      return variableType == TYPE_DOUBLE ||  variableType == TYPE_INT || variableType == TYPE_DOUBLE_NULLABLE || variableType == TYPE_INT_NULLABLE;
     case TYPE_STRING:
-      return variableType == TYPE_STRING;
+      return variableType == TYPE_STRING || variableType == TYPE_STRING_NULLABLE;
     case TYPE_BOOL:
       return variableType == TYPE_BOOL;
     case TYPE_INT_NULLABLE:
-      return variableType == TYPE_INT || variableType == TYPE_NIL;
+      return variableType == TYPE_INT || variableType == TYPE_NIL || variableType == TYPE_INT_NULLABLE;
     case TYPE_DOUBLE_NULLABLE:
-      return variableType == TYPE_DOUBLE ||  variableType == TYPE_NIL  || variableType == TYPE_INT;
+      return variableType == TYPE_DOUBLE ||  variableType == TYPE_NIL  || variableType == TYPE_INT || variableType == TYPE_DOUBLE_NULLABLE || variableType == TYPE_INT_NULLABLE;
     case TYPE_STRING_NULLABLE:
-      return variableType == TYPE_STRING || variableType == TYPE_NIL;
+      return variableType == TYPE_STRING || variableType == TYPE_NIL || variableType == TYPE_STRING_NULLABLE;
     default:
       return false;
   }

@@ -1,0 +1,145 @@
+# IFJ dlya liudiej bez lichnoi zhizni
+.IFJcode23
+JUMP $$main
+
+# Write function
+LABEL $%write
+WRITE LF@%param
+RETURN
+# end of write ---------
+
+# Int2Double function
+LABEL $%int2float
+PUSHFRAME
+DEFVAR LF@%retval
+INT2FLOAT LF@%retval LF@%param
+POPFRAME
+RETURN
+# end of int2float ---------
+
+# Double2Int function
+LABEL $%Double2int
+PUSHFRAME
+DEFVAR LF@%retval
+FLOAT2INT LF@%retval LF@%param
+POPFRAME
+RETURN
+# end of double2int ---------
+
+# Length function
+LABEL $%length
+PUSHFRAME
+DEFVAR LF@%retval
+STRLEN LF@%retval LF@%param
+POPFRAME
+RETURN
+# end of length ---------
+
+# ReadString function
+LABEL $%%readString
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@%retval
+DEFVAR LF@%string_tmp
+DEFVAR LF@%bool
+DEFVAR LF@%len
+READ LF@%string_tmp string
+STRLEN LF@%len LF@%string_tmp
+EQ LF@%bool LF@%len int@0
+JUMPIFEQ $%eq_to_zero_readstring LF@%bool bool@true
+PUSHS LF@%string_tmp
+JUMP $%readString_end
+LABEL $%eq_to_zero_readstring
+PUSHS nil@nil
+LABEL $%readString_end
+POPFRAME
+RETURN
+# end of readString ---------
+
+# ReadInt function
+LABEL $%%readInt
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@%retval
+DEFVAR LF@%int_tmp
+DEFVAR LF@%bool
+DEFVAR LF@%len
+READ LF@%int_tmp int
+EQ LF@%bool LF@%int_tmp nil@nil
+JUMPIFEQ $%eq_to_zero_readInt LF@%bool bool@true
+PUSHS LF@%int_tmp
+JUMP $%readInt_end
+LABEL $%eq_to_zero_readInt
+PUSHS nil@nil
+LABEL $%readInt_end
+POPFRAME
+RETURN
+# end of readInt ---------
+
+# ReadDouble function
+LABEL $%%readDouble
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@%retval
+DEFVAR LF@%double_tmp
+DEFVAR LF@%bool
+DEFVAR LF@%len
+READ LF@%double_tmp float
+EQ LF@%bool LF@%double_tmp nil@nil
+JUMPIFEQ $%eq_to_zero_readDouble LF@%bool bool@true
+PUSHS LF@%double_tmp
+JUMP $%readDouble_end
+LABEL $%eq_to_zero_readDouble
+PUSHS nil@nil
+LABEL $%readDouble_end
+POPFRAME
+RETURN
+# end of readDouble ---------
+
+# Ord function
+LABEL $%ord
+PUSHFRAME
+DEFVAR LF@%retval
+DEFVAR LF@%strlen
+STRLEN LF@%strlen LF@%param
+DEFVAR LF@%bool
+EQ LF@%bool LF@%strlen int@0
+JUMPIFEQ $%eq_to_zero LF@%bool bool@true
+STRI2INT LF@%retval LF@%param int@0
+JUMP $%ord_end
+LABEL $%eq_to_zero
+MOVE LF@%retval int@0
+LABEL $%ord_end
+POPFRAME
+RETURN
+# end of ord ---------
+
+
+LABEL $$main
+DEFVAR GF@%%retval_main
+DEFVAR GF@?temp_1
+DEFVAR GF@?temp_2
+DEFVAR GF@&str
+MOVE GF@&str string@
+CREATEFRAME
+PUSHFRAME
+JUMP **main_declares**
+LABEL **main_declares_return**
+DEFVAR GF@%%res
+
+
+# write(...)
+WRITE string@Zadejte\032cislo\032pro\032vypocet\032faktorialu\010
+DEFVAR GF@a_0
+CALL $%%readInt
+POPS GF@a_0
+CLEARS
+
+
+# EXIT 
+POPFRAME
+EXIT int@0
+
+
+LABEL **main_declares**
+JUMP **main_declares_return**

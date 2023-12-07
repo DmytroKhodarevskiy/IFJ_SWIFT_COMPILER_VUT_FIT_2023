@@ -135,6 +135,20 @@ CALL $%%readInt
 POPS GF@a_0
 CLEARS
 
+DEFVAR GF@b_0
+PUSHS int@0
+POPS GF@b_0
+CLEARS
+
+PUSHS GF@b_0
+PUSHS int@5
+ADDS
+POPS GF@a_0
+CLEARS
+
+
+# write(...)
+WRITE GF@a_0
 
 # EXIT 
 POPFRAME

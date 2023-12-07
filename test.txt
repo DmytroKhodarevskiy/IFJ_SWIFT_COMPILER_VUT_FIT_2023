@@ -4,10 +4,14 @@
 
 write("Zadejte cislo pro vypocet faktorialu\n")
 // let a : Int? = readInt()!
-let a : Int = readInt()
+var a : Int = readInt()
 // if let a {
 
+let b : Int = 0
+ 
+a = b + 5
 
+write(a)
 
 
 // if (a < 0) {write("Faktorial nelze spocitat\n")

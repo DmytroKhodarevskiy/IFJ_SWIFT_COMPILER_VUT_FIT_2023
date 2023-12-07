@@ -9,6 +9,7 @@ instr_node *main_gen_list;
 instr_list_dynamic *instr_llist;
 bool int_to_double = false;
 bool double_to_int = false;
+bool int_to_char = false;
 bool str_len = false;
 bool read = false;
 
@@ -51,15 +52,20 @@ bool isFloat(const char *str) {
     return *endptr == '\0' && endptr != str;
 }
 
+bool math_type(DataType type){
+    if(type == TYPE_INT || type == TYPE_DOUBLE || type == TYPE_INT_NULLABLE || type == TYPE_DOUBLE_NULLABLE) return true;
+    else return false;
+}
+
 void generate_convert(Token *token, DataType *type){
-    if(int_to_double == false && double_to_int == false) return;
+    if(int_to_double == false && double_to_int == false && int_to_char == false) return;
     SymTable *check_symtable = create_SymTable();
     check_symtable = s_peek(table);
     Data data = init_data();
     data.op.id_name = token->string_value->str;
     data.op.val = token->string_value->str;
     if(token->token_type == T_TYPE_ID) data.op.type = TYPE_UNKNOWN;
-    else data.op.type = data.op.type = *type;
+    else data.op.type = *type;
     AVLNode *node = s_search_symtack(table, token->string_value->str);
     if(node == NULL) {
         exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
@@ -81,6 +87,7 @@ void generate_convert(Token *token, DataType *type){
     else generate_code(&node_inst, data, GEN_PUSH, depth, LF);
     if(int_to_double) generate_code(&node_inst, data, GEN_INT2FLOAT, 0, UNUSED);
     else if(double_to_int) generate_code(&node_inst, data, GEN_FLOAT2INT, 0, UNUSED);
+    else if(int_to_char) generate_code(&node_inst, data, GEN_INT2CHAR, 0, UNUSED);
     return;
 }
 
@@ -124,6 +131,9 @@ void build_in_function(char *id_name){
     else if(!strcmp(id_name, "Double2Int")){
         double_to_int = true;
     }
+    else if(!strcmp(id_name, "chr")){
+        int_to_char = true;
+    }
     return;
 }
 
@@ -165,7 +175,6 @@ void push_variable(char *id_name){
         node_inst = search_by_name_in_list(instr_llist, Name->name, main_gen_list);
     else
         node_inst = main_gen_list;  
-
 
     if(depth == 0 && !strcmp(node_inst->name_of_llist, "global")) generate_code(&node_inst, data,GEN_PUSH, 0, GF);
     else generate_code(&node_inst, data, GEN_PUSH, depth, LF);
@@ -303,7 +312,7 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
         data.op.id_name = current_token->string_value->str;
         data.func_param.id_name = param->name;
         int depth = Get_deepness_of_var(table, current_token->string_value->str);
-        if(!(str_len || int_to_double || double_to_int || read)){
+        if(!(str_len || int_to_double || double_to_int || read || int_to_char)){
             generate_code(&main_gen_list, data, GEN_CREATE_ID, 0, TF);
             if(node->data.isGlobal) {
 
@@ -318,12 +327,12 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
             else generate_code(&main_gen_list, data, GEN_PUSH, depth, LF);
             generate_code(&main_gen_list, init_data(), GEN_STRLEN, 0, UNUSED);
         }
-        // if(read) {
-        //     if(node->data.isGlobal) {
-        //         generate_code(&main_gen_list, data, GEN_PUSH, 0, GF);
-        //     }
-        //     else generate_code(&main_gen_list, data, GEN_PUSH, depth, LF);
-        // }
+//         if(int_to_char) {
+//             if(node->data.isGlobal) {
+//                 generate_code(&main_gen_list, data, GEN_PUSH, 0, GF);
+//             }
+//             else generate_code(&main_gen_list, data, GEN_PUSH, depth, LF);
+//         }
     }
     else
     {
@@ -336,19 +345,19 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
         data.op.type = actual_argument_type;
         data.func_param.id_name = param->name;
         data.op.id_name = param->name;
-        generate_code(&main_gen_list, data, GEN_CREATE_ID, 0, TF);
-        if(!(str_len || int_to_double || double_to_int || read)){
+
+        if(!(str_len || int_to_double || double_to_int || read || int_to_char)){
+            generate_code(&main_gen_list, data, GEN_CREATE_ID, 0, TF);
             generate_code(&main_gen_list, data, GEN_MOVE, 0, UNUSED);
         }
         if(str_len) {
             generate_code(&main_gen_list, data, GEN_PUSH, 0, UNUSED);
             generate_code(&main_gen_list, init_data(), GEN_STRLEN, 0, UNUSED);
         }
-        // if(read) {
-        //     generate_code(&main_gen_list, data, GEN_PUSH, 0, UNUSED);
-        // }
+//         if(int_to_char) {
+//             generate_code(&main_gen_list, data, GEN_PUSH, 0, UNUSED);
+//         }
     }
-
     generate_convert(current_token, &param->dataType);
 }
 
@@ -477,25 +486,6 @@ void print_expression_type(DataType expression_type){
 DataType get_token_type(Token op1, Token op3, int rule_type, instr_node *node_inst){
     switch (rule_type) {
         case 1:
-             
-            if((op3.token_type == T_DOUBLE && !isFloat(op3.string_value->str)) && (op1.token_type == T_DOUBLE && !isFloat(op1.string_value->str))){
-                generate_code(&node_inst, init_data(), GEN_INT2FLOAT, 0, UNUSED);
-                generate_code(&node_inst, init_data(), GEN_POP_TMP, 1, UNUSED);
-                generate_code(&node_inst, init_data(), GEN_INT2FLOAT, 0, UNUSED);
-                generate_code(&node_inst, init_data(), GEN_PUSH_TMP, 1, UNUSED);
-                
-            }
-            else if(op3.token_type == T_DOUBLE && !isFloat(op3.string_value->str)){
-                generate_code(&node_inst, init_data(), GEN_INT2FLOAT, 0, UNUSED);
-            }
-           
-            else if(op1.token_type == T_DOUBLE && !isFloat(op1.string_value->str)){
-                generate_code(&node_inst, init_data(), GEN_POP_TMP, 1, UNUSED);
-                generate_code(&node_inst, init_data(), GEN_INT2FLOAT, 0, UNUSED);
-                generate_code(&node_inst, init_data(), GEN_PUSH_TMP, 1, UNUSED);
-            }
-        
-
             if((op1.token_type == T_INT && op3.token_type == T_DOUBLE)){
                 generate_code(&node_inst, init_data(), GEN_POP_TMP, 1, UNUSED);
                 generate_code(&node_inst, init_data(), GEN_INT2FLOAT, 0, UNUSED);
@@ -667,15 +657,16 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
                         build_in_function(token->string_value->str);
                         FuncId = *token;
                         EOL = findNewLineInFile(*file);
-                        if(!(str_len || int_to_double || double_to_int || read)) generate_code(&main_gen_exp, init_data(), GEN_CREATEFRAME, 0, UNUSED);
+                        if(!(str_len || int_to_double || double_to_int || read ||int_to_char)) generate_code(&main_gen_exp, init_data(), GEN_CREATEFRAME, 0, UNUSED);
                         *token = get_token(*file);
                         FUNC_CALLS_EXP(file, token);
                         Data data = init_data();
                         data.func_name = FuncId.string_value->str;
-                        if(!(str_len || int_to_double || double_to_int || read)) generate_code(&main_gen_exp, data, GEN_CALL, 0, UNUSED);
+                        if(!(str_len || int_to_double || double_to_int || read || int_to_char)) generate_code(&main_gen_exp, data, GEN_CALL, 0, UNUSED);
                         str_len = false;
                         int_to_double = false;
                         double_to_int = false;
+                        int_to_char = false;
                         read = false;
                     }
                 }
@@ -798,7 +789,6 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                 switch (tokens[1].token_type) {
                     // E -> E + E
                     case T_PLUS:
-                    fprintf(stderr, "token: %d\n", *expression_type);
                         *expression_type = get_token_type(tokens[0], tokens[2], 1, node_inst);
                         if(*expression_type == TYPE_STRING) {
                             generate_code(&node_inst, data, GEN_CONCAT,  0, UNUSED);
@@ -810,18 +800,23 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                         // E -> E - E
                     case T_MINUS:
                         *expression_type = get_token_type(tokens[0], tokens[2], 1, node_inst);
+                        if(!math_type(*expression_type)) exitWithError("Semantic error: Cannot use arithmetic operations on non-math types\n", ERR_SEMANT_TYPE);
                         generate_code(&node_inst, data, GEN_SUB,  0, UNUSED);
                         return 3;
                         // E -> E * E
                     case T_MULTIPLY:
                         *expression_type = get_token_type(tokens[0], tokens[2], 1, node_inst);
+                        if(!math_type(*expression_type)) exitWithError("Semantic error: Cannot use arithmetic operations on non-math types\n", ERR_SEMANT_TYPE);
                         generate_code(&node_inst, data, GEN_MUL,  0, UNUSED);
                         return 4;
                         // E -> E / E
                     case T_DIVIDE:
                         *expression_type = get_token_type(tokens[0], tokens[2], 1, node_inst);
+                        if(!math_type(*expression_type)) exitWithError("Semantic error: Cannot use arithmetic operations on non-math types\n", ERR_SEMANT_TYPE);
                         if(*expression_type == TYPE_INT) generate_code(&node_inst, data, GEN_IDIV,  0, UNUSED);
-                        else generate_code(&node_inst, data, GEN_DIV,  0, UNUSED);
+                        else {
+                            generate_code(&node_inst, data, GEN_DIV,  0, UNUSED);
+                        }
                         return 5;
                         // E -> E < E
                     case T_LESS:
@@ -830,7 +825,7 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                         return 7;
                         // E -> E > E
                     case T_GREATER:
-                        *expression_type = get_token_type(tokens[0], tokens[2], 2, node_inst);
+                        *expression_type = get_token_type(tokens[0], tokens[2], 2,  node_inst);
                         generate_code(&node_inst, data, GEN_GT,  0, UNUSED);
                         return 8;
                         // E -> E <= E

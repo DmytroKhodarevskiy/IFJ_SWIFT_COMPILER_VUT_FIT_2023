@@ -156,6 +156,7 @@ AVLNode *s_search_param_list(ListFuncParam *param_list, char *key) {
     (*node).data = initSymData();
 
     (*node).data.dtype = current->dataType;
+    fprintf(stderr, "data typeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee: %d\n", (*node).data.dtype);
     (*node).data.name = parameter;
     // strncpy((*node).data.name, parameter, strlen(parameter) + 1);
 
@@ -206,11 +207,11 @@ SymData* s_getFirstFunctionSymData(SymStack *stack) {
 
     // Iterate through the stack from top to bottom
     for (int i = stack->top; i >= 0; i--) {
+
         SymTable *currentTable = stack->items[i];
         if (currentTable == NULL) {
             continue; // Skip if the current symbol table is NULL
         }
-
         // Check in the global symbol table if the current symbol table represents a function
         SymTable *globalTable = stack->items[0];
         AVLNode *node = search_SymTable(globalTable, currentTable->name);
@@ -247,11 +248,12 @@ int Get_deepness_of_var(SymStack *stack, char* id_name) {
   for (i = stack->top; i >= 0; i--) {
     table = stack->items[i];
     if (search_SymTable(table, id_name) != NULL) {
+  // fprintf(stderr, "DEEEEEEEEEEEEPNESS: %d\n", deepness);
       return deepness;
     }
     deepness--;
   }
 
   fprintf(stderr, "Error: Variable not found in the stack for deepness...\n");
-  return -1;
+  return 0;
 }

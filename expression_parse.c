@@ -9,6 +9,8 @@ instr_node *main_gen_list;
 instr_list_dynamic *instr_llist;
 bool int_to_double = false;
 bool double_to_int = false;
+bool str_len = false;
+bool read = false;
 
 
 
@@ -27,6 +29,32 @@ int precedence_table[size_table][size_table] = {
 
 };
 
+void generate_convert(Token *token, DataType *type){
+    if(int_to_double == false && double_to_int == false) return;
+    SymTable *check_symtable = create_SymTable();
+    check_symtable = s_peek(table);
+    Data data = init_data();
+    data.op.id_name = token->string_value->str;
+    data.op.val = token->string_value->str;
+    data.op.type = *type;
+
+    SymData *Name = s_getFirstFunctionSymData(table);
+
+    instr_node *node_inst;
+
+    if (Name != NULL)
+        node_inst = search_by_name_in_list(instr_llist, Name->name, main_gen_list);
+        // node_inst = search_by_name_in_list(instr_llist, check_symtable->name, main_gen_list);
+    else
+        node_inst = main_gen_list;
+
+    if(!strcmp(check_symtable->name, "global")) generate_code(&node_inst, data, GEN_PUSH, 0, GF);
+    else generate_code(&node_inst, data, GEN_PUSH, 0, LF);
+    if(int_to_double) generate_code(&node_inst, data, GEN_INT2FLOAT, 0, UNUSED);
+    else if(double_to_int) generate_code(&node_inst, data, GEN_FLOAT2INT, 0, UNUSED);
+    return;
+}
+
 
 void build_in_function(char *id_name){
     SymTable *check_symtable = create_SymTable();
@@ -44,16 +72,30 @@ void build_in_function(char *id_name){
         char *string = malloc(sizeof(char) * 256);
         string = "CALL $%%readString\n";
         add_instr(&node_inst, string);
+        read = true;
+    }
+    else if(!strcmp(id_name, "readInt")){
+        char *string = malloc(sizeof(char) * 256);
+        string = "CALL $%%readInt\n";
+        add_instr(&node_inst, string);
+        read = true;
+    }
+    else if(!strcmp(id_name, "readDouble")){
+        char *string = malloc(sizeof(char) * 256);
+        string = "CALL $%%readDouble\n";
+        add_instr(&node_inst, string);
+        read = true;
     }
     else if(!strcmp(id_name, "length")){
-        char *string = malloc(sizeof(char) * 256);
-        string = "CALL $%%length\n";
-        add_instr(&node_inst, string);
+        str_len = true;
     }
-
-
+    else if(!strcmp(id_name, "Int2Double")){
+        int_to_double = true;
+    }
+    else if(!strcmp(id_name, "Double2Int")){
+        double_to_int = true;
+    }
     return;
-
 }
 
 void push_literal(char *val, DataType type){
@@ -95,14 +137,8 @@ void push_variable(char *id_name){
     else
         node_inst = main_gen_list;  
 
-    // fprintf(stderr, "node_inst: %s\n", node_inst->name_of_llist);
-    // print_list_names(instr_llist);
-    // fprintf(stderr, "LINENUM: %d\n", linenum);
-    // fprintf(stderr, "=====================================================\n");
-    // fprintf(stderr, "check_symtable->name: %s\n", check_symtable->name);
-    // fprintf(stderr, "=====================================================\n");
 
-    if(depth == 0) generate_code(&node_inst, data,GEN_PUSH, 0, GF);
+    if(depth == 0 && !strcmp(node_inst->name_of_llist, "global")) generate_code(&node_inst, data,GEN_PUSH, 0, GF);
     else generate_code(&node_inst, data, GEN_PUSH, depth, LF);
 }
  void push_binary(int deepness, DataType type)
@@ -149,6 +185,7 @@ void FUNC_CALLS_EXP(FILE **file,Token *current_token){ //current token is (// *c
     if (current_token->token_type != T_LPAR){
         exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
     }
+
     ListFuncParam* param = &func_node->data.paramTypes;
     if(func_node->data.paramCount == 0) param = NULL;
     ARG_LIST_EXP(file, current_token, param);
@@ -163,7 +200,6 @@ void FUNC_CALLS_EXP(FILE **file,Token *current_token){ //current token is (// *c
 }
 
 void ARG_LIST_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current token is (
-
     *current_token = peekNextToken(*file);
     if (!(current_token->token_type == T_COLON ||
           (current_token->token_type == T_TYPE_ID || current_token->token_type == T_DOUBLE ||
@@ -200,6 +236,7 @@ void ARG_LIST_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //cur
 }
 
 void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current token is (
+
     if (param == NULL) {
         exitWithError("Semantic error: Too many arguments\n", ERR_SEMANT_TYPE);
     }
@@ -215,6 +252,7 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
     //printf("token befroe: %s\n", current_token->string_value->str);
     *current_token = get_token(*file); // get id
     //printf("token after: %s\n", current_token->string_value->str);
+    //print_SymTable(table->items[0]);
 
     if(current_token->token_type == T_TYPE_ID){
         AVLNode *node = s_search_symtack(table, current_token->string_value->str);
@@ -232,6 +270,31 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
         if(param->dataType != actual_argument_type) {
             exitWithError("Semantic error: Wrong type of argument\n", ERR_SEMANT_TYPE);
         }
+        Data data = init_data();
+        data.op.id_name = current_token->string_value->str;
+        data.func_param.id_name = param->name;
+        int depth = Get_deepness_of_var(table, current_token->string_value->str);
+        if(!(str_len || int_to_double || double_to_int || read)){
+            generate_code(&main_gen_list, data, GEN_CREATE_ID, 0, TF);
+            if(node->data.isGlobal) {
+
+                generate_code(&main_gen_list, data, GEN_MOVE, 0, GF);
+            } 
+            else generate_code(&main_gen_list, data, GEN_MOVE, depth, LF);
+        }
+        if(str_len) {
+            if(node->data.isGlobal) {
+                generate_code(&main_gen_list, data, GEN_PUSH, 0, GF);
+            }
+            else generate_code(&main_gen_list, data, GEN_PUSH, depth, LF);
+            generate_code(&main_gen_list, init_data(), GEN_STRLEN, 0, UNUSED);
+        }
+        // if(read) {
+        //     if(node->data.isGlobal) {
+        //         generate_code(&main_gen_list, data, GEN_PUSH, 0, GF);
+        //     }
+        //     else generate_code(&main_gen_list, data, GEN_PUSH, depth, LF);
+        // }
     }
     else
     {
@@ -239,7 +302,25 @@ void ARG_EXP(FILE **file,Token *current_token, ListFuncParam *param){ //current 
         if (param->dataType != actual_argument_type) {
             exitWithError("Semantic error: Wrong type of argument\n", ERR_SEMANT_TYPE);
         }
+        Data data = init_data();
+        data.op.val = current_token->string_value->str;
+        data.op.type = actual_argument_type;
+        data.func_param.id_name = param->name;
+        data.op.id_name = param->name;
+        generate_code(&main_gen_list, data, GEN_CREATE_ID, 0, TF);
+        if(!(str_len || int_to_double || double_to_int || read)){
+            generate_code(&main_gen_list, data, GEN_MOVE, 0, UNUSED);
+        }
+        if(str_len) {
+            generate_code(&main_gen_list, data, GEN_PUSH, 0, UNUSED);
+            generate_code(&main_gen_list, init_data(), GEN_STRLEN, 0, UNUSED);
+        }
+        // if(read) {
+        //     generate_code(&main_gen_list, data, GEN_PUSH, 0, UNUSED);
+        // }
     }
+
+    generate_convert(current_token, &param->dataType);
 }
 
 void PREFIX_EXP(FILE **file, Token *current_token, ListFuncParam *param){ //current token is (
@@ -257,7 +338,6 @@ bool findNewLineInFile(FILE *file) {
         // File is not open
         return false;
     }
-
     char ch;
     while ((ch = fgetc(file)) != EOF) {
         if (ch == '\n') {
@@ -521,22 +601,34 @@ DataType parse_expression(SymStack *symStack, Token *token, int *error, FILE** f
             // AVLNode *node = search_SymTable(table, token->string_value->str);
             // printf("tokendawdawdwwawdaw: %s\n", token->string_value->str);
             // printf("token in exotret: %s\n", token->string_value->str);
+
             if(token->token_type == T_TYPE_ID) {
                 func_node = s_search_symtack(table, token->string_value->str);
+
+
+
                 if (func_node != NULL) {
                     if (func_node->data.isFunction) {
                         build_in_function(token->string_value->str);
                         FuncId = *token;
                         EOL = findNewLineInFile(*file);
+                        if(!(str_len || int_to_double || double_to_int || read)) generate_code(&main_gen_exp, init_data(), GEN_CREATEFRAME, 0, UNUSED);
                         *token = get_token(*file);
                         FUNC_CALLS_EXP(file, token);
+                        Data data = init_data();
+                        data.func_name = FuncId.string_value->str;
+                        if(!(str_len || int_to_double || double_to_int || read)) generate_code(&main_gen_exp, data, GEN_CALL, 0, UNUSED);
+                        str_len = false;
+                        int_to_double = false;
+                        double_to_int = false;
+                        read = false;
                     }
                 }
             }
-//            fprintf(stderr, "token: %s\n", token->string_value->str);
+            //            fprintf(stderr, "token: %s\n", token->string_value->str);
             EOL = findNewLineInFile(*file);
             *token = get_token(*file);
-//            fprintf(stderr, "token: %s  and eol = %d\n", token->string_value->str, EOL);
+            //            fprintf(stderr, "token: %s  and eol = %d\n", token->string_value->str, EOL);
         }
 
         else if (action_letter == R) {
@@ -596,6 +688,9 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                 //Print_Sym_stack(table);
                 // fprintf(stderr, "token: %s\n", tokens[0].string_value->str);
                 AVLNode *node = s_search_symtack(table, tokens[0].string_value->str);
+
+                // fprintf(stderr, "isfunctino: %d\n", node->data.isFunction);
+                // fprintf(stderr, "node TYPEEEEEEEEEE: %d\n", node->data.dtype);
                 // print_SymTable(&(table->items[0]));
                 // print_SymTable(table->items[0]);
                 if(node == NULL) {
@@ -603,12 +698,17 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                     exitWithError("Semantic error: undefined variable\n", ERR_SEMANT_UNDF_VALUE);
                 }
                 if(node->data.isFunction) *expression_type = node->data.returnType;
-                else *expression_type = node->data.dtype;
+                else {
+                     *expression_type = node->data.dtype;
+                    push_variable(tokens[0].string_value->str);
+                   
+                }
+                
 
                 if(is_nullable(*expression_type)){
                     if(node->data.isNil) *expression_type = TYPE_NIL;
                 }
-                push_variable(tokens[0].string_value->str);
+
                 return 1;
             }
             if(tokens[0].token_type == T_INT || tokens[0].token_type == T_DOUBLE || (tokens[0].token_type == T_KEYWORD && strcmp(tokens[0].string_value->str, "nil") == 0) || tokens[0].token_type == T_SING_STRING) {
@@ -643,6 +743,7 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                 switch (tokens[1].token_type) {
                     // E -> E + E
                     case T_PLUS:
+                    fprintf(stderr, "token: %d\n", *expression_type);
                         *expression_type = get_token_type(tokens[0], tokens[2], 1);
                         if(*expression_type == TYPE_STRING) {
                             generate_code(&node_inst, data, GEN_CONCAT,  0, UNUSED);
@@ -664,7 +765,8 @@ int get_rule_index(Token tokens[], int count, DataType *expression_type) {
                         // E -> E / E
                     case T_DIVIDE:
                         *expression_type = get_token_type(tokens[0], tokens[2], 1);
-                        generate_code(&node_inst, data, GEN_DIV,  0, UNUSED);
+                        if(*expression_type == TYPE_INT) generate_code(&node_inst, data, GEN_IDIV,  0, UNUSED);
+                        else generate_code(&node_inst, data, GEN_DIV,  0, UNUSED);
                         return 5;
                         // E -> E < E
                     case T_LESS:

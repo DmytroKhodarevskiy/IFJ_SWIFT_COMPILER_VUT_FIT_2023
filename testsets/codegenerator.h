@@ -51,23 +51,26 @@ typedef enum {
   GEN_EXIT,
   GEN_POP_TMP,
   GEN_BUILTIN,
-  GEN_PUSH_TMP,
-  GEN_IDIV,
-  GEN_LT,
-  GEN_GT,
-  GEN_EQ,
-  GEN_AND,
-  GEN_OR,
-  GEN_NOT,
-  GEN_INT2FLOAT,
-  GEN_FLOAT2INT,
-  GEN_INT2CHAR,
-  GEN_STRI2INT,
-  GEN_READ,
-  GEN_CONCAT,
-  GEN_WHILE_START,
-  GEN_WHILE_CHECK,
-  GEN_WHILE_END,
+    GEN_PUSH_TMP,
+    GEN_IDIV,
+    GEN_LT,
+    GEN_GT,
+    GEN_EQ,
+    GEN_AND,
+    GEN_OR,
+    GEN_NOT,
+    GEN_INT2FLOAT,
+    GEN_FLOAT2INT,
+    GEN_INT2CHAR,
+    GEN_STRI2INT,
+    GEN_READ,
+    GEN_CONCAT,
+    GEN_WHILE_START,
+    GEN_WHILE_CHECK,
+    GEN_WHILE_END,
+    GEN_CALL,
+    GEN_RETURN,
+    GEN_STRLEN,
 } gencode;
 
 typedef struct Operand {
@@ -80,7 +83,7 @@ typedef struct Data {
   Operand op;
   Operand op2;
   char *func_name;
-  Operand *func_param;
+  Operand func_param;
   unsigned int func_param_count;
   int ifelse_cnt;
   int while_cnt;
@@ -90,7 +93,8 @@ typedef struct Data {
 instr_list_dynamic *init_instr_list_dynamic();
 // int add_new_linked_list(instr_list_dynamic *list);
 int add_new_linked_list(instr_list_dynamic *list, char *name);
-instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node);
+// instr_node *search_by_name_in_list(instr_list_dynamic *list, const char *name, instr_node *main_node);
+instr_node *search_by_name_in_list(instr_list_dynamic *list, char *name, instr_node *main_node);
 void print_list_names(instr_list_dynamic *list);
 void pop_all_lists_to_file(instr_list_dynamic *list);
 char *type_to_string(DataType type);

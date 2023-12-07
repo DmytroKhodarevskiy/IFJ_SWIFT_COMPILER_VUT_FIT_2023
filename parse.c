@@ -817,6 +817,9 @@ void ASSIGN_STMT_OR_FUNCALL(FILE *file){ //current token is id
 }
 
 void WRITE_CALLS(FILE *file){ //current token is (
+
+
+
   if (current_token.token_type != T_LPAR){
                 //check
     exitWithError("Syntax error: expected (\n", ERR_SYNTAX);
@@ -893,8 +896,13 @@ void ARG_WRITE(FILE *file){ //current token is (
 
   current_token = get_token(file); // get param
   DataType actual_argument_type = TYPE_UNKNOWN;
-  char *Name = s_getFirstFunctionSymData(&stack)->name;
-  instr_node *node_inst = search_by_name_in_list(instr_list, Name, main_gen);
+  // char *Name = s_getFirstFunctionSymData(&stack)->name;
+  SymData *Name = s_getFirstFunctionSymData(&stack);
+  instr_node *node_inst;
+  if (Name != NULL) 
+    node_inst = search_by_name_in_list(instr_list, Name->name, main_gen);
+  else
+    node_inst = main_gen;
   Data data = init_data();
   if(current_token.token_type == T_TYPE_ID){
     AVLNode *node = s_search_symtack(&stack, current_token.string_value->str);

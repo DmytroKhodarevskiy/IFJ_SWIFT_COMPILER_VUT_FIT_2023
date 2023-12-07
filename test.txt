@@ -63,7 +63,7 @@ func GRINFIND () -> Int {
     // }
 
     var outerCounter = 0
-var innerCounter = 0
+    var innerCounter = 0
     while (innerCounter < 3) {
         write("Inner Counter:", innerCounter, "\n")
 

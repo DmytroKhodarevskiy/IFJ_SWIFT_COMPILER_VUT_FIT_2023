@@ -1,0 +1,28 @@
+Archive:  xkhoda01.zip
+  inflating: TestExpression.c        
+  inflating: codegenerator.c         
+  inflating: compiler.c              
+  inflating: dynamic_string.c        
+  inflating: expression_parse.c      
+  inflating: memory.c                
+  inflating: parse.c                 
+  inflating: stack.c                 
+  inflating: symtable.c              
+  inflating: symtable_stack.c        
+  inflating: tokenizer.c             
+  inflating: codegenerator.h         
+  inflating: compiler.h              
+  inflating: dynamic_string.h        
+  inflating: expression_parse.h      
+  inflating: memory.h                
+  inflating: parse.h                 
+  inflating: stack.h                 
+  inflating: symtable.h              
+  inflating: symtable_stack.h        
+  inflating: tokenizer.h             
+  inflating: makefile                
+  inflating: exprParse.c             
+  inflating: rozdeleni               
+  inflating: dokumentace.pdf         
+  inflating: LL1grammar.txt          
+gcc -g -o compiler.exe compiler.c parse.c symtable_stack.c expression_parse.c symtable.c stack.c tokenizer.c dynamic_string.c memory.c codegenerator.c
